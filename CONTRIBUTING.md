@@ -1,7 +1,3 @@
-# Contributing to [Project]
+# Contributing to ClassFieldTheory
 
-Thank you for your interest in contributing to [Project]! We welcome contributions from the
-community and appreciate your efforts to improve the project. Please follow the guidelines below
-to ensure a smooth contribution process.
-
-[ADD CONTENTS HERE]
+This project is going public in mid-July 2025 and initially we will be accepting contributions from the attendees of the [Clay Math "Formalizing Class Field Theory" workshop](https://www.claymath.org/events/formalizing-class-field-theory/).
