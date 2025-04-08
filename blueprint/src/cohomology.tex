@@ -1,0 +1,214 @@
+% In this file you should put the actual content of the blueprint.
+% It will be used both by the web and the print version.
+% It should *not* include the \begin{document}
+%
+% If you want to split the blueprint content into several files then
+% the current file can be a simple sequence of \input. Otherwise It
+% can start with a \section or \chapter for instance.
+
+
+\chapter{Group Cohomology}
+
+\section{Generalities}
+
+Let $G$ be a group and regard $\Z$ as a $G$-module on which the action of $G$ is trivial.
+By a \emph{projective resolution of $\Z$}, we shall mean an exact sequence of $G$-modules
+\[
+  \cdots \to P_2 \stackrel{d_1}\to P_1 \stackrel{d_0}\to P_0 \to \Z \to 0,
+\]
+in which each $P_i$ is a projective $\Z[G]$-module. An example of such
+a resolution is the bar resolution, which is constructed in Mathlib.
+Given any projective resolution of $\Z$ and any $G$-module $M$, we may define a cochain
+complex of additive groups $C^n(G,M) = Hom_{\Z[G]}(P_n,M)$. The coboundary maps
+$\partial^{(n)} : C^n(G,M) \to C^{n+1}(G,M)$ are defined by $\partial^{(n)} f = f \circ d_n$.
+Regardless of the resolution $P_\bullet$,
+the cohomology groups $H^n(G,M)$ are isomorphic to the cohomology groups
+of the cochain complex $C^\bullet(G,M)$. This isomorphism is already in Mathlib.
+
+(say something about long exact sequences, inflation and restriction).
+
+
+
+
+
+\section{Cohomology of cyclic groups}
+
+(transfer lean file of the resolution across)
+
+Let $G$ be a finite cyclic group of order $n$. We shall write $\xi$ for a generator of $G$.
+The element $N$ in the group ring $\Z[G]$ is defined to be the sum of the group elements.
+
+There is a special projective resolution of $\Z$ in which all of the modules $P_n$ are $\Z[G]$:
+\[
+  \Z[G] \stackrel{1-\xi} \to \Z[G] \stackrel{N}\to \Z[G] \stackrel{1-\xi}
+  \to \Z[G] \stackrel{N}\to \Z[G] \stackrel{1-\xi} \to \Z[G] \stackrel{\epsilon}\to \Z.
+\]
+Here the map $\epsilon : \Z[G] \to \Z$ is the \emph{augmentation map}, defined by
+\[
+  \epsilon \left(\sum_{g \in G} c_g \bullet g\right) = \sum_{g \in G} c_g.
+\]
+We shall call this resolution $P_n$, so the modules in the resulotion are all $P_n = \Z[G]$
+and the maps $d_n : P_{n+1} \to P_n$ are given by
+\[
+  d_n(m) = \begin{cases}
+    m \cdot (1-\xi) & \text{if $n$ is even,}\\
+    m \cdot N & \text{if $n$ is odd.}
+  \end{cases}
+\]
+Given a $\Z[G]$-module $M$, the cohomology groups of $M$ may be calculated by
+taking the cohomology of the cochain complex $C^n(G,M) = Hom_{\Z[G]}(P_n,M)$.
+We may identify each of the cochain groups $C^n(G,M)$ with $M$. With this
+identification, the coboundary maps $\partial^{(n)} : C^n(G,M) \to C^{n+1}(G,M)$ are given by
+\[
+  \partial^{(n)} (m) = \begin{cases}
+    (1-\xi) \cdot m & \text{if $n$ is even,}\\
+    N \cdot m & \text{if $n$ is odd.}
+  \end{cases}
+\]
+Hence the cochcain complex $C^\bullet(G,M)$ looks like this:
+\[
+  0 \to M \stackrel{1-\xi}\to M \stackrel{N} \to M \to
+    \stackrel{1-\xi}\to M \stackrel{N} \to M \to \cdots.
+\]
+
+\begin{lemma}
+  The kernel of the map $\partial^{(even)}: M \to M$
+  is $M^G$.
+\end{lemma}
+
+\begin{proof}
+  An element $m$ is in the kernel iff $(1-\xi)m=0$.
+  This is equivalent to $m=\xi m$. Since $\xi$ generates $G$, this is
+  equivalent to $m$ being $G$-invariant.
+\end{proof}
+
+Hence for $n > 0$ we have
+\[
+  H^n(G,M) \cong \begin{cases}
+    M^G / N\cdot M & \text{if $n$ is even,}\\
+    M[N] / (1-\xi) \cdot M & \text{if $n$ is odd.}
+  \end{cases}
+\]
+
+\begin{theorem}\label{cyclic group cohomology with values in Z}
+  Let $\Z$ be the trivial $G$-module.
+  Then $H^1(G,\Z)=0$ and $H^2(G,\Z) \cong \Z/n\Z$, where $n = |G|$.
+\end{theorem}
+
+\begin{proof}
+  In the case that the module $M$ is $\Z$, the map $\partial^{(even)} : \Z \to \Z$ is zero
+  and the map $\partial^{(odd)} : \Z\to \Z$ is multiplication by $n$.
+  The result follows immediately from this.
+\end{proof}
+
+
+\section{Herbrand Quotents}
+
+Let $A$ be an additive commutative group, and suppose we have two endomorphisms
+$f,g : A \to A$ such that $f \circ g = g \circ f = 0$.
+Then the kernel of $f$ contains the image of $g$ and the kernel of $g$ contains the image of $f$,
+and we may define the Herbrand quotient $q_{f,g} \in \Q$ by
+\[
+  q_{f,g} = \frac{| \ker f / \image g|}{| \ker g / \image f|}.
+\]
+(If either the numerator or denominator is infinite then $q_{f,g}$ takes the default value $0$.)
+
+An example of this situation is where $M$ is a module for a finite cyclic group $G$.
+The maps $f,g : M \to M$ are defined to be $\partial^{(even)} = 1-\xi$ and $\partial^{(odd)} = N$
+respectively.
+In this case we write
+\[
+  h(G,M) = q_{1-\xi,N},
+\]
+and we have
+\[
+  h(G,M) = \frac{|H^2(G,M)|}{|H^1(G,M)|}.
+\]
+
+\begin{theorem}
+  \label{Herbrand of short exact sequence}
+  Suppose we have a commutative diagram with exact rows:
+  \[
+    \begin{matrix}
+      0 &\to& A &\to& B &\to& C &\to& 0 \\
+      &&\downarrow f_A &&\downarrow f_B &&\downarrow f_C \\
+      0 &\to& A &\to& B &\to& C &\to& 0 \\
+      &&\downarrow g_A &&\downarrow g_B &&\downarrow g_C \\
+      0 &\to& A &\to& B &\to& C &\to& 0 \\
+    \end{matrix}
+  \]
+  Suppose that the pairs $f_*,g_*$ satisfy compose to zero in either direction
+  for $*=A,B,C$, and thus have Herbrand quotients.
+  Assume that at least two of $q(A)$, $q(B)$ and $q(C)$ are non-zero.
+  Then all are non-zero and we have
+  \[
+    q(B) = q(A) q(C).
+  \]
+  Here we are using the notation $q(*) = q_{f_*,g_*}$.
+\end{theorem}
+
+
+In the special case that $M$ is a module over a cyclic group, the theorem gives:
+
+\begin{corollary}
+  Suppose $G$ is a finite cyclic group and we have a short exact sequence of $G$-modules
+  \[
+    0 \to A \to B \to C \to 0.
+  \]
+  Then $h(G,B) = h(G,A) h(G,C)$.
+\end{corollary}
+
+\begin{theorem}
+  \label{Herbrand of finite}
+  If $A$ is finite then $q_{f,g} = 1$.
+\end{theorem}
+
+\begin{proof}
+  By the first isomorphism theorem $|\image f| = \frac{|A|}{|\ker f|}$, and similarly with $g$.
+  Substituting this into the definition we have
+  \[
+    q_{f,g} = \frac{|\ker f| / (|A| / |\ker g|)}{|\ker g| / (|A| / |\ker f|)}
+    = 1.
+  \]
+\end{proof}
+
+\begin{lemma}
+  Let $G$ be a cyclic group of order $n$ and let $\Z$ be the trivial $G$-module.
+  Then we have
+  \[
+    h(G,\Z) = n.
+  \]
+\end{lemma}
+
+\begin{proof}
+  We have calculated both cohomology groups in
+  Theorem \ref{cyclic group cohomology with values in Z}.
+\end{proof}
+
+
+\section{Splitting modules}
+
+In this section $G$ is a group and $M$ is a $G$-module.
+We suppose that we have a 2-cocycle $\sigma \in Z^2(G,M)$.
+From such a $\sigma$ we shall construct a $G$-module $S$, called the \emph{splitting module} of
+$\sigma$.
+We shall show that there is an exact sequence of $G$-modules
+\[
+  0 \to M \to S \to \Z[G] \to \Z \stackrel{\epsilon}\to 0.
+\]
+The image of $\sigma$ in $H^2(G,S)$ is $0$.
+
+(fill in the definition, transfer lean file across.)
+
+
+\section{Tate's Theorem}
+
+If $M$ satisfies certain conditions, then Tate has proved that $H^n(G,S)=0$ for all $n>0$,
+and more generally $H^n_{Tate}(G,S)=0$ for all $n \in \Z$.
+If this is the case then we see that $M$ is a dimension-shift of $\Z$, so that we have
+isomorphisms for all $n \in \Z$:
+\[
+  H^n_{Tate}(G,\Z) \cong H^{n+2}(G,M).
+\]
+
+(state and prove the theorem. Maybe prove it with weaker hypotheses in the case $n=-2$.)
