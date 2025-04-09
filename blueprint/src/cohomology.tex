@@ -11,13 +11,74 @@
 
 \section{Generalities}
 
-Let $G$ be a group and regard $\Z$ as a $G$-module on which the action of $G$ is trivial.
+Let $G$ be a group.
+By a $G$-module, we shall mean a module $M$ over the integral group ring $\Z[G]$, on which we
+write scalars on the left. This is equivalent to giving a monoid homomorphism $G \to End_\Z M$.
+The category of $G$-modules is in Mathlib as \texttt{Rep Int G}.
+
+Given a $G$-module $M$, there is a cochain complex $C^n(G,M)$ of $\Z$-modules
+indexed by $n \in \N$, which consists of the functions $G^n \to M$ with some appropriately defined
+differentials.
+The cochain complex $C^n(G,M)$ is functorial in $M$ and is defined in Mathlib as
+\texttt{groupCohomology.cochainsFunctor}.
+The cohomology groups of this chain complex are called the cohomology groups of the
+$G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
+\texttt{groupCohomology M n}.
+
+The next two lemmas are a little technical.
+
+\begin{lemma}
+  \label{lem:groupCohomology.exact1}
+  \lean{groupCohomology.exact1}
+  The functor taking $M$ to $C^\bullet (G,M)$ preserves finite limits.
+\end{lemma}
+
+\begin{lemma}
+  \label{lem:groupCohomology.exact2}
+  \lean{groupCohomology.exact2}
+  The functor taking $M$ to $C^\bullet (G,M)$ preserves finite colimits.
+\end{lemma}
+
+\begin{lemma}
+  \lean{groupCohomology.cochainsFunctor_Exact}
+  The functor taking $M$ to $C^\bullet (G,M)$ is exact.
+  I.e. if $0 \to A \to B \to C \to 0$ be a short exact sequence of $G$-modules.
+  Then the corresponding sequence of cochain complexes is exact:
+  \[
+    0 \to C^n(G,A) \to C^n(G,B) \to C^n(G,C) \to 0.
+  \]
+\end{lemma}
+
+\begin{proof}
+  \uses{lem:groupCohomology.exact1, lem:groupCohomology.exact2}
+  This follows automatically from lemmas \ref{lem:groupCohomology.exact1}
+  and \ref{lem:groupCohomology.exact2} (by \texttt{exact?}).
+\end{proof}
+
+
+\begin{definition}[Long exact sequences]
+  \lean{grougroupCohomology.δ}
+  Given a short exact sequence $0 \to A \stackrel{f}\to B \stackrel{g}\to C \to 0$ of $G$-modules,
+  the corresponding sequence of cochain complexes is exact:
+  $0 \to C^n(G,A) \to C^n(G,B) \to C^n(G,C) \to 0$.
+  This implies that there exist "connecting homomorphisms" $\delta : H^n(G,C) \to H^{n+1}(G,A)$,
+  such that the following is a long exact sequence:
+  \[
+    0 \to H^0(G,A) \stackrel{f_*}\to H^0(G,B) \stackrel{g_*}\to H^0(G,C) \stackrel{\delta}\to
+    H^1(G,A) \stackrel{f_*}\to H^1(G,B) \stackrel{g_*} \to H^1(G,C) \stackrel{\delta}\to \cdots.
+  \]
+\end{definition}
+
+
+
+We shall regard $\Z$ as a $G$-module on which the action of $G$ is trivial.
 By a \emph{projective resolution of $\Z$}, we shall mean an exact sequence of $G$-modules
 \[
   \cdots \to P_2 \stackrel{d_1}\to P_1 \stackrel{d_0}\to P_0 \to \Z \to 0,
 \]
-in which each $P_i$ is a projective $\Z[G]$-module. An example of such
-a resolution is the bar resolution, which is constructed in Mathlib.
+in which each $P_i$ projective.
+An example of such a resolution is the bar resolution,
+which is constructed in Mathlib.
 Given any projective resolution of $\Z$ and any $G$-module $M$, we may define a cochain
 complex of additive groups $C^n(G,M) = Hom_{\Z[G]}(P_n,M)$. The coboundary maps
 $\partial^{(n)} : C^n(G,M) \to C^{n+1}(G,M)$ are defined by $\partial^{(n)} f = f \circ d_n$.
@@ -25,7 +86,7 @@ Regardless of the resolution $P_\bullet$,
 the cohomology groups $H^n(G,M)$ are isomorphic to the cohomology groups
 of the cochain complex $C^\bullet(G,M)$. This isomorphism is already in Mathlib.
 
-(say something about long exact sequences, inflation and restriction).
+(say something about inflation and restriction).
 
 
 
@@ -33,7 +94,7 @@ of the cochain complex $C^\bullet(G,M)$. This isomorphism is already in Mathlib.
 
 \section{Cohomology of cyclic groups}
 
-(transfer lean file of the resolution across)
+(transfer lean file on the resolution across)
 
 Let $G$ be a finite cyclic group of order $n$. We shall write $\xi$ for a generator of $G$.
 The element $N$ in the group ring $\Z[G]$ is defined to be the sum of the group elements.
@@ -57,8 +118,10 @@ and the maps $d_n : P_{n+1} \to P_n$ are given by
 \]
 Given a $\Z[G]$-module $M$, the cohomology groups of $M$ may be calculated by
 taking the cohomology of the cochain complex $C^n(G,M) = Hom_{\Z[G]}(P_n,M)$.
-We may identify each of the cochain groups $C^n(G,M)$ with $M$. With this
-identification, the coboundary maps $\partial^{(n)} : C^n(G,M) \to C^{n+1}(G,M)$ are given by
+We may identify each of the cochain groups $C^n(G,M)$ with $M$
+(this is \texttt{Rep.leftRegularHomEquiv} in Mathlib).
+With this identification, the coboundary maps $\partial^{(n)} : C^n(G,M) \to C^{n+1}(G,M)$
+are given by
 \[
   \partial^{(n)} (m) = \begin{cases}
     (1-\xi) \cdot m & \text{if $n$ is even,}\\
