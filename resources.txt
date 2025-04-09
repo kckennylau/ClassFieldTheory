@@ -1,1 +1,6 @@
 Kedlaya course: https://kskedlaya.org/cft/sec_kronweb.html
+Artin Tate: https://www.scribd.com/document/378688024/Emil-Artin-John-Tate-Class-Field-Theory-366-2008-American-Mathematical-Society
+Neukirch Bonn notes: https://www.mathi.uni-heidelberg.de/%7Eschmidt/Neukirch-en/Neukirch_cft_02_may15.pdf
+Milne course: https://www.jmilne.org/math/CourseNotes/CFT.pdf
+Cassels Froehlich: https://math.arizona.edu/~cais/scans/Cassels-Frohlich-Algebraic_Number_Theory.pdf
+
