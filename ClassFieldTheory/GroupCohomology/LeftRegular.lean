@@ -1,0 +1,245 @@
+import ClassFieldTheory.GroupCohomology.Basic
+
+section Group
+
+variable {R G : Type} [Group G] [CommRing R]
+
+open Classical Finsupp CategoryTheory.ConcreteCategory
+open Rep hiding of
+open scoped CategoryTheory BigOperators
+
+/-
+# helper lemmas concerning the object `leftRegular R G` of `Rep R G`.
+-/
+namespace Rep.leftRegular
+
+/--
+The definitional equivalence between `leftRegular R G` and `G →₀ R`.
+-/
+def coeff : leftRegular R G ≃ₗ[R] (G →₀ R) where
+  toFun     := id
+  invFun    := id
+  left_inv  := by tauto
+  right_inv := by tauto
+  map_add'  := by tauto
+  map_smul' := by tauto
+
+/--
+`Rep.leftRegular.of g` is the group element `g : G` regarded as
+as element of `Rep.leftRegular ℤ G`. Its type is `CoeSort.coe (Rep.leftRegular ℤ G)`.
+-/
+noncomputable abbrev of (g : G) : leftRegular R G := single g 1
+
+lemma coeff_of (g h : G) : coeff (of g) h = if (g = h) then (1 : R) else (0 : R) :=
+  Finsupp.single_apply
+
+example (g : G) : coeff (of g) g = (1 : R) := by
+  rw [coeff_of]
+  simp
+
+@[ext] lemma ext (v w : (leftRegular R G)) (h : ∀ x : G, coeff v x = coeff w x) : v = w :=
+  Finsupp.ext h
+
+lemma eq_sum (v : leftRegular R G) :
+    v = (coeff v).sum (fun x s ↦ s • of x) :=
+by
+  ext g
+  change _ = coeff (∑ h ∈ (coeff v).support, (coeff v h • (of h) )) g
+  rw [map_sum]
+  simp only [LinearMapClass.map_smul]
+  change _ = ((coeff v).sum fun x s ↦ s • coeff (of x) : G →₀ R) g
+  simp only [sum_apply, coe_smul, Pi.smul_apply, smul_eq_mul]
+  conv => {
+    right
+    right
+    intro a₁ b
+    rw [coeff_of]
+  }
+  simp only [mul_ite, mul_one, mul_zero, sum_ite_eq', mem_support_iff, ne_eq, ite_not]
+  split_ifs
+  · assumption
+  · rfl
+
+lemma eq_sum_smul_of (v : leftRegular R G) : v = ∑ x ∈ (coeff v).support, (coeff v x) • (of x) :=
+  eq_sum _
+
+noncomputable abbrev ρReg := (leftRegular R G).ρ
+
+/-This is a collection of definitional lemmas concerning `ρReg`.-/
+
+lemma ρReg_defn : ρReg = (leftRegular R G).ρ := rfl
+
+lemma ρReg_apply (g : G) : ρReg g = lmapDomain R R (g * ·) := rfl
+
+lemma ρReg_apply_apply (g : G) (v : leftRegular R G) : ρReg g v = lmapDomain R R (g * ·) v := rfl
+
+lemma coeff_ρReg_apply_self_mul (g : G) (v : leftRegular R G) (x : G) :
+    coeff (ρReg g v) (g * x) = coeff v x :=
+by
+  rw [ρReg_apply_apply, lmapDomain_apply]
+  have : Function.Injective (g * ·)
+  · intro x y hxy
+    dsimp at hxy
+    simpa using hxy
+  exact mapDomain_apply this v x
+
+lemma coeff_ρReg_apply (g : G) (v : leftRegular R G) (x : G) :
+    coeff (ρReg g v) x = coeff v (g⁻¹ * x) :=
+by
+  convert coeff_ρReg_apply_self_mul g v (g⁻¹ * x)
+  rw [←mul_assoc, mul_inv_cancel, one_mul]
+
+lemma ρReg_apply_of (g x : G) : ρReg (R := R) g (of x) = of (g * x) :=
+by
+  rw [ρReg_apply_apply, lmapDomain_apply, leftRegular.of, mapDomain_single, ←leftRegular.of]
+
+lemma of_eq_ρReg_of_one (g : G) : of (R := R) g = ρReg g (of 1) :=
+by
+  rw [ρReg_apply_of, mul_one]
+
+-- lemma ρReg_apply_of_one (g : G) :
+--     ρReg (R := R) g (of 1) = of g :=
+-- by
+--   rw [ρReg_apply_of, mul_one]
+
+lemma hom_comp_ρReg {B : Rep R G} (b : B) (g : G) (v : leftRegular R G) :
+    (leftRegularHom B b) (ρReg g v) = B.ρ g ((leftRegularHom B b) v) :=
+  hom_comm_apply (B.leftRegularHom b) g v
+
+/--
+If two morphisms from the left regular representation agree at `of 1` then they are equal.
+-/
+lemma Hom.ext {A : Rep R G} (f g : leftRegular R G ⟶ A) (hfg : f (of 1) = g (of 1)) :
+    f = g :=
+by
+  let equ := (leftRegularHomEquiv A).symm
+  calc
+    f = equ (equ.symm f)    := by simp
+    _ = equ (f (of 1))      := by rfl
+    _ = equ (g (of 1))      := by rw [hfg]
+    _ = equ (equ.symm g)    := rfl
+    _ = g                   := by simp
+
+lemma leftRegularHom_of {A : Rep R G} (v : A) (g : G) :
+    (leftRegularHom A v) (of g) = A.ρ g v := by
+  have := leftRegularHom_hom_single g v 1
+  rw [one_smul] at this
+  exact this
+
+/--
+If `g` is in the centre of `G` then the unique morphism of the
+left regular representation which takes `1` to `g` is (as a linear map) `ρReg g`.
+-/
+lemma leftRegularHom_eq_ρReg (g : G) (hg : g ∈ Subgroup.center G) :
+    hom (leftRegularHom (leftRegular R G) (of g)).hom = ρReg g :=
+by
+  have (x : G) : (leftRegularHom (leftRegular R G) (of g)) (of x) = ρReg g (of x)
+  · rw [leftRegularHom_of, ρReg_apply_of, ρReg_apply_of, hg.comm]
+  ext
+  congr 2
+  apply this
+
+variable (R G)
+/--The augmentation map from the left regular representation to the trivial module.-/
+noncomputable
+def ε : leftRegular R G ⟶ trivial R G R := leftRegularHom (trivial R G R) (1 : R)
+
+variable {R G}
+lemma ε_of_one : (ε R G) (of 1) = (1 : R) :=
+  leftRegularHom_of 1 1
+
+lemma ε_comp_ρ (g : G) : ModuleCat.ofHom (ρReg g) ≫ (ε R G).hom = (ε R G).hom := (ε R G).comm g
+
+lemma ε_comp_ρ_apply (g : G) (v : (leftRegular R G).V) :
+  (ε R G) (ρReg g v) = (ε R G) v :=
+by
+  change ((ModuleCat.ofHom _) ≫ (ε R G).hom).hom v = _
+  rw [ε_comp_ρ]
+  rfl
+
+@[simp]
+lemma ε_of (g : G) : ε R G (of g) = (1 : R) :=
+by
+  have : of g = ρReg (R := R) g (of 1)
+  · rw [ρReg_apply_of, mul_one]
+  rw [this, ε_comp_ρ_apply, ε_of_one]
+
+lemma ε_eq_sum_coeff (v : leftRegular R G) : ε R G v = ∑ x ∈ (coeff v).support, coeff v x :=
+by
+  rw [apply_eq_hom]
+  nth_rw 1 [eq_sum_smul_of v, map_sum]
+  apply Finset.sum_congr rfl
+  intros
+  rw [map_smul, ←apply_eq_hom, ε_of, smul_eq_mul, mul_one]
+
+lemma ε_eq_sum [Fintype G] (v : leftRegular R G) : ε R G v = ∑ x ∈ Fintype.elems, coeff v x :=
+by
+  rw [ε_eq_sum_coeff]
+  have : (coeff v : G → R).support ⊆ (coeff v).support
+  · simp
+  have := finsum_eq_finset_sum_of_support_subset (coeff v) this
+  rw [←this]
+  rw [finsum_eq_sum_of_fintype]
+  rfl
+
+/--
+The left regular representation is nontrivial (i.e. non-zero) if and only if the coefficient
+ring is trivial.
+-/
+lemma nontrivial_iff_nontrivial : Nontrivial (leftRegular R G) ↔ Nontrivial R :=
+by
+  simp only [nontrivial_iff]
+  constructor
+  · intro h
+    contrapose! h
+    intro v w
+    ext
+    apply h
+  · intro h
+    obtain ⟨x,y,hxy⟩ := h
+    use x • (of 1), y • (of 1)
+    contrapose! hxy
+    calc
+      x = coeff (x • (of (1 : G))) 1 := by simp
+      _ = coeff (y • (of (1 : G))) 1 := by rw [hxy]
+      _ = y := by simp
+
+def equiv_MonoidAlgebra :
+    (Representation.ofMulAction R G G).asModule  ≃ₗ[MonoidAlgebra R G] MonoidAlgebra R G where
+      toFun := id
+      map_add' := by tauto
+      map_smul' := by
+        intros
+        dsimp only [id_eq, AddHom.toFun_eq_coe, AddHom.coe_mk, RingHom.id_apply, smul_eq_mul]
+        rw [Representation.ofMulAction_self_smul_eq_mul]
+      invFun := id
+      left_inv := by tauto
+      right_inv := by tauto
+
+noncomputable def Free : Basis Unit (MonoidAlgebra R G) <|
+    (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G) : Type) where repr := {
+  toFun := single ()
+  map_add' := by simp
+  map_smul' := by
+    intros
+    dsimp only [AddHom.toFun_eq_coe, AddHom.coe_mk, RingHom.id_apply]
+    rw [smul_single', Representation.ofMulAction_self_smul_eq_mul]
+  invFun := fun a ↦ a ()
+  left_inv := fun _ ↦ single_eq_same
+  right_inv := by
+    intro
+    dsimp only [AddHom.toFun_eq_coe, AddHom.coe_mk, RingHom.id_apply, id_eq, eq_mpr_eq_cast]
+    ext
+    apply single_eq_same
+  }
+
+
+instance : CategoryTheory.Projective (leftRegular R G) :=
+by
+  apply Rep.equivalenceModuleMonoidAlgebra.toAdjunction.projective_of_map_projective
+  apply ModuleCat.projective_of_free
+  exact Free
+
+
+
+end Rep.leftRegular
