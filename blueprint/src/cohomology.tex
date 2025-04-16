@@ -40,6 +40,7 @@ The next two lemmas are a little technical.
 \end{lemma}
 
 \begin{lemma}
+  \label{lem:cochainsFunctor exact}
   \lean{groupCohomology.cochainsFunctor_Exact}
   The functor taking $M$ to $C^\bullet (G,M)$ is exact.
   I.e. if $0 \to A \to B \to C \to 0$ be a short exact sequence of $G$-modules.
@@ -55,9 +56,10 @@ The next two lemmas are a little technical.
   and \ref{lem:groupCohomology.exact2} (by \texttt{exact?}).
 \end{proof}
 
-
 \begin{definition}[Long exact sequences]
+  \label{def: Long exact sequences}
   \lean{groupCohomology.δ}
+  \uses{lem:groupCohomology.exact1, lem:groupCohomology.exact2}
   Given a short exact sequence $0 \to A \stackrel{f}\to B \stackrel{g}\to C \to 0$ of $G$-modules,
   the corresponding sequence of cochain complexes is exact:
   $0 \to C^n(G,A) \to C^n(G,B) \to C^n(G,C) \to 0$.
@@ -68,6 +70,9 @@ The next two lemmas are a little technical.
     H^1(G,A) \stackrel{f_*}\to H^1(G,B) \stackrel{g_*} \to H^1(G,C) \stackrel{\delta}\to \cdots.
   \]
 \end{definition}
+
+
+
 
 
 
