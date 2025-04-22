@@ -34,11 +34,17 @@ lemma Rep.apply_eq_hom (A B : Rep R G) (f : A ⟶ B) (v : A) :
 #check Action.add_hom
 #check Action.smul_hom
 universe u
+@[simp]
 lemma Action.sub_hom {V : Type (u + 1)} [CategoryTheory.LargeCategory V] {G : Type u} [Monoid G]
     [CategoryTheory.Preadditive V] {X Y : Action V G} (f g : X ⟶ Y) : (f - g).hom = f.hom - g.hom
     := by
   rw [eq_sub_iff_add_eq, ←Action.add_hom, sub_add_cancel]
 
+
+
+#check ModuleCat.hom_add
+#check ModuleCat.hom_sub
+#check ModuleCat.hom_zero
 
 /-
 This will combine with `Action.zero_hom` to simplify `(O : A ⟶ B) v`,
@@ -53,7 +59,6 @@ by
 -- example (A B : Rep R G) (v : A) : (0 : A ⟶ B) v = (0 : B) :=
 -- by
 --   simp
-
 
 @[simp]
 lemma ModuleCat.add_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B) (v : A) :
@@ -80,6 +85,21 @@ lemma ModuleCat.sub_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B
   (f - g) v = f v - g v :=
 by
   rfl
+
+
+lemma Rep.comp_apply {A B C : Rep R G} (f : A ⟶ B) (g : B ⟶ C) (v : A.V) : (f ≫ g) v = g (f v) :=
+  rfl
+
+lemma Rep.zero_apply {A B : Rep R G} (v : A) : (0 : A ⟶ B) v = 0 := rfl
+
+lemma Rep.apply_sub {A B : Rep R G} (f : A ⟶ B) (v w : A) : f (v - w) = f v - f w := by
+  simp only [apply_eq_hom, map_sub]
+
+lemma Rep.hom_comm_apply' {A B : Rep R G} (f : A ⟶ B) (g : G) (x : A) :
+    f (A.ρ g x) = B.ρ g (f x) := hom_comm_apply f g x
+
+
+
 
 -- @[simp]
 -- lemma Rep.add_hom {A B : Rep R G} (f g : A ⟶ B) : (f + g).hom = f.hom + g.hom := Action.add_hom _ _

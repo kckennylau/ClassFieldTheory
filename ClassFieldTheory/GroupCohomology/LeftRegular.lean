@@ -33,6 +33,9 @@ noncomputable abbrev of (g : G) : leftRegular R G := single g 1
 lemma coeff_of (g h : G) : coeff (of g) h = if (g = h) then (1 : R) else (0 : R) :=
   Finsupp.single_apply
 
+lemma coeff_of_eq_one (g : G) : coeff (of g) g = (1 : R) := by
+  rw [coeff_of, if_pos rfl]
+
 example (g : G) : coeff (of g) g = (1 : R) := by
   rw [coeff_of]
   simp
@@ -74,8 +77,7 @@ lemma ρReg_apply (g : G) : ρReg g = lmapDomain R R (g * ·) := rfl
 lemma ρReg_apply_apply (g : G) (v : leftRegular R G) : ρReg g v = lmapDomain R R (g * ·) v := rfl
 
 lemma coeff_ρReg_apply_self_mul (g : G) (v : leftRegular R G) (x : G) :
-    coeff (ρReg g v) (g * x) = coeff v x :=
-by
+    coeff (ρReg g v) (g * x) = coeff v x := by
   rw [ρReg_apply_apply, lmapDomain_apply]
   have : Function.Injective (g * ·)
   · intro x y hxy
@@ -84,17 +86,14 @@ by
   exact mapDomain_apply this v x
 
 lemma coeff_ρReg_apply (g : G) (v : leftRegular R G) (x : G) :
-    coeff (ρReg g v) x = coeff v (g⁻¹ * x) :=
-by
+    coeff (ρReg g v) x = coeff v (g⁻¹ * x) := by
   convert coeff_ρReg_apply_self_mul g v (g⁻¹ * x)
   rw [←mul_assoc, mul_inv_cancel, one_mul]
 
-lemma ρReg_apply_of (g x : G) : ρReg (R := R) g (of x) = of (g * x) :=
-by
+lemma ρReg_apply_of (g x : G) : ρReg (R := R) g (of x) = of (g * x) := by
   rw [ρReg_apply_apply, lmapDomain_apply, leftRegular.of, mapDomain_single, ←leftRegular.of]
 
-lemma of_eq_ρReg_of_one (g : G) : of (R := R) g = ρReg g (of 1) :=
-by
+lemma of_eq_ρReg_of_one (g : G) : of (R := R) g = ρReg g (of 1) := by
   rw [ρReg_apply_of, mul_one]
 
 -- lemma ρReg_apply_of_one (g : G) :
@@ -109,16 +108,9 @@ lemma hom_comp_ρReg {B : Rep R G} (b : B) (g : G) (v : leftRegular R G) :
 /--
 If two morphisms from the left regular representation agree at `of 1` then they are equal.
 -/
-lemma Hom.ext {A : Rep R G} (f g : leftRegular R G ⟶ A) (hfg : f (of 1) = g (of 1)) :
-    f = g :=
-by
-  let equ := (leftRegularHomEquiv A).symm
-  calc
-    f = equ (equ.symm f)    := by simp
-    _ = equ (f (of 1))      := by rfl
-    _ = equ (g (of 1))      := by rw [hfg]
-    _ = equ (equ.symm g)    := rfl
-    _ = g                   := by simp
+lemma Hom.ext {A : Rep R G} (f g : leftRegular R G ⟶ A) (hfg : f (of 1) = g (of 1)) : f = g := by
+  rw [←(leftRegularHomEquiv A).toEquiv.apply_eq_iff_eq]
+  exact hfg
 
 lemma leftRegularHom_of {A : Rep R G} (v : A) (g : G) :
     (leftRegularHom A v) (of g) = A.ρ g v := by
@@ -195,15 +187,17 @@ by
     intro v w
     ext
     apply h
-  · intro h
-    obtain ⟨x,y,hxy⟩ := h
+  · intro ⟨x,y,hxy⟩
     use x • (of 1), y • (of 1)
     contrapose! hxy
-    calc
-      x = coeff (x • (of (1 : G))) 1 := by simp
-      _ = coeff (y • (of (1 : G))) 1 := by rw [hxy]
-      _ = y := by simp
+    apply_fun fun v ↦ ((coeff v) 1) at hxy
+    rwa [map_smul,map_smul, smul_apply,smul_apply, smul_eq_mul,smul_eq_mul, coeff_of_eq_one,
+      mul_one, mul_one] at hxy
 
+/--
+The module over the group algebra corresponding to `leftRegular R G` is isomorphic to
+the group algebra. This is used in proving that `leftRegular R G` is free, and hence projective.
+-/
 def equiv_MonoidAlgebra :
     (Representation.ofMulAction R G G).asModule  ≃ₗ[MonoidAlgebra R G] MonoidAlgebra R G where
       toFun := id
@@ -216,6 +210,9 @@ def equiv_MonoidAlgebra :
       left_inv := by tauto
       right_inv := by tauto
 
+/--
+`leftRegular R G` is free as a module over the group algebra.
+-/
 noncomputable def Free : Basis Unit (MonoidAlgebra R G) <|
     (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G) : Type) where repr := {
   toFun := single ()
@@ -233,7 +230,9 @@ noncomputable def Free : Basis Unit (MonoidAlgebra R G) <|
     apply single_eq_same
   }
 
-
+/--
+`leftRegular R G` is projective in the category `Rep R G`.
+-/
 instance : CategoryTheory.Projective (leftRegular R G) :=
 by
   apply Rep.equivalenceModuleMonoidAlgebra.toAdjunction.projective_of_map_projective
