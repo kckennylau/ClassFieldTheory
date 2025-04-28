@@ -21,14 +21,38 @@ open scoped CategoryTheory
   --   _ = (A.ρ g ≫ f.hom) v := rfl
   --   _ = (f.hom ≫ B.ρ g) v := by congr 1; exact f.comm g
 
+#synth CategoryTheory.ConcreteCategory (ModuleCat R) (fun A B ↦ A →ₗ[R] B)
+
+instance (A B : ModuleCat R) : FunLike (A ⟶ B) A B where
+  coe f := (f : A → B)
+  coe_injective' _ _ hfg := CategoryTheory.ConcreteCategory.hom_ext_iff.mpr (congrFun hfg)
+
 instance (A B : Rep R G) : FunLike (A ⟶ B) A.V B.V where
   coe f := (f : A.V → B.V)
   coe_injective' _ _ hfg := CategoryTheory.ConcreteCategory.hom_ext_iff.mpr (congrFun hfg)
+
+instance (A B : Rep R G) : FunLike (A ⟶ B) A.V B.V where
+  coe f := (f : A.V → B.V)
+  coe_injective' _ _ hfg := CategoryTheory.ConcreteCategory.hom_ext_iff.mpr (congrFun hfg)
+
+instance (A B : ModuleCat R) : AddHomClass (A ⟶ B) A B where
+  map_add f _ _ := by
+    change f.hom _ = f.hom _ + f.hom _
+    apply map_add
 
 
 @[simp]
 lemma Rep.apply_eq_hom (A B : Rep R G) (f : A ⟶ B) (v : A) :
     f v = f.hom v := rfl
+
+instance (A B : Rep R G) : AddHomClass (Action.HomSubtype _ _ A B) A.V B.V where
+  map_add f x y := map_add f.val x y
+
+instance (A B : Rep R G) : MulActionHomClass (Action.HomSubtype _ _ A B) R A.V B.V where
+  map_smulₛₗ f c v := map_smul f.val c v
+
+example (A B : Rep R G) (f : A ⟶ B ) (a b : A) (c : R) : f (a + c • b) = f a + c • f b := by
+  simp
 
 #check Action.zero_hom
 #check Action.add_hom
@@ -149,9 +173,6 @@ To check whether the underlying sequence is exact in `ModuleCat R`, we can use t
 -- example (A B C : Ab) (f : A ⟶ B) (g : B ⟶ C) : Exact f g ↔ f.range = g.ker :=
 -- by
 --   exact AddCommGroupCat.exact_iff f g
-
-
-
 
 
 
