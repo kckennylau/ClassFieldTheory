@@ -1,5 +1,5 @@
 import Mathlib
-import CFT.Cohomology.CyclicGroup
+import ClassFieldTheory.GroupCohomology.CyclicGroup
 
 variables {G : Type} [Fintype G] [Group G] {R : Type} [CommRing R]
 
@@ -17,7 +17,7 @@ noncomputable def Rep.restriction : (Rep R G) ⥤ (Rep R H) where
   obj X := {
     V := X.V
     ρ := {
-      toFun := fun ⟨h,_⟩ ↦ X.ρ h
+      toFun := fun ⟨h,_⟩ ↦ CategoryTheory.ConcreteCategory.ofHom (X.ρ h)
       map_one' := sorry
       map_mul' := sorry
     }
