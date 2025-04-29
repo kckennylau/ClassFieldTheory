@@ -47,13 +47,11 @@ lemma diff₁_of_one : diff₁ R G (of 1) = of 1 - of gen := by
 
 lemma diff₁_of (g : G) : diff₁ R G (of g) = of g - of (g * gen) :=
 by
-  rw [of_eq_ρReg_of_one, Rep.apply_eq_hom, hom_comm_apply, ←apply_eq_hom, diff₁_of_one,
-    map_sub, ←ρReg_apply_of]
+  rw [of_eq_ρReg_of_one, hom_comm_apply', diff₁_of_one, map_sub, ←ρReg_apply_of]
 
 @[simp] theorem ε_comp_diff₁ : diff₁ R G ≫ ε R G = 0 := by
   apply Hom.ext
-  rw [Rep.comp_apply, diff₁_of, apply_eq_hom, map_sub, ←apply_eq_hom, ←apply_eq_hom, ε_of, ε_of,
-    sub_self, Rep.zero_apply]
+  rw [Rep.comp_apply, diff₁_of, map_sub, ε_of, ε_of, sub_self, zero_apply]
 
 
 /-
@@ -75,18 +73,18 @@ lemma of_sub_of_one_mem_range_diff₁ (g : G) :
       use ρReg gen w - of 1
       rw [Int.ofNat_eq_natCast, zpow_natCast] at hw
       rw [Int.ofNat_eq_natCast, zpow_natCast, map_sub, hom_comm_apply, hw, map_sub, ρReg_apply_of,
-        ρReg_apply_of, pow_succ', ←apply_eq_hom, diff₁_of_one, mul_one, sub_sub_sub_cancel_right]
+        ρReg_apply_of, pow_succ', hom_apply, diff₁_of_one, mul_one, sub_sub_sub_cancel_right]
   | negSucc n =>
-    simp only [apply_eq_hom, zpow_negSucc]
+    simp only [zpow_negSucc]
     induction n with
     | zero =>
       use of gen⁻¹
-      rw [←apply_eq_hom, diff₁_of, inv_mul_cancel, zero_add, pow_one]
+      rw [hom_apply, diff₁_of, inv_mul_cancel, zero_add, pow_one]
     | succ n ih =>
       obtain ⟨w,hw⟩ := ih
-      rw [←apply_eq_hom] at hw
+      rw [hom_apply] at hw
       use ρReg gen⁻¹ w + of gen⁻¹
-      rw [map_add, ←apply_eq_hom, ←apply_eq_hom, diff₁_of, hom_comm_apply', ←ρReg, hw, map_sub,
+      rw [map_add, hom_apply, hom_apply, diff₁_of, hom_comm_apply', ←ρReg, hw, map_sub,
         ρReg_apply_of, ←of_eq_ρReg_of_one, inv_mul_cancel, sub_add_sub_cancel]
       group
 
@@ -98,7 +96,7 @@ theorem exact_ε_diff₁ : LinearMap.ker (ε R G).hom.hom = LinearMap.range (dif
 by
   apply eq_of_le_of_le
   · intro v hv
-    rw [LinearMap.mem_ker, ←apply_eq_hom, ε_eq_sum_coeff] at hv
+    rw [LinearMap.mem_ker, hom_apply, ε_eq_sum_coeff] at hv
     let pre (g : G) : leftRegular R G :=
       (of_sub_of_one_mem_range_diff₁ g).choose
     have pre_spec (g : G) : diff₁ R G (pre g) = of g - of 1 :=
@@ -110,7 +108,7 @@ by
       left
       right
       intro x
-      rw [map_smul, ←apply_eq_hom, pre_spec, smul_sub]
+      rw [map_smul, hom_apply, pre_spec, smul_sub]
     }
     rw [Finset.sum_sub_distrib, ←Finset.sum_smul, hv, zero_smul, sub_zero, ←eq_sum_smul_of]
   · rw [LinearMap.range_le_ker_iff]
@@ -146,7 +144,7 @@ by
 lemma coeff_diff₁_gen_mul (v : leftRegular R G) (g : G) :
     coeff (diff₁ R G v) (gen * g) = coeff v (gen * g) - coeff v g :=
 by
-  rw [apply_eq_hom, diff₁, map_sub, Action.sub_hom, ModuleCat.sub_apply, map_sub, sub_apply]
+  rw [diff₁, map_sub, Rep.sub_apply, map_sub, Finsupp.sub_apply]
   congr 1
   · congr
     change ((leftRegularHomEquiv (leftRegular R G)).symm (of 1)) v = v
@@ -154,9 +152,12 @@ by
     · rw [this]
       rfl
     apply Hom.ext
-    rw [id_apply, apply_eq_hom, leftRegularHomEquiv_symm_single, map_one, LinearMap.one_apply]
+    rw [id_apply, ←hom_apply, leftRegularHomEquiv_symm_single, map_one, LinearMap.one_apply]
   · convert coeff_ρReg_apply_self_mul gen v g
     rw [leftRegularHomEquiv_symm_apply]
+    ext
+    rw [←hom_apply]
+    congr 3
     apply leftRegularHom_eq_ρReg
     rw [Subgroup.mem_center_iff]
     intro g
@@ -176,7 +177,7 @@ by
     induction n with
     | zero => simp
     | succ n ih =>
-      simp only [apply_eq_hom, Int.ofNat_eq_coe, zpow_natCast, Nat.cast_succ] at *
+      simp only [Int.ofNat_eq_coe, zpow_natCast, Nat.cast_succ] at *
       norm_cast at *
       rw [pow_succ', this, ih]
   case intro.negSucc n =>
@@ -263,7 +264,7 @@ by
 lemma leftRegularHom_normElt_of (g : G) :
     (leftRegularHom (leftRegular R G) (of g)) (normElt R G) = normElt R G:=
 by
-  rw [apply_eq_hom, leftRegularHom_normElt, normElt_eq_sum]
+  rw [←hom_apply, leftRegularHom_normElt, normElt_eq_sum]
   let my_equiv : G ≃ G := {
     toFun := (· * g)
     invFun := (· * g⁻¹)
@@ -294,19 +295,22 @@ by
 
 end not_cyclic
 
+instance : AddMonoidHomClass (Action.HomSubtype (ModuleCat R) G (leftRegular R G) (leftRegular R G))
+    ↑(leftRegular R G).V ↑(leftRegular R G).V where
+  map_add f := map_add f.val
+  map_zero f := map_zero f.val
 
 @[simp] lemma diff₂_comp_diff₁ : diff₁ R G ≫ diff₂ R G = 0 :=
 by
   apply Hom.ext
-  rw [CategoryTheory.ConcreteCategory.comp_apply, diff₁_of_one, apply_sub,
-    diff₂_of, diff₂_of, sub_self, Rep.zero_apply]
+  rw [CategoryTheory.ConcreteCategory.comp_apply, diff₁_of_one, map_sub, diff₂_of, diff₂_of,
+    sub_self, Rep.zero_apply]
 
 
 @[simp] lemma diff₁_comp_diff₂ : diff₂ R G ≫ diff₁ R G = 0 :=
 by
   apply Hom.ext -- `ext` would apply a weaker lemma here.
-  rw [apply_eq_hom, Action.comp_hom, CategoryTheory.ConcreteCategory.comp_apply, ←apply_eq_hom,
-    ←apply_eq_hom, diff₂_of, Rep.zero_apply, diff₁, map_sub, apply_eq_hom, Action.sub_hom]
+  rw [Rep.comp_apply, diff₂_of, Rep.zero_apply, diff₁, map_sub, Rep.sub_apply]
   simp only [ModuleCat.hom_sub, LinearMap.sub_apply, sub_eq_zero]
   trans normElt R G
   · apply leftRegularHom_normElt_of
@@ -374,6 +378,9 @@ open IsCyclic
 --       congr
 
 
+instance : MulActionHomClass (Action.HomSubtype (ModuleCat R) G (leftRegular R G) (leftRegular R G))
+    R ((fun X ↦ ↑X.V) (leftRegular R G)) ↑(leftRegular R G).V where
+  map_smulₛₗ f := map_smul f.val
 
 theorem exact_diff₁_diff₂ (v : leftRegular R G) (hv : diff₁ R G v = (0: leftRegular R G)) :
     ∃ w : leftRegular R G, diff₂ R G w = v :=
@@ -381,9 +388,9 @@ by
   use coeff v 1 • of 1
   ext
   trans coeff v 1
-  · rw [apply_eq_hom, map_smul]
+  · rw [map_smul]
     simp only [map_smul, coe_smul, Pi.smul_apply, smul_eq_mul]
-    rw [←apply_eq_hom, diff₂_of, coeff_normElt_apply, mul_one]
+    rw [diff₂_of, coeff_normElt_apply, mul_one]
   · exact (diff₁_apply_eq_zero hv _).symm
 
 theorem exact_diff₂_diff₁ :
@@ -395,14 +402,14 @@ theorem exact_diff₂_diff₁ :
     left
     right
     intro
-    rw [←apply_eq_hom, diff₂_of]
+    rw [hom_apply, diff₂_of]
   }
   rw [←Finset.sum_smul] at hv
   have : coeff ((∑ i ∈ (coeff v).support, (coeff v) i) • (normElt R G)) (1 : G) = 0
   · rw [hv, map_zero, Finsupp.zero_apply]
   simp only [map_smul, coe_smul, Pi.smul_apply, smul_eq_mul] at this
   rw [coeff_normElt_apply, mul_one] at this
-  rw [←exact_ε_diff₁, LinearMap.mem_ker, ←apply_eq_hom, ε_eq_sum_coeff, this]
+  rw [←exact_ε_diff₁, LinearMap.mem_ker, hom_apply, ε_eq_sum_coeff, this]
 
 /-
 # TODO

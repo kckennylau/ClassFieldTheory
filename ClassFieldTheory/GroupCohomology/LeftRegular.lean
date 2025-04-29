@@ -156,13 +156,21 @@ by
   · rw [ρReg_apply_of, mul_one]
   rw [this, ε_comp_ρ_apply, ε_of_one]
 
+instance : AddMonoidHomClass (Action.HomSubtype (ModuleCat R) G (leftRegular R G) (trivial R G R))
+    (leftRegular R G) (trivial R G R) where
+  map_add f := map_add f.val
+  map_zero f := map_zero f.val
+
+instance : MulActionHomClass (Action.HomSubtype (ModuleCat R) G (leftRegular R G) (trivial R G R))
+    R (leftRegular R G) (trivial R G R) where
+  map_smulₛₗ f := map_smul f.val
+
 lemma ε_eq_sum_coeff (v : leftRegular R G) : ε R G v = ∑ x ∈ (coeff v).support, coeff v x :=
 by
-  rw [apply_eq_hom]
   nth_rw 1 [eq_sum_smul_of v, map_sum]
   apply Finset.sum_congr rfl
   intros
-  rw [map_smul, ←apply_eq_hom, ε_of, smul_eq_mul, mul_one]
+  rw [map_smul, ε_of, smul_eq_mul, mul_one]
 
 lemma ε_eq_sum [Fintype G] (v : leftRegular R G) : ε R G v = ∑ x ∈ Fintype.elems, coeff v x :=
 by
@@ -191,8 +199,8 @@ by
     use x • (of 1), y • (of 1)
     contrapose! hxy
     apply_fun fun v ↦ ((coeff v) 1) at hxy
-    rwa [map_smul,map_smul, smul_apply,smul_apply, smul_eq_mul,smul_eq_mul, coeff_of_eq_one,
-      mul_one, mul_one] at hxy
+    rwa [map_smul,map_smul, Finsupp.smul_apply, Finsupp.smul_apply, smul_eq_mul,smul_eq_mul,
+      coeff_of_eq_one, mul_one, mul_one] at hxy
 
 /--
 The module over the group algebra corresponding to `leftRegular R G` is isomorphic to
