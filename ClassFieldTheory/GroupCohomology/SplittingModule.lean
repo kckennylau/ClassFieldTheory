@@ -8,7 +8,7 @@ section AugmentationModule
 namespace Rep.leftRegular
 
 variable (R : Type) [CommRing R]
-variable (G : Type) [Group G] -- (the Fintype isn't needed)
+variable (G : Type) [Group G]
 
 noncomputable abbrev _root_.Rep.aug : Rep R G := Limits.kernel (leftRegular.ε R G)
 
@@ -26,17 +26,17 @@ lemma sum_coeff_augι [Fintype G] (v : aug R G) : ∑ g : G, (augι R G v) g = 0
   sorry
   -- use the previous lemma.
 
-lemma exists_ofOneSubOf (g : G) : ∃ v : aug R G, augι R G v = of 1 - of g := by
+lemma exists_ofSubOfOne (g : G) : ∃ v : aug R G, augι R G v = of g - of 1 := by
   apply exists_kernelι_eq
   rw [map_sub, ε_of, ε_of, sub_self]
 
 /--
-The element of `aug R G` whose image in `leftRegular R G` is `of 1 - of g`.
+The element of `aug R G` whose image in `leftRegular R G` is `of g - of 1`.
 -/
-noncomputable def ofOneSubOf (g : G) : aug R G := (exists_ofOneSubOf R G g).choose
+noncomputable def ofSubOfOne (g : G) : aug R G := (exists_ofSubOfOne R G g).choose
 
-lemma ofOneSubOf_spec (g : G) : augι R G (ofOneSubOf R G g) = of 1 - of g :=
-  (exists_ofOneSubOf R G g).choose_spec
+@[simp] lemma ofSubOfOne_spec (g : G) : augι R G (ofSubOfOne R G g) = of g - of 1 :=
+  (exists_ofSubOfOne R G g).choose_spec
 
 /-
 # TODO
@@ -126,6 +126,20 @@ noncomputable def splittingModule : Rep R G := Rep.of (splittingModuleRepresenta
 
 namespace splittingModule
 
+lemma apply (g : G) (v : aug R G) (m : M) :
+    (splittingModule σ).ρ g ⟨v,m⟩ = ⟨(aug R G).ρ g v, M.ρ g m + ∑ x : G, augι R G v x • σ ⟨g, x⟩⟩ :=
+  rfl
+
+@[ext] lemma ext (vm vm' : splittingModule σ) (hv : vm.1 =vm'.1) (hm : vm.2 = vm'.2) : vm = vm' := by
+  change (⟨vm.1,vm.2⟩ : aug R G × M) = ⟨vm'.1,vm'.2⟩
+  rw [hv,hm]
+
+@[simp] lemma add_fst (vm vm' : splittingModule σ) : (vm+vm').1 = vm.1 + vm'.1 := rfl
+@[simp] lemma add_snd (vm vm' : splittingModule σ) : (vm+vm').2 = vm.2 + vm'.2 := rfl
+@[simp] lemma sub_fst (vm vm' : splittingModule σ) : (vm-vm').1 = vm.1 - vm'.1 := rfl
+@[simp] lemma sub_snd (vm vm' : splittingModule σ) : (vm-vm').2 = vm.2 - vm'.2 := rfl
+
+
 /--
 The natural inclusion of a `G`-module `M` in the splitting module
 of a 2-cocycle `σ : Z²(G,M)`.
@@ -135,10 +149,12 @@ noncomputable def ι : M ⟶ splittingModule σ := by
   exact {
     val := LinearMap.inr R (aug R G).V M.V
     property g := by
-      ext m
+      ext m : 1
       simp only [id_eq, ρ_hom, Function.comp_apply]
       sorry
   }
+
+lemma ι_apply (m : M) : ι σ m = ⟨0,m⟩ := rfl
 
 /--
 The projection from the splitting module of a 2-cocycle to `aug R G`.
@@ -157,7 +173,9 @@ which takes `g : G` to ([1]-[g], σ (g,1)).
 The coboundary of this function is equal to the image of `σ` in H²(G,split).
 -/
 noncomputable def τ (g : G) : splittingModule σ :=
-  ⟨leftRegular.ofOneSubOf R G g, σ (g,1)⟩
+  ⟨leftRegular.ofSubOfOne R G g, σ (g,1)⟩
+
+open leftRegular
 
 /--
 Given a 2-cocycle `σ`, the image of `σ` in the splitting module of `σ` is equal to the
@@ -165,14 +183,21 @@ coboundary of `τ σ`.
 -/
 lemma τ_property (g h : G) : (splittingModule σ).ρ g (τ σ h) - τ σ (g * h) + τ σ g  = ι σ (σ (g,h))
     := by
-  sorry
+  rw [τ, apply, τ, τ, ι_apply]
+  ext
+  · simp only [ofSubOfOne_spec, Finsupp.coe_sub, Pi.sub_apply, add_fst, sub_fst]
+    sorry
+  · simp only [ofSubOfOne_spec, Finsupp.coe_sub, Pi.sub_apply, add_snd, sub_snd]
+    sorry
+
+
 
 /--
 Given a 2-cocycle `σ : Z²(G,M)`, the image of `σ` in `Z²(G,splittingModule σ)` is a coboundary.
 -/
 lemma splits : ι σ ∘ σ ∈ groupCohomology.twoCoboundaries (splittingModule σ) := by
   use τ σ
-  ext gs
+  ext : 1
   rw [groupCohomology.dOne_apply, Function.comp_apply, τ_property]
 
 
