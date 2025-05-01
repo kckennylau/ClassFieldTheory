@@ -3,27 +3,40 @@ import ClassFieldTheory.GroupCohomology.CyclicGroup
 
 open CategoryTheory Rep BigOperators CategoryTheory.ConcreteCategory
 
-section AugmentationModule'
+section AugmentationModule
+
+namespace Rep.leftRegular
 
 variable (R : Type) [CommRing R]
-variable (G : Type) [Group G] [Fintype G] -- (the Fintype isn't needed)
+variable (G : Type) [Group G] -- (the Fintype isn't needed)
 
-noncomputable abbrev aug : Rep R G := Limits.kernel (leftRegular.ε R G)
+noncomputable abbrev _root_.Rep.aug : Rep R G := Limits.kernel (leftRegular.ε R G)
 
-noncomputable abbrev augι : aug R G ⟶ leftRegular R G :=
+noncomputable abbrev _root_.Rep.augι : aug R G ⟶ leftRegular R G :=
   Limits.kernel.ι (leftRegular.ε R G)
 
-lemma ε_comp_augι : augι R G ≫ leftRegular.ε R G = 0 :=
-  Limits.kernel.condition (leftRegular.ε R G)
+lemma ε_comp_augι : augι R G ≫ ε R G = 0 :=
+  Limits.kernel.condition (ε R G)
 
-lemma ε_apply_augι (v : aug R G) : leftRegular.ε R G (augι R G v) = 0 :=
+lemma ε_apply_augι (v : aug R G) : ε R G (augι R G v) = 0 :=
   sorry
   -- use the previous lemma.
 
-lemma sum_coeff_augι (v : aug R G) : ∑ g : G, (augι R G v) g = 0 :=
+lemma sum_coeff_augι [Fintype G] (v : aug R G) : ∑ g : G, (augι R G v) g = 0 :=
   sorry
   -- use the previous lemma.
 
+lemma exists_ofOneSubOf (g : G) : ∃ v : aug R G, augι R G v = of 1 - of g := by
+  apply exists_kernelι_eq
+  rw [map_sub, ε_of, ε_of, sub_self]
+
+/--
+The element of `aug R G` whose image in `leftRegular R G` is `of 1 - of g`.
+-/
+noncomputable def ofOneSubOf (g : G) : aug R G := (exists_ofOneSubOf R G g).choose
+
+lemma ofOneSubOf_spec (g : G) : augι R G (ofOneSubOf R G g) = of 1 - of g :=
+  (exists_ofOneSubOf R G g).choose_spec
 
 /-
 # TODO
@@ -40,13 +53,12 @@ so this should follow fairly easily.
 
 -/
 
+end Rep.leftRegular
+
+end AugmentationModule
 
 
-end AugmentationModule'
-
-
-
-section SplittingModule'
+section SplittingModule
 variable (R : Type) [CommRing R]
 variable (G : Type) [Group G] [Fintype G]
 variable (M : Rep R G)
@@ -91,7 +103,7 @@ noncomputable def splittingModuleRepresentation : Representation R G (SplittingM
         · -- essentially the same statement is in Mathlib.
           sorry
         simp only [this]
-        rw [←Finset.sum_smul, sum_coeff_augι, zero_smul]
+        rw [←Finset.sum_smul, leftRegular.sum_coeff_augι, zero_smul]
     · ext v : 1
       simp
   map_mul' g₁ g₂ := by
@@ -112,7 +124,13 @@ noncomputable def splittingModuleRepresentation : Representation R G (SplittingM
 
 noncomputable def splittingModule : Rep R G := Rep.of (splittingModuleRepresentation σ)
 
-noncomputable def splittingModule_ι : M ⟶ splittingModule σ := by
+namespace splittingModule
+
+/--
+The natural inclusion of a `G`-module `M` in the splitting module
+of a 2-cocycle `σ : Z²(G,M)`.
+-/
+noncomputable def ι : M ⟶ splittingModule σ := by
   apply ofHom
   exact {
     val := LinearMap.inr R (aug R G).V M.V
@@ -122,12 +140,43 @@ noncomputable def splittingModule_ι : M ⟶ splittingModule σ := by
       sorry
   }
 
-def splittingModule_π :splittingModule σ ⟶ aug R G := by
+/--
+The projection from the splitting module of a 2-cocycle to `aug R G`.
+-/
+def π : splittingModule σ ⟶ aug R G := by
   apply ofHom
   exact {
     val := LinearMap.fst R ↑(aug R G).V ↑M.V
     property := sorry
   }
+
+/--
+The function from the group `G` to the splitting module of a 2-cocycle `σ`,
+which takes `g : G` to ([1]-[g], σ (g,1)).
+
+The coboundary of this function is equal to the image of `σ` in H²(G,split).
+-/
+noncomputable def τ (g : G) : splittingModule σ :=
+  ⟨leftRegular.ofOneSubOf R G g, σ (g,1)⟩
+
+/--
+Given a 2-cocycle `σ`, the image of `σ` in the splitting module of `σ` is equal to the
+coboundary of `τ σ`.
+-/
+lemma τ_property (g h : G) : (splittingModule σ).ρ g (τ σ h) - τ σ (g * h) + τ σ g  = ι σ (σ (g,h))
+    := by
+  sorry
+
+/--
+Given a 2-cocycle `σ : Z²(G,M)`, the image of `σ` in `Z²(G,splittingModule σ)` is a coboundary.
+-/
+lemma splits : ι σ ∘ σ ∈ groupCohomology.twoCoboundaries (splittingModule σ) := by
+  use τ σ
+  ext gs
+  rw [groupCohomology.dOne_apply, Function.comp_apply, τ_property]
+
+
+
 
 
 /-
@@ -172,10 +221,10 @@ Note that for local class field theory, it's enough to prove in the case that `G
 is isomorphic to H^{n+2}(G,R).
 -/
 
+end splittingModule
 
 
-
-end SplittingModule'
+end SplittingModule
 
 
 
