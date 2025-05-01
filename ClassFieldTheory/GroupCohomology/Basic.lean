@@ -169,7 +169,31 @@ example {A B : Rep R G} (f g : A ⟶ B) (v : A) :
 
 -- # Some API for exact sequences?
 
-open CategoryTheory
+open CategoryTheory CategoryTheory.Limits
+
+
+lemma leftRegularHomEquiv_symm_comp {A B : Rep R G} (f : A ⟶ B) (a : A) :
+    (leftRegularHomEquiv A).symm a ≫ f = (leftRegularHomEquiv B).symm (f a) := by
+  rw [LinearEquiv.eq_symm_apply, leftRegularHomEquiv_apply, hom_apply, Rep.comp_apply]
+  congr
+  exact A.leftRegularHomEquiv.right_inv a
+
+lemma exists_kernelι_eq {A B : Rep R G} (f : A ⟶ B) (a : A) (ha : f a = 0) :
+    ∃ k : kernel f (C := Rep R G), kernel.ι f k = a := by
+  let g : leftRegular R G ⟶ A := (leftRegularHomEquiv A).symm a
+  have : g ≫ f = 0
+  · rw [leftRegularHomEquiv_symm_comp, ha, map_zero]
+  let lift : leftRegular R G ⟶ kernel f := kernel.lift f g this
+  use leftRegularHomEquiv (kernel f) lift
+  rw [leftRegularHomEquiv_apply]
+  change (lift ≫ kernel.ι f) (Finsupp.single 1 1) = a
+  rw [kernel.lift_ι]
+  convert (leftRegularHomEquiv_apply A g).symm
+  change a = A.leftRegularHomEquiv (A.leftRegularHomEquiv.symm a)
+  rw [LinearEquiv.apply_symm_apply]
+
+
+
 
 /--
 A short sequence in `Rep R G` is exact iff the underlying sequence in `ModuleCat R` is exact.
