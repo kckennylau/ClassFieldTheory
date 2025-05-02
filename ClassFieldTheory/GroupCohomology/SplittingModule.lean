@@ -8,28 +8,43 @@ noncomputable section AugmentationModule
 
 namespace Rep.leftRegular
 
+universe u
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
+
+/--
+The restriction functor `Rep R G ⥤ Rep R H` for a subgroup `H` of `G`.
+-/
+abbrev _root_.Rep.res (H : Subgroup G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) H.subtype
 
 /-
 # TODO
 
-Let `H` be a subgroup of `G`.
+1. add a few definitional lemmas for `Rep.res`.
 
-1. add a restriction functor `rest H : Rep R G ⥤ Rep R H`.
-  I think this is already a PR, so just add a dummy at this stage.
+2. prove the isomorphisms `H^{n+1}(H,R) ≅ H^{n+2}(H,aug R G)` and `H¹(H,aug R G) ≅ R ⧸ |H|`.
 
-2. Show that this takes projectives to projectives.
-
-3. Show that this takes exact sequences to exact sequences.
-
-4. Hence prove the isomorphisms `H^{n+1}(H,R) ≅ H^{n+2}(H,aug R G)` and `H¹(H,aug R G) ≅ R ⧸ |H|`.
-
-5. Restate the results about the splitting module more generally in terms of the cohomology og `H`.
+3. Restate the results about the splitting module more generally in terms of the cohomology og `H`.
 -/
 
+lemma _root_.Rep.res_respectsExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
+    (S.map (res H)).Exact ↔ S.Exact :=
+  sorry
 
+lemma _root_.Rep.res_respectsShortExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
+    (S.map (res H)).ShortExact ↔ S.ShortExact :=
+  sorry
 
+lemma _root_.Rep.res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
+    Projective ((res H).obj P) := by
+  /-
+  A representation is projective iff it is a direct summand of a free module over the group ring.
+  This lemma follows because "R[G]" is free as an "R[H]"-module (a basis is given by a set of
+  coset representatives).
+
+  There is perhaps a better proof than this.
+  -/
+  sorry
 
 /--
 # Leave this as a sorry, and then remove once Amelia's PR on long exact sequences is merged.
@@ -45,7 +60,6 @@ The augmentation module `aug R G` is the kernel of the augmentation map
 
 -/
 abbrev _root_.Rep.aug : Rep R G := Limits.kernel (leftRegular.ε R G)
-
 
 /--
 The inclusion of `aug R G` in `leftRegular R G`.
@@ -80,7 +94,7 @@ def ofSubOfOne (g : G) : aug R G := (exists_ofSubOfOne R G g).choose
 /--
 The short exact sequence
 
-    0 ⟶ aug R G ⟶ leftRegular R G ⟶ trivial R G R ⟶ 0.
+    0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0.
 
 -/
 def aug_shortExactSequence : ShortComplex (Rep R G) where
@@ -91,7 +105,25 @@ def aug_shortExactSequence : ShortComplex (Rep R G) where
   g := ε R G
   zero := ε_comp_augι R G
 
-lemma isShortExactSequence : (aug_shortExactSequence R G).ShortExact := sorry
+/--
+The sequence
+
+  0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0
+
+is a short exact sequence of G-modules.
+-/
+lemma isShortExactSequence  : (aug_shortExactSequence R G).ShortExact := sorry
+
+/--
+The sequence
+
+  0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0
+
+is a short exact sequence of `H`-modules for any subgroup `H` of `G`.
+-/
+lemma isShortExactSequence' (H : Subgroup G) :
+    ((aug_shortExactSequence R G).map (res H)).ShortExact := by
+  sorry
 
 def _root_.groupCohomology.of_projective (P : Rep R G) [Projective P] (n : ℕ) :
     Unique (groupCohomology P (n+1)) :=
@@ -100,7 +132,7 @@ def _root_.groupCohomology.of_projective (P : Rep R G) [Projective P] (n : ℕ) 
   -/
   sorry
 
-
+lemma
 
 
 /--
