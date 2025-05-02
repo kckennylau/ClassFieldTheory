@@ -48,12 +48,26 @@ open scoped CategoryTheory
 
 -- example (A B : Rep R G) (v w : A) (f : A ⟶ B) : f (v + w) = f v + f w := by simp
 
-instance (A B : Rep R G) : MulActionHomClass (Action.HomSubtype _ _ A B) R A B where
-  map_smulₛₗ f c v := map_smul f.val c v
+instance mine₁ (A B : Rep R G) : MulActionHomClass (Action.HomSubtype _ _ A B) R A B where
+  map_smulₛₗ f := map_smul f.val
 
-instance (A B : Rep R G) : AddMonoidHomClass (Action.HomSubtype (ModuleCat R) G A B) A B where
+instance mine₂ (A B : Rep R G) :
+    AddMonoidHomClass (Action.HomSubtype (ModuleCat R) G A B) A B where
   map_add f := map_add f.val
   map_zero f := map_zero f.val
+
+/-
+# TODO
+find out why this hack is needed, and why the previous instance isn't working.
+
+(asked on zulip.)
+-/
+instance (A : Rep R G) (H : Type) [MulAction G H] :
+    MulActionHomClass (Action.HomSubtype _ _ A (ofMulAction R G H)) R A (ofMulAction R G H) :=
+  mine₁ _ _
+instance (A : Rep R G) (H : Type) [MulAction G H] :
+    AddMonoidHomClass (Action.HomSubtype (ModuleCat R) G A (ofMulAction R G H))
+    A (ofMulAction R G H) := mine₂ A (ofMulAction R G H)
 
 lemma Rep.hom_comm_apply' {A B : Rep R G} (f : A ⟶ B) (g : G) (x : A) :
     f (A.ρ g x) = B.ρ g (f x) := hom_comm_apply f g x
