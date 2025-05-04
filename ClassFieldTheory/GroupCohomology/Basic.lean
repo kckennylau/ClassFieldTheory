@@ -80,44 +80,42 @@ example (A B : Rep R G) (f : A ⟶ B ) (a b : A) (c : R) : f (a + c • b) = f a
 #check Action.zero_hom
 #check Action.add_hom
 #check Action.smul_hom
-universe u
 @[simp]
-lemma Action.sub_hom {V : Type (u + 1)} [CategoryTheory.LargeCategory V] {G : Type u} [Monoid G]
+lemma Action.sub_hom.{u} {V : Type (u + 1)} [CategoryTheory.LargeCategory V] {G : Type u} [Monoid G]
     [CategoryTheory.Preadditive V] {X Y : Action V G} (f g : X ⟶ Y) : (f - g).hom = f.hom - g.hom
     := by
   rw [eq_sub_iff_add_eq, ←Action.add_hom, sub_add_cancel]
-
-
 
 #check ModuleCat.hom_add
 #check ModuleCat.hom_sub
 #check ModuleCat.hom_zero
 
-/-
-This will combine with `Action.zero_hom` to simplify `(O : A ⟶ B) v`,
-where `A` and `B` are in `Rep ℤ G`. check the example below.
--/
-@[simp]
-lemma ModuleCat.zero_apply (V V' : ModuleCat R) (v : V) :
-    (0 : V ⟶ V') v = 0 :=
-by
-  rfl
+-- /-
+-- # No longer needed
+-- This will combine with `Action.zero_hom` to simplify `(O : A ⟶ B) v`,
+-- where `A` and `B` are in `Rep ℤ G`. check the example below.
+-- -/
+-- @[simp]
+-- lemma ModuleCat.zero_apply (V V' : ModuleCat R) (v : V) :
+--     (0 : V ⟶ V') v = 0 :=
+-- by
+--   rfl
 
 -- example (A B : Rep R G) (v : A) : (0 : A ⟶ B) v = (0 : B) :=
 -- by
 --   simp
 
-@[simp]
-lemma ModuleCat.add_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B) (v : A) :
-  (f + g) v = f v + g v :=
-by
-  rfl
+-- @[simp]
+-- lemma ModuleCat.add_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B) (v : A) :
+--   (f + g) v = f v + g v :=
+-- by
+--   rfl
 
-@[simp]
-lemma ModuleCat.sub_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B) (v : A) :
-  (f - g) v = f v - g v :=
-by
-  rfl
+-- @[simp]
+-- lemma ModuleCat.sub_apply {S : Type} [Ring S] {A B : ModuleCat S} (f g : A ⟶ B) (v : A) :
+--   (f - g) v = f v - g v :=
+-- by
+--   rfl
 
 
 @[simp]
@@ -186,13 +184,13 @@ example {A B : Rep R G} (f g : A ⟶ B) (v : A) :
 open CategoryTheory CategoryTheory.Limits
 
 
-lemma leftRegularHomEquiv_symm_comp {A B : Rep R G} (f : A ⟶ B) (a : A) :
+lemma Rep.leftRegularHomEquiv_symm_comp {A B : Rep R G} (f : A ⟶ B) (a : A) :
     (leftRegularHomEquiv A).symm a ≫ f = (leftRegularHomEquiv B).symm (f a) := by
   rw [LinearEquiv.eq_symm_apply, leftRegularHomEquiv_apply, hom_apply, Rep.comp_apply]
   congr
   exact A.leftRegularHomEquiv.right_inv a
 
-lemma exists_kernelι_eq {A B : Rep R G} (f : A ⟶ B) (a : A) (ha : f a = 0) :
+lemma Rep.exists_kernelι_eq {A B : Rep R G} (f : A ⟶ B) (a : A) (ha : f a = 0) :
     ∃ k : kernel f (C := Rep R G), kernel.ι f k = a := by
   let g : leftRegular R G ⟶ A := (leftRegularHomEquiv A).symm a
   have : g ≫ f = 0
