@@ -1,42 +1,54 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology.CyclicGroup
 
-open CategoryTheory Rep BigOperators CategoryTheory.ConcreteCategory
+open
+  CategoryTheory
+  ConcreteCategory
+  Limits
+  Rep
   groupCohomology
+  BigOperators
 
-noncomputable section AugmentationModule
-
-namespace Rep.leftRegular
-
-universe u
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
+
+/--
+If `M` is a trivial representation of a finite group `G` and `M` is torsion-free
+then `H¹(G,M) = 0`.
+-/
+lemma groupCohomology.H1_isZero_of_trivial (M : Rep R G) [NoZeroSMulDivisors ℕ M] [IsTrivial M]
+    [Finite G] : IsZero (H1 M) :=
+  /-
+  Since `M` is trivial, we can identify `H¹(G,M)` with `Hom(G,M)`, which is zero if
+  `M` is finite and `M` is torsion-free.
+  -/
+  sorry
 
 /--
 The restriction functor `Rep R G ⥤ Rep R H` for a subgroup `H` of `G`.
 -/
 abbrev _root_.Rep.res (H : Subgroup G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) H.subtype
 
-/-
-# TODO
+set_option quotPrecheck false in
+notation M "↓" H => (res H).obj M
 
-1. add a few definitional lemmas for `Rep.res`.
-
-2. prove the isomorphisms `H^{n+1}(H,R) ≅ H^{n+2}(H,aug R G)` and `H¹(H,aug R G) ≅ R ⧸ |H|`.
-
-3. Restate the results about the splitting module more generally in terms of the cohomology og `H`.
+/--
+The restriction functor `res H : Rep R G ⥤ Rep R H` is exact.
 -/
-
-lemma _root_.Rep.res_respectsExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
+lemma Rep.res_respectsExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
     (S.map (res H)).Exact ↔ S.Exact :=
   sorry
 
-lemma _root_.Rep.res_respectsShortExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
+/--
+The restriction functor `res H : Rep R G ⥤ Rep R H` is takes short exact sequences to short
+exact sequences.
+-/
+lemma Rep.res_respectsShortExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
     (S.map (res H)).ShortExact ↔ S.ShortExact :=
   sorry
 
-lemma _root_.Rep.res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
-    Projective ((res H).obj P) := by
+lemma Rep.res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
+    Projective (P ↓ H) := by
   /-
   A representation is projective iff it is a direct summand of a free module over the group ring.
   This lemma follows because "R[G]" is free as an "R[H]"-module (a basis is given by a set of
@@ -52,6 +64,21 @@ lemma _root_.Rep.res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgro
 def _root_.groupCohomology.δ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
     groupCohomology S.X₃ n ⟶ groupCohomology S.X₁ (n + 1) := sorry
 
+noncomputable section AugmentationModule
+
+namespace Rep.leftRegular
+
+
+/-
+# TODO
+
+1. add a few definitional lemmas for `Rep.res`.
+
+2. Restate the results about the splitting module more generally in terms of the cohomology og `H`.
+
+-/
+
+
 variable (R G)
 /--
 The augmentation module `aug R G` is the kernel of the augmentation map
@@ -59,16 +86,14 @@ The augmentation module `aug R G` is the kernel of the augmentation map
   `ε : leftRegular R G ⟶ trivial R G R`.
 
 -/
-abbrev _root_.Rep.aug : Rep R G := Limits.kernel (leftRegular.ε R G)
+abbrev _root_.Rep.aug : Rep R G := kernel (ε R G)
 
 /--
 The inclusion of `aug R G` in `leftRegular R G`.
 -/
-abbrev _root_.Rep.augι : aug R G ⟶ leftRegular R G :=
-  Limits.kernel.ι (leftRegular.ε R G)
+abbrev _root_.Rep.augι : aug R G ⟶ leftRegular R G := kernel.ι (ε R G)
 
-lemma ε_comp_augι : augι R G ≫ ε R G = 0 :=
-  Limits.kernel.condition (ε R G)
+lemma ε_comp_augι : augι R G ≫ ε R G = 0 := kernel.condition (ε R G)
 
 lemma ε_apply_augι (v : aug R G) : ε R G (augι R G v) = 0 :=
   sorry
@@ -89,7 +114,6 @@ def ofSubOfOne (g : G) : aug R G := (exists_ofSubOfOne R G g).choose
 
 @[simp] lemma ofSubOfOne_spec (g : G) : augι R G (ofSubOfOne R G g) = of g - of 1 :=
   (exists_ofSubOfOne R G g).choose_spec
-
 
 /--
 The short exact sequence
@@ -125,26 +149,63 @@ lemma isShortExactSequence' (H : Subgroup G) :
     ((aug_shortExactSequence R G).map (res H)).ShortExact := by
   sorry
 
-def _root_.groupCohomology.of_projective (P : Rep R G) [Projective P] (n : ℕ) :
-    Unique (groupCohomology P (n+1)) :=
+lemma _root_.groupCohomology.of_coinduced (A : Rep R G) (n : ℕ):
+    IsZero (groupCohomology ((ihom (leftRegular R G)).obj A) (n + 1)) := by sorry
+
+lemma _root_.Rep.leftRegular.isZero_groupCohomology [Finite G] (n : ℕ) :
+    IsZero (groupCohomology (leftRegular R G) (n+1)) := by
+  /-
+  show that if `G` is finite then `leftRegular R G` is coinduced from `trivial R G R`.
+  Then apply `groupCohomology.ofcoinduced`.
+  -/
+  sorry
+
+lemma _root_.groupCohomology.of_projective [Finite G] (P : Rep R G) [Projective P] (n : ℕ) :
+    IsZero (groupCohomology P (n+1)) :=
   /-
   Use the isomorphism in Mathlib between group cohomology and Ext.
   -/
   sorry
 
-lemma
+/--
+If `G` is a finite group and `H` is a subgroup of `G` then `H^{n+1}(H,R[G]) = 0`.
+-/
+lemma _root_.Rep.leftRegular.isZero_groupCohomology' [Finite G] (n : ℕ) (H : Subgroup G) :
+    IsZero (groupCohomology (leftRegular R G ↓ H) (n + 1)) := by
+  /-
+  Show that `R[G]` is isomorphic as an `H`-module to a direct sum of copies of `R[H]`.
+  Then use `Rep.leftRegular.isZero_groupCohomology`.
+  -/
+  sorry
+
+/--
+The connecting homomorphism from H^{n+1}(G,R) to H^{n+2}(G,aug R G) is an isomorphism.
+-/
+lemma cohomology_aug_succ_iso [Finite G] (n : ℕ) :
+    IsIso (δ (isShortExactSequence R G) (n + 1)) :=
+  /-
+  This connecting homomorphism is sandwiched between two modules H^{n+1}(G,R[G]) and H^{n+2}(G,R[G]),
+  where P is the left regular representation.
+  Then use `Rep.leftRegular.isZero_groupCohomology` to show that both of these are zero.
+  -/
+  sorry
+
+lemma H2_aug_isZero [Finite G] [NoZeroSMulDivisors ℕ R] : IsZero (H2 (aug R G)) :=
+  /-
+  This follows from `cohomology_aug_succ_iso` and `groupCohomology.H1_isZero_of_trivial`.
+  -/
+  sorry
+
 
 
 /--
 The connecting homomorphism from H^{n+1}(G,R) to H^{n+2}(G,aug R G) is an isomorphism.
 -/
-lemma cohomology_aug_succ_iso (n : ℕ) :
-    IsIso (δ (isShortExactSequence R G) (n + 1)) :=
+lemma cohomology_aug_succ_iso' [Finite G] (H : Subgroup G) (n : ℕ):
+    IsIso (δ (isShortExactSequence' R G H) (n + 1)) :=
   /-
-  This connecting homomorphism is sandwiched between two modules H^{n+1}(G,P) and H^{n+2}(G,P),
-  where P is the left regular representation.
-  It's proved (in the file `leftRegular.lean`) that the left regular representation is projective,
-  so both of these modules are zero.
+  The proof is similar to that of `cohomology_aug_succ_iso` but uses
+  `Rep.leftRegular.isZero_groupCohomology'` in place of `Rep.leftRegular.isZero_groupCohomology`.
   -/
   sorry
 
@@ -170,8 +231,7 @@ end AugmentationModule
 
 
 noncomputable section SplittingModule
-variable {R : Type} [CommRing R]
-variable {G : Type} [Group G] [Fintype G]
+variable [Fintype G]
 variable {M : Rep R G}
 
 namespace Rep.splittingModule
@@ -212,7 +272,7 @@ def representation : Representation R G (carrier σ) where
     · ext v : 1
       simp
   map_mul' g₁ g₂ := by
-    simp only [map_mul, LinearMap.mul_apply, Limits.equalizer_as_kernel]
+    simp only [map_mul, LinearMap.mul_apply, equalizer_as_kernel]
     ext v
     · simp only [LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_inl,
       Function.comp_apply, map_zero, zero_add, LinearMap.mul_apply, map_sum, map_smul]
@@ -336,7 +396,6 @@ The hypotheses `h2` and `h2'` say that `H²(G,M)` is isomorphic to `R / |G|R`,
 and is generated by (the class of) `σ`.
 -/
 
-
 /--
 If `σ` generates H²(G,M) then the map H²(G,M) ⟶ H²(G,split σ) is zero.
 -/
@@ -348,7 +407,6 @@ lemma TateTheorem_lemma_1
   coboundary.
   -/
   sorry
-
 
 lemma helper (I : Ideal R) (f : R ⧸ I →ₗ[R] R ⧸ I) (surj : Function.Surjective f) :
     Function.Injective f :=
@@ -387,9 +445,13 @@ lemma TateTheorem_lemma_2
   sorry
 
 
-def TateTheorem_lemma_3 (h1 : Unique (H1 M)) (h2 : ∀ (c : H2 M), ∃ r : R, c = r • H2π M σ)
+
+
+lemma TateTheorem_lemma_3
+    (h1 : IsZero (H1 M))
+    (h2 : ∀ (c : H2 M), ∃ r : R, c = r • H2π M σ)
     (h2' : ∀ r : R, r • H2π M σ = 0 ↔ (Nat.card G : R) ∣ r) :
-    Unique (H1 (splittingModule σ)) :=
+    IsZero (H1 (splittingModule σ)) :=
   /-
   We therefore have a long exact sequence containing the section
 
@@ -399,11 +461,12 @@ def TateTheorem_lemma_3 (h1 : Unique (H1 M)) (h2 : ∀ (c : H2 M), ∃ r : R, c 
   -/
   sorry
 
-def Tate₂ [NoZeroSMulDivisors ℕ R] (h2 : ∀ (c : H2 M), ∃ r : R, c = r • H2π M σ)
-    : Unique (H2 (splittingModule σ)) := sorry
+lemma TateTheorem_lemma_4 [NoZeroSMulDivisors ℕ R]
+    (h2 : ∀ (c : H2 M), ∃ r : R, c = r • H2π M σ)
+    : IsZero (H2 (splittingModule σ)) :=
   /-
   By assumption, `R` has no elements of finite additive order,
-  so we have H²(G,aug) ≅ H¹(G,R) ≅ Hom(G,R) ≅ 0.
+  so we have H²(G,aug) ≅ H¹(G,R) ≅ Hom(G,R) ≅ 0. This uses `groupCohomology.H1_isZero_of_trivial`
 
   We therefore have a long exact sequence containing
 
@@ -411,7 +474,7 @@ def Tate₂ [NoZeroSMulDivisors ℕ R] (h2 : ∀ (c : H2 M), ∃ r : R, c = r �
 
   We have shown in `TateTheorem_lemma_1` that the map above is zero.
   -/
-
+  sorry
 
 /-
 
@@ -455,7 +518,7 @@ Note that for local class field theory, it's enough to prove in the case that `G
 is isomorphic to H^{n+2}(G,R).
 -/
 
-end splittingModule
+end Rep.splittingModule
 
 
 end SplittingModule
