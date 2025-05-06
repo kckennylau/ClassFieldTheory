@@ -1,4 +1,5 @@
 import ClassFieldTheory.GroupCohomology.Basic
+import ClassFieldTheory.GroupCohomology.Acyclic
 
 section Group
 
@@ -221,7 +222,7 @@ def equiv_MonoidAlgebra :
 /--
 `leftRegular R G` is free as a module over the group algebra.
 -/
-noncomputable def Free : Basis Unit (MonoidAlgebra R G) <|
+noncomputable def free : Basis Unit (MonoidAlgebra R G) <|
     (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G) : Type) where repr := {
   toFun := single ()
   map_add' := by simp
@@ -245,7 +246,15 @@ instance : CategoryTheory.Projective (leftRegular R G) :=
 by
   apply Rep.equivalenceModuleMonoidAlgebra.toAdjunction.projective_of_map_projective
   apply ModuleCat.projective_of_free
-  exact Free
+  exact free
+
+/--
+The left regular representation is acyclic.
+I.e. the cohomology groups Hⁿ(H,R[G]) are zero for all `n > 0`
+and all subgroups `H` of `G`.
+-/
+theorem isAcyclic [Finite G] : (leftRegular R G).IsAcyclic :=
+  sorry
 
 
 
