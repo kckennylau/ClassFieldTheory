@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology.Current_PRs
 
 section Rep
 
@@ -207,13 +208,13 @@ lemma Rep.exists_kernelι_eq {A B : Rep R G} (f : A ⟶ B) (a : A) (ha : f a = 0
 
 
 
-/--
-A short sequence in `Rep R G` is exact iff the underlying sequence in `ModuleCat R` is exact.
--/
-lemma Rep.exact_iff {A B C : Rep R G} (f : A ⟶ B) (g : B ⟶ C) :
-    Function.Exact f g ↔ Function.Exact f.hom g.hom :=
-by
-  rfl
+-- /--
+-- A short sequence in `Rep R G` is exact iff the underlying sequence in `ModuleCat R` is exact.
+-- -/
+-- lemma Rep.exact_iff {A B C : Rep R G} (f : A ⟶ B) (g : B ⟶ C) :
+--     Function.Exact f g ↔ Function.Exact f.hom g.hom :=
+-- by
+--   rfl
 
 /-
 To check whether the underlying sequence is exact in `ModuleCat R`, we can use this:

@@ -248,12 +248,52 @@ by
   apply ModuleCat.projective_of_free
   exact free
 
+
+
+-- The next few things are used for dimension-shifting.
+-- Given an representation M, we want an acyclic module N and a short exact sequence
+--
+--  `0 ⟶ M ⟶ N ⟶ Q ⟶ 0`.
+--
+-- This is achieved by taking `N` to be the function space `G → M`, or equivalently
+-- `(leftRegular R G).ihom.obj M`.
+
+/--
+`leftRegular R G` is free as a module over the group algebra of a subgroup `H`.
+-/
+noncomputable def free' (H : Subgroup G) : Basis (G ⧸ H) (MonoidAlgebra R H) <|
+    (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G ↓ H) : Type) :=
+  /-
+  There is a basis indexed by the coset type `G ⧸ H`, with basis
+  vectors `of g⁻¹` for coset representatives.
+  -/
+  sorry
+
+/--
+Coinduced representations are Acyclic.
+This is a special case of Shapiro's lemma.
+-/
+lemma _root_.Rep.Acyclic.ofCoinduced (M : Rep R G) (n : ℕ) :
+    ((leftRegular R G).ihom.obj M).IsAcyclic :=
+  sorry
+
+
+/--
+For finite groups, the left regular representation is coinduced.
+-/
+def iso_coinduced [Finite G] : leftRegular R G ≅ (leftRegular R G).ihom.obj (trivial R G R) :=
+  sorry
+
 /--
 The left regular representation is acyclic.
 I.e. the cohomology groups Hⁿ(H,R[G]) are zero for all `n > 0`
 and all subgroups `H` of `G`.
 -/
 theorem isAcyclic [Finite G] : (leftRegular R G).IsAcyclic :=
+  /-
+  Construct an isomorphism `leftRegular R G ≅ (leftRegular R G).ihom.obj (trivial R G R)`.
+  Then apply `groupCohomology.ofCoinduced`.
+  -/
   sorry
 
 

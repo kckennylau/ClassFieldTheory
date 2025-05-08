@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology.Current_PRs
 import ClassFieldTheory.GroupCohomology.restriction
 
 /-!
@@ -25,7 +26,7 @@ One shows that if `σ` is a non-zero cohomology class, then there exists a prime
 restriction of `σ` to the `p`-Sylow subgroup is non-zero. However the `p`-Sylow subgroups are
 solvable so we get a contradiction.
 
-Once #22653 is merges, we can state the more general version of inflation-restriction.
+Once #22653 is merged, we can state the more general version of inflation-restriction.
 -/
 
 -- # requires #22653
@@ -89,49 +90,6 @@ namespace groupCohomology
 --In this section, only the last sorry can be removed until #21760 is merged.
 --The other lines are a `sorry` version on long exact sequences.
 
-/--
-# Leave this as a sorry, and then remove once Amelia's PR 21760 on long exact sequences is merged.
-
-(This has the same name and Type as in PR 21760.)
-
-The connecting homomorphism in the long exact sequence in group cohomology.
--/
-def δ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (i j : ℕ) (hij : i + 1 = j) :
-    groupCohomology S.X₃ i ⟶ groupCohomology S.X₁ j := sorry
-
-def longExactSequence₁ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-  ShortComplex (ModuleCat R) where
-    X₁ := groupCohomology S.X₁ n
-    X₂ := groupCohomology S.X₂ n
-    X₃ := groupCohomology S.X₃ n
-    f := groupCohomology.map (MonoidHom.id G) S.f n
-    g := groupCohomology.map (MonoidHom.id G) S.g n
-    zero := sorry
-
-def longExactSequence₂ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-  ShortComplex (ModuleCat R) where
-    X₁ := groupCohomology S.X₂ n
-    X₂ := groupCohomology S.X₃ n
-    X₃ := groupCohomology S.X₁ (n + 1)
-    f := groupCohomology.map (MonoidHom.id G) S.g n
-    g := groupCohomology.δ hS n (n+1) rfl
-    zero := sorry
-
-def longExactSequence₃ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-  ShortComplex (ModuleCat R) where
-    X₁ := groupCohomology S.X₃ n
-    X₂ := groupCohomology S.X₁ (n + 1)
-    X₃ := groupCohomology S.X₂ (n + 1)
-    f := groupCohomology.δ hS n (n+1) rfl
-    g := groupCohomology.map (MonoidHom.id G) S.f (n + 1)
-    zero := sorry
-
-lemma isLongExact₁ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
-lemma isLongExact₂ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
-lemma isLongExact₃ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
 
 lemma groupCohomology.isIso_of_acyclic {S : ShortComplex (Rep R G)}
     (short_exact : S.ShortExact) (acyclic : S.X₂.IsAcyclic) (n : ℕ) :
