@@ -37,9 +37,9 @@ abbrev gen : G := IsCyclic.exists_generator.choose
 
 variable {G}
 
-def oneSubGen : coind.obj M ⟶ coind.obj M where
+def oneSubGen : coind'.obj M ⟶ coind'.obj M where
   hom := by
-    rw [coind]
+    rw [coind']
     apply ofHom
     simp only [ihom_obj_V_carrier, ihom_obj_V_isAddCommGroup, ihom_obj_V_isModule]
     exact {
@@ -64,7 +64,7 @@ lemma cx₁_exact : (cx₁ M).Exact := sorry
 lemma cx₂_exact : (cx₂ M).Exact := sorry
 
 def upToDown : up M ⟶ down M := by
-  let : up M ⟶ coind.obj M
+  let : up M ⟶ coind'.obj M
   · apply cokernel.desc (up_ι M) (oneSubGen M) (oneSubGen_comp_up_ι M)
   rw [down]
   · apply kernel.lift (down_π M) this

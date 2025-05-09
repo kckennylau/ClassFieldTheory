@@ -39,23 +39,24 @@ open
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
 
-
--- # To be removed after PR merged:
-/--
-The `H`-invariants of a representation of `G`, regarded as a representation of `G ⧸ H`.
--/
-def Rep.invariants' (H : Subgroup G) [H.Normal] : Rep R G ⥤ Rep R (G ⧸ H) := sorry
-
-def Rep.coinduced (H : Subgroup G) : Rep R H ⥤ Rep R G := sorry
-
-
-
 /--
 A representation `M : Rep R G` is acyclic if the cohomology groups `Hⁿ(H,M)` are all zero
 for every subgroup `H` of `G` and every `n > 0`.
 -/
 def Rep.IsAcyclic (M : Rep R G) : Prop :=
   ∀ (H : Subgroup G), ∀ n : ℕ, IsZero (groupCohomology (M ↓ H) n.succ)
+
+lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsAcyclic) : M.IsAcyclic := by
+  intro H n
+  have : groupCohomology (M ↓ H) n.succ ≅ groupCohomology (N ↓ H) n.succ
+    /-
+    This would be simpler to prove if `groupCohomology` were defined as a functor, since
+    this would take isomorphisms to isomorphisms.
+    -/
+  · sorry
+  exact IsZero.of_iso (hN H n) this
+
+
 
 /--
 If `H¹(H,M)` and `H²(H,M)` are both zero for every subgroup of `G` then `M` is acyclic.
