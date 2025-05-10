@@ -1,43 +1,85 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.Current_PRs
-import ClassFieldTheory.GroupCohomology.Acyclic
-import ClassFieldTheory.GroupCohomology.DimensionShift
+import ClassFieldTheory.GroupCohomology._0_Current_PRs
+import ClassFieldTheory.GroupCohomology._1_inflation
+import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._4_DimensionShift
 
-open Rep
+noncomputable section
+
+open
+  Rep
+  dimensionShift
   groupCohomology
   CategoryTheory
   Limits
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G]
+variable {G : Type} [Group G] (H : Subgroup G) [H.Normal]
 
+def inflationRestriction (n : ℕ) (M : Rep R G) : ShortComplex (ModuleCat R) where
+  X₁ := groupCohomology (M ↑ H) n
+  X₂ := groupCohomology M n
+  X₃ := groupCohomology (M ↓ H) n
+  f := (infl H n).app M
+  g := (rest H n).app M
+  zero := sorry -- uses current PR for definitions.
 
 /--
-We shall construct this by induction on `n` by dimension-shifting.
-The case `n = 1` is a current PR. The induction step is
--/
-noncomputable def H1InfRes' (H : Subgroup G) [H.Normal] (n : ℕ) (M : Rep R G)
-    --(hM : ∀ i : ℕ, i ≤ n → IsZero (groupCohomology (M ↓ H) i))
-    : ShortComplex (ModuleCat R) := by
-  induction n with
-  | zero =>  exact {
-      X₁ := groupCohomology (M.quotientToInvariants H) 1
-      X₂ := groupCohomology M 1
-      X₃ := groupCohomology (M ↓ H) 1
-      f := map (QuotientGroup.mk' H) sorry 1
-      g := map H.subtype (𝟙 _) 1
-      zero := sorry
-    }
-  | succ n _ => exact {
-      X₁ := groupCohomology (M.quotientToInvariants H) (n + 1)
-      X₂ := groupCohomology M (n + 1)
-      X₃ := groupCohomology (M ↓ H) (n + 1)
-      f := sorry
-      g := sorry
-      zero := sorry
-    }
+A weak form of the inflation restriction sequence.
+This states the existence of a sequence but doesn't describe the maps.
+It's sufficient for proving that various cohomology groups are trivial.
 
-theorem  H1InfRes'_Exact {M : Rep R G} (H : Subgroup G) [H.Normal] (n : ℕ)
-    (hM : ∀ i : ℕ, i ≤ n → IsZero (groupCohomology (M ↓ H) i)) :
-    (H1InfRes' H n M).Exact :=
-  sorry
+To prove a stronger version, we need that inflation and restriction commute with the
+connecting homomorphisms defined by short exact sequences.
+-/
+theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
+    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
+    ∃ infRes : ShortComplex (ModuleCat R),
+    ∃ φ₁ : infRes.X₁ ≅ groupCohomology (M.quotientToInvariants H) (n + 1),
+    ∃ φ₂ : infRes.X₂ ≅ groupCohomology M (n + 1),
+    ∃ φ₃ : infRes.X₂ ≅ groupCohomology (M ↓ H) (n + 1),
+    infRes.Exact ∧ Mono infRes.f := by
+  revert M
+  induction n with
+  | zero =>
+    -- from current PR.
+    sorry
+  | succ n ih =>
+    intro M hM
+    have iso₁ {i : ℕ} : groupCohomology ((up M).quotientToInvariants H) (i + 1)
+        ≅ groupCohomology (M.quotientToInvariants H) (i + 2)
+    · /-
+      By `hM`, we have `H¹(H,M)= 0` so we have a short exact sequence
+
+        `0 ⟶ Mᴴ ⟶ (coind' M)ᴴ ⟶ (up M)ᴴ ⟶ 0`.
+
+      The isomorphism required is the connecting homomorphism in `G ⧸ H`-cohomology
+      from this short exact sequence. It is a isomorphism because `(coind' M)ᴴ` is acyclic.
+      -/
+      specialize hM 0 (Nat.zero_lt_succ n)
+      sorry
+    have iso₂ {i : ℕ} : groupCohomology (up M) (i + 1) ≅ groupCohomology M (i + 2)
+    · apply up_δiso M i
+    have iso₃ {i : ℕ} : groupCohomology ((up M) ↓ H) (i + 1) ≅ groupCohomology (M ↓ H) (i + 1 + 1)
+    · apply up_δiso' M H i
+    have : ∀ i, (i < n → IsZero (groupCohomology ((up M) ↓ H) (i + 1)))
+    · intro i hi
+      exact IsZero.of_iso (hM _ (by simpa)) iso₃
+    specialize ih this
+    obtain ⟨S, φ₁, φ₂, φ₃, hS₁, hS₂⟩ := ih
+    use S
+    use φ₁ ≪≫ iso₁
+    use φ₂ ≪≫ iso₂
+    use φ₃ ≪≫ iso₃
+
+
+
+theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
+    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
+    Mono (inflationRestriction H n M).f := sorry
+
+theorem inflation_restriction_exact (n : ℕ) {M : Rep R G}
+    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
+    (inflationRestriction H n M).Exact := sorry
+
+end

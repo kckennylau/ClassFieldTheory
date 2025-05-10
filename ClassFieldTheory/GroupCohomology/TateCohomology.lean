@@ -1,5 +1,5 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.DimensionShift
+import ClassFieldTheory.GroupCohomology._4_DimensionShift
 
 open
   CategoryTheory

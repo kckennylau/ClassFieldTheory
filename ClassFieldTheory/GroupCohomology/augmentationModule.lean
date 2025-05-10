@@ -1,7 +1,8 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.CyclicGroup
-import ClassFieldTheory.GroupCohomology.Acyclic
-import ClassFieldTheory.GroupCohomology.restriction
+-- import ClassFieldTheory.GroupCohomology.CyclicGroup
+import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._1_restriction
+import ClassFieldTheory.GroupCohomology._3_LeftRegular
 
 
 /-!

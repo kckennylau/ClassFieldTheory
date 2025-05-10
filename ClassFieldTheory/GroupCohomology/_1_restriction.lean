@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology._1_Basic
 
 open
   Rep
@@ -26,7 +27,7 @@ lemma groupCohomology.H1_isZero_of_trivial (M : Rep R G) [NoZeroSMulDivisors ℕ
   sorry
 
 
-section Restriction
+noncomputable section
 
 namespace Rep
 
@@ -45,7 +46,7 @@ This is notation for `(Rep.res H).obj M`, which is an abbreviation of
 `(Action.res (ModuleCat R) H.subtype).obj M`
 -/
 notation M "↓" H => (res H).obj M
-
+--infixr:80 " ↓ "   => fun (M : Rep R G) (H : Subgroup G) ↦ (Rep.res H).obj M
 /-
 `simp` lemmas for `Action.res` also work for `Rep.res` because it is an abbreviation:
 -/
@@ -77,6 +78,8 @@ example (H : Subgroup G) (S : ShortComplex (Rep R G)) :
     (S.map (res H)).Exact ↔ S.Exact := by
   rw [ShortComplex.exact_map_iff_of_faithful]
 
+
+
 /--
 An object of `Rep R G` is zero iff the underlying `R`-module is zero.
 -/
@@ -107,6 +110,10 @@ lemma res_respectsShortExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
     (S.map (res H)).ShortExact ↔ S.ShortExact :=
   sorry
 
+lemma res_ofShortExact (H : Subgroup G) {S : ShortComplex (Rep R G)} (hS : S.ShortExact) :
+    (S.map (res H)).ShortExact := by
+  rwa [res_respectsShortExact]
+
 lemma res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
     Projective (P ↓ H) := by
   /-
@@ -120,4 +127,46 @@ lemma res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
 
 end Rep
 
-end Restriction
+namespace groupCohomology
+
+/--
+The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a natural transformation:
+-/
+def rest (H : Subgroup G) (n : ℕ) : functor R G n ⟶ Rep.res H ⋙ functor R H n  where
+  app M               := map H.subtype (𝟙 (M ↓ H)) n
+  naturality M₁ M₂ f  := by
+    dsimp
+    sorry
+
+lemma rest_app (H : Subgroup G) (n : ℕ) (M : Rep R G) :
+    (rest H n).app M = map H.subtype (𝟙 (M ↓ H)) n := rfl
+
+
+/--
+Given any short exact sewuence `0 → A → B → C → 0` in `Rep R G` and any
+subgroup `H` of `G`, the following diagram is commutative
+
+  Hⁿ(G,C) ⟶ H^{n+1}(G A)
+      |         |
+      ↓         ↓
+  Hⁿ(H,C) ⟶ H^{n+1}(G A).
+
+The vertical arrows are restriction and the horizontals are connecting homomorphisms.
+
+For this, it would be sensible to define restriction as a natural transformation, so that it
+automatically commutes with the other maps. This requires us to first define cohomology as a functor.
+-/
+lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (H : Subgroup G) (i j : ℕ)
+    (hij : i + 1 = j) :
+    (δ hS i j hij) ≫ (rest H j).app S.X₁ = (rest H i).app S.X₃ ≫ δ (res_ofShortExact H hS) i j hij
+    := by
+  /-
+  This will essentially be `HomologicalComplex.HomologySequence.δ_naturality`, but it relies on
+  the definition of `groupCohomology.δ`, which is a current PR.
+  -/
+  sorry
+
+
+end groupCohomology
+
+end

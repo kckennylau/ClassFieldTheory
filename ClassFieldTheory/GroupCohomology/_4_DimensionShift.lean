@@ -1,5 +1,5 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.LeftRegular
+import ClassFieldTheory.GroupCohomology._3_LeftRegular
 
 /-!
 We define two "coinduction" functors taking values in the acyclic objects of `Rep R G`.
@@ -256,11 +256,14 @@ lemma up_δ_zero_epi : Epi (δ (up_shortExact M) 0 1 rfl) :=
 The connecting homomorphism from `H^{n+1}(G,up M)` to `H^{n+2}(G,M)` is an
 isomorphism.
 -/
-lemma up_δ_isIso (n : ℕ) : IsIso (δ (up_shortExact M) (n + 1) (n + 2) rfl) :=
+instance up_δ_isIso (n : ℕ) : IsIso (δ (up_shortExact M) (n + 1) (n + 2) rfl) :=
   /-
   This map is sandwiched between two zeros by `groupCohomology.ofCoind`.
   -/
   sorry
+
+def up_δiso (n : ℕ) : groupCohomology (up M) (n + 1) ≅ groupCohomology M (n + 2) :=
+  asIso (δ (up_shortExact M) (n + 1) (n + 2) rfl)
 
 /--
 The connecting homomorphism from `H^{n+1}(G,dimensionShift M)` to `H^{n+2}(G,M)` is
@@ -276,11 +279,15 @@ lemma up_δ_zero_epi' (H : Subgroup G) : Epi (δ (up_shortExact' M H) 0 1 rfl) :
 The connecting homomorphism from `H^{n+1}(G,up M)` to `H^{n+2}(G,M)` is an
 isomorphism.
 -/
-lemma up_δ_isIso' (H : Subgroup G) (n : ℕ) : IsIso (δ (up_shortExact' M H) (n + 1) (n + 2) rfl) :=
+instance up_δ_isIso' (H : Subgroup G) (n : ℕ) : IsIso (δ (up_shortExact' M H) (n + 1) (n + 2) rfl) :=
   /-
   This map is sandwiched between two zeros by `groupCohomology.ofCoind`.
   -/
   sorry
+
+def up_δiso' (H : Subgroup G) (n : ℕ) :
+    groupCohomology (up M ↓ H) (n + 1) ≅ groupCohomology (M ↓ H) (n + 2) :=
+  asIso (δ (up_shortExact' M H) (n + 1) (n + 2) rfl)
 
 variable [Fintype G]
 
@@ -339,11 +346,30 @@ lemma down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) :=
 The connecting homomorphism from `H^{n+1}(G,M)` to `H^{n+2}(G,down M)` is an
 isomorphism.
 -/
-lemma down_δ_isIso (n : ℕ) : IsIso (δ (up_shortExact M) (n + 1) (n + 2) rfl) :=
+instance down_δ_isIso (n : ℕ) : IsIso (δ (down_shortExact M) (n + 1) (n + 2) rfl) :=
   /-
   This map is sandwiched between two zeros by `groupCohomology.ofCoind`.
   -/
   sorry
+
+instance down_δ_isIso' (H : Subgroup G) (n : ℕ) :
+    IsIso (δ (down_shortExact' M H) (n + 1) (n + 2) rfl) :=
+  /-
+  This map is sandwiched between two zeros by `groupCohomology.ofCoind`.
+  -/
+  sorry
+/--
+The isomorphism `H^{n+1}(G,up M) ≅ H^{n+2}(G,M)`.
+-/
+def down_δiso (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology (down M) (n + 2) :=
+  asIso (δ (down_shortExact M) (n + 1) (n + 2) rfl)
+
+/--
+The isomorphism `H^{n+1}(H,up M) ≅ H^{n+2}(H,M)`.
+-/
+def down_δiso' (H : Subgroup G) (n : ℕ) :
+    groupCohomology (M ↓ H) (n + 1) ≅ groupCohomology ((down M) ↓ H) (n + 2) :=
+  asIso (δ (down_shortExact' M H) (n + 1) (n + 2) rfl)
 
 end dimensionShift
 end Rep

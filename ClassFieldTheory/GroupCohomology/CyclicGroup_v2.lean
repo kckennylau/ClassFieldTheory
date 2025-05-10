@@ -1,6 +1,6 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.DimensionShift
-import ClassFieldTheory.GroupCohomology.LeftRegular
+import ClassFieldTheory.GroupCohomology._3_LeftRegular
+import ClassFieldTheory.GroupCohomology._4_DimensionShift
 
 /-!
 Let `M : Rep R G`, where `G` is a finite cyclic group.
@@ -22,6 +22,7 @@ open
   ConcreteCategory
   Limits
   BigOperators
+  groupCohomology
 
 
 variable {R : Type} [CommRing R]
@@ -85,3 +86,17 @@ def periodicCohomology (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology
   and an isomorphism `up M ≅ down M`.
   -/
   sorry
+
+/--
+Let `M` be a representation of a finite cyclic group `G`.
+If `H¹(G,M)` and `H²(G,M)` are both zero then `Hⁿ(G,M)` is zero for all `n > 0`.
+-/
+lemma isZero_ofH1_ofH2 {M : Rep R G} (h1 : IsZero (groupCohomology M 1))
+    (h2 : IsZero (groupCohomology M 2)) (n : ℕ) : IsZero (groupCohomology M (n + 1)) := by
+  induction n using Nat.twoStepInduction with
+  | zero => exact h1
+  | one => exact h2
+  | more n ih _ =>
+    apply IsZero.of_iso ih
+    symm
+    apply periodicCohomology

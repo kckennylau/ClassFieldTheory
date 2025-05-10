@@ -1,9 +1,9 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.Current_PRs
+import ClassFieldTheory.GroupCohomology._0_Current_PRs
+
+variable {R G : Type} [Group G] [CommRing R]
 
 section Rep
-
-variable {G R : Type} [Group G] [CommRing R]
 
 open Rep CategoryTheory.ConcreteCategory
 open scoped CategoryTheory
@@ -239,3 +239,4 @@ To check whether the underlying sequence is exact in `ModuleCat R`, we can use t
 
 
 end Rep
+

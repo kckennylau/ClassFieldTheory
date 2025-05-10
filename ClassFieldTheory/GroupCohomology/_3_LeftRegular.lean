@@ -1,5 +1,6 @@
-import ClassFieldTheory.GroupCohomology.Basic
-import ClassFieldTheory.GroupCohomology.Acyclic
+import Mathlib
+import ClassFieldTheory.GroupCohomology._1_Basic
+import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 
 section Group
 
