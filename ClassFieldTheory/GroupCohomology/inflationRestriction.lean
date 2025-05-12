@@ -46,7 +46,7 @@ theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
     sorry
   | succ n ih =>
     intro M hM
-    have iso₁ {i : ℕ} : groupCohomology ((up M).quotientToInvariants H) (i + 1)
+    have iso₁ {i : ℕ} : groupCohomology ((up.obj M).quotientToInvariants H) (i + 1)
         ≅ groupCohomology (M.quotientToInvariants H) (i + 2)
     · /-
       By `hM`, we have `H¹(H,M)= 0` so we have a short exact sequence
@@ -58,11 +58,11 @@ theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
       -/
       specialize hM 0 (Nat.zero_lt_succ n)
       sorry
-    have iso₂ {i : ℕ} : groupCohomology (up M) (i + 1) ≅ groupCohomology M (i + 2)
+    have iso₂ {i : ℕ} : groupCohomology (up.obj M) (i + 1) ≅ groupCohomology M (i + 2)
     · apply up_δiso M i
-    have iso₃ {i : ℕ} : groupCohomology ((up M) ↓ H) (i + 1) ≅ groupCohomology (M ↓ H) (i + 1 + 1)
+    have iso₃ {i : ℕ} : groupCohomology ((up.obj M) ↓ H) (i + 1) ≅ groupCohomology (M ↓ H) (i + 1 + 1)
     · apply up_δiso' M H i
-    have : ∀ i, (i < n → IsZero (groupCohomology ((up M) ↓ H) (i + 1)))
+    have : ∀ i, (i < n → IsZero (groupCohomology ((up.obj M) ↓ H) (i + 1)))
     · intro i hi
       exact IsZero.of_iso (hM _ (by simpa)) iso₃
     specialize ih this

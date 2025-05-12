@@ -43,19 +43,19 @@ variable (G : Type) [Group G]
 
 namespace Rep
 /--
-The functor taking an `R`-module `M` to the trivial representation of `G` on `M`.
+The functor taking an `R`-module `A` to the trivial representation of `G` on `A`.
 -/
 def fTrivial : ModuleCat R ⥤ Rep R G where
-  obj M := trivial R G M
+  obj A := trivial R G A
   map f := {
     hom := f
     comm := by tauto
   }
 
 /--
-The coinduced representation of an `R`-module `M`, defined to be the
-space of linear maps `R[G] → M`, on which `G` acts on `R[G]`.
-This is isomorphic to the function space `G → M`, where `G` acts by translation.
+The coinduced representation of an `R`-module `A`, defined to be the
+space of linear maps `R[G] → A`, on which `G` acts on `R[G]`.
+This is isomorphic to the function space `G → A`, where `G` acts by translation.
 -/
 abbrev coind : ModuleCat R ⥤ Rep R G := fTrivial G ⋙ (leftRegular R G).ihom
 
@@ -111,6 +111,9 @@ def coind_quotientToInvariants_iso (A : ModuleCat R) (H : Subgroup G) [H.Normal]
   -/
   sorry
 
+/--
+The `H`-invariants of `(coind G).obj A` form an acyclic representation of `G ⧸ H`.
+-/
 lemma coind_quotientToInvariants_isAcyclic (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
     (((coind G).obj A).quotientToInvariants H).IsAcyclic := by
   apply Rep.isAcyclic_of_iso
@@ -126,6 +129,17 @@ This is isomorphic to the function space `G → M` on which `G` acts on both `G`
 -/
 abbrev coind' : Rep R G ⥤ Rep R G := (leftRegular R G).ihom
 
+instance (M : Rep R G) : FunLike (coind'.obj M) (leftRegular R G) M :=
+  inferInstanceAs (FunLike ((leftRegular R G) →ₗ[R] M) _ _)
+
+@[ext] lemma coind'.ext {M : Rep R G} (f₁ f₂ : coind'.obj M)
+    (h : ∀ g : G, f₁ (leftRegular.of g) = f₂ (leftRegular.of g)) : f₁ = f₂ := by
+  apply Finsupp.lhom_ext
+  intro g c
+  rw [←Finsupp.smul_single_one, map_smul, h, map_smul]
+
+lemma coind'_map_apply {M N : Rep R G} (f₁ : M ⟶ N) (f₂ : coind'.obj M) (v : leftRegular R G) :
+    coind'.map f₁ f₂ v = f₁ (f₂ v) := by rfl
 
 /--
 Both of the representations `coind'.obj M` and `(coind G).obj M.V` can be thought of
@@ -157,13 +171,21 @@ def coind'_iso_coind (M : Rep R G) : coind'.obj M ≅ (coind G).obj M.V where
   hom_inv_id := sorry
   inv_hom_id := sorry
 
+
+
 variable (M : Rep R G)
 
+/--
+`coind'.obj M` is an acyclic representation of `G`.
+-/
 lemma coind'_isAcyclic : (coind'.obj M).IsAcyclic := by
   apply isAcyclic_of_iso
   apply coind'_iso_coind
   exact coind_isAcyclic G M.V
 
+/--
+The `H`-invariants in `coind'.obj M` form an acyclic representation of `G ⧸ H`.
+-/
 lemma coind'_quotientToInvariants_isAcyclic (H : Subgroup G) [H.Normal] :
     ((coind'.obj M).quotientToInvariants H).IsAcyclic := by
   have : (coind'.obj M).quotientToInvariants H ≅ ((coind G).obj M.V).quotientToInvariants H
@@ -181,8 +203,6 @@ namespace dimensionShift
 The inclusion of `M` in its coinduced representation. If we think of the
 coinduced representation as the function space `G → M`, then this inclusion is
 the map `m ↦ const G m`.
-
-We could define it as a natural transformation, but we don't need that right now.
 -/
 def up_ι : M ⟶ coind'.obj M := by
   apply ofHom
@@ -200,6 +220,23 @@ def up_ι : M ⟶ coind'.obj M := by
       sorry
   }
 
+lemma up_ι_apply {M : Rep R G} (m : M) (v : leftRegular R G) : (up_ι M) m v = (ε R G v) • m := rfl
+
+lemma up_ι_apply_of {M : Rep R G} (m : M) (x : G) : (up_ι M) m (leftRegular.of x) = m := by
+  rw [up_ι_apply, ε_of, one_smul]
+
+/--
+The inclusion of `M : Rep R G` in `coind'.obj M` as a natural transformation.
+-/
+def up_ι' : 𝟭 (Rep R G) ⟶ coind' where
+  app := up_ι
+  naturality M N f := by
+    ext m x
+    simp only [Functor.id_obj, Functor.id_map, Action.comp_hom, ModuleCat.hom_comp,
+      LinearMap.coe_comp, Function.comp_apply, ModuleCat.hom_ofHom, LinearMap.llcomp_apply,
+      hom_apply]
+    rw [up_ι_apply_of, coind'_map_apply, up_ι_apply_of]
+
 /--
 The map from `M` to its coinduced representation is a monomorphism.
 -/
@@ -211,11 +248,22 @@ instance : Mono (up_ι M) := by
   -/
   sorry
 
+/-
+The functor taking `M : Rep R G` to `up.obj M`, defined by the short exact sequence
 
-/--
-We could define this as a functor, but there's no need right now.
+  `0 ⟶ M ⟶ coind'.obj M ⟶ up.obj M ⟶ 0`.
+
+Since `coind'.obj M` is acyclic, the cohomology of `up.obj M` is a shift by one
+of the cohomology of `M`.
 -/
-def up : Rep R G := cokernel (up_ι M)
+def up : Rep R G ⥤ Rep R G where
+  obj M := cokernel (up_ι'.app M)
+  map f := by
+    dsimp
+    apply cokernel.desc _ (coind'.map f ≫ cokernel.π (up_ι'.app _))
+    rw [←Category.assoc, ←up_ι'.naturality, Category.assoc, cokernel.condition, comp_zero]
+  map_id := sorry
+  map_comp := sorry
 
 /--
 The short exact sequence
@@ -227,7 +275,7 @@ This can be used for dimension shifting because `coind'.obj M` is acyclic.
 abbrev up_ses : ShortComplex (Rep R G) where
   X₁ := M
   X₂ := coind'.obj M
-  X₃ := up M
+  X₃ := up.obj M
   f := up_ι M
   g := cokernel.π (up_ι M)
   zero := cokernel.condition (up_ι M)
@@ -262,7 +310,7 @@ instance up_δ_isIso (n : ℕ) : IsIso (δ (up_shortExact M) (n + 1) (n + 2) rfl
   -/
   sorry
 
-def up_δiso (n : ℕ) : groupCohomology (up M) (n + 1) ≅ groupCohomology M (n + 2) :=
+def up_δiso (n : ℕ) : groupCohomology (up.obj M) (n + 1) ≅ groupCohomology M (n + 2) :=
   asIso (δ (up_shortExact M) (n + 1) (n + 2) rfl)
 
 /--
@@ -286,7 +334,7 @@ instance up_δ_isIso' (H : Subgroup G) (n : ℕ) : IsIso (δ (up_shortExact' M H
   sorry
 
 def up_δiso' (H : Subgroup G) (n : ℕ) :
-    groupCohomology (up M ↓ H) (n + 1) ≅ groupCohomology (M ↓ H) (n + 2) :=
+    groupCohomology (up.obj M ↓ H) (n + 1) ≅ groupCohomology (M ↓ H) (n + 2) :=
   asIso (δ (up_shortExact' M H) (n + 1) (n + 2) rfl)
 
 variable [Fintype G]

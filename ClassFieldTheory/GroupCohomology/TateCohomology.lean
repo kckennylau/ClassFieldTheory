@@ -15,6 +15,8 @@ noncomputable section
 
 namespace groupCohomology
 
+
+
 /--
 This is the map from the coinvariants of `M : Rep R G` to the invariants, induced by the map
 `m ↦ ∑ g : G, M.ρ g m`.
@@ -28,7 +30,6 @@ lemma TateNorm_comp_d (M : Rep R G) : TateNorm M ≫ (inhomogeneousCochains M).d
 
 lemma d_comp_TateNorm (M : Rep R G) : (inhomogeneousChains M).d 1 0 ≫ TateNorm M  = 0 :=
   sorry
-
 
 def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
   X

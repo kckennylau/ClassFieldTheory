@@ -64,8 +64,8 @@ lemma cx₁_exact : (cx₁ M).Exact := sorry
 
 lemma cx₂_exact : (cx₂ M).Exact := sorry
 
-def upToDown : up M ⟶ down M := by
-  let : up M ⟶ coind'.obj M
+def upToDown : up.obj M ⟶ down M := by
+  let : up.obj M ⟶ coind'.obj M
   · apply cokernel.desc (up_ι M) (oneSubGen M) (oneSubGen_comp_up_ι M)
   rw [down]
   · apply kernel.lift (down_π M) this
