@@ -270,33 +270,5 @@ noncomputable def free' (H : Subgroup G) : Basis (G ⧸ H) (MonoidAlgebra R H) <
   -/
   sorry
 
-/--
-Coinduced representations are Acyclic.
-This is a special case of Shapiro's lemma.
--/
-lemma _root_.Rep.Acyclic.ofCoinduced (M : Rep R G) (n : ℕ) :
-    ((leftRegular R G).ihom.obj M).IsAcyclic :=
-  sorry
-
-
-/--
-For finite groups, the left regular representation is coinduced.
--/
-def iso_coinduced [Finite G] : leftRegular R G ≅ (leftRegular R G).ihom.obj (trivial R G R) :=
-  sorry
-
-/--
-The left regular representation is acyclic.
-I.e. the cohomology groups Hⁿ(H,R[G]) are zero for all `n > 0`
-and all subgroups `H` of `G`.
--/
-theorem isAcyclic [Finite G] : (leftRegular R G).IsAcyclic :=
-  /-
-  Construct an isomorphism `leftRegular R G ≅ (leftRegular R G).ihom.obj (trivial R G R)`.
-  Then apply `groupCohomology.ofCoinduced`.
-  -/
-  sorry
-
-
 
 end Rep.leftRegular

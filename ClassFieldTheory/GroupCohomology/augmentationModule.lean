@@ -1,8 +1,8 @@
 import Mathlib
--- import ClassFieldTheory.GroupCohomology.CyclicGroup
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 import ClassFieldTheory.GroupCohomology._1_restriction
 import ClassFieldTheory.GroupCohomology._3_LeftRegular
+import ClassFieldTheory.GroupCohomology._4_DimensionShift
 
 
 /-!
@@ -53,12 +53,10 @@ abbrev Rep.aug : Rep R G := kernel (ε R G)
 
 namespace Rep.aug
 
-abbrev ι : aug R G ⟶ leftRegular R G := kernel.ι (ε R G)
-
-
 /--
 The inclusion of `aug R G` in `leftRegular R G`.
 -/
+abbrev ι : aug R G ⟶ leftRegular R G := kernel.ι (ε R G)
 
 lemma ε_comp_ι : ι R G ≫ ε R G = 0 := kernel.condition (ε R G)
 
@@ -70,6 +68,9 @@ lemma sum_coeff_ι [Fintype G] (v : aug R G) : ∑ g : G, (ι R G v) g = 0 :=
   sorry
   -- use the previous lemma.
 
+/--
+There is an element of `aug R G` whose image in the left regular representation is `of g - of 1`.
+-/
 lemma exists_ofSubOfOne (g : G) : ∃ v : aug R G, ι R G v = leftRegular.of g - leftRegular.of 1 := by
   apply exists_kernelι_eq
   rw [map_sub, ε_of, ε_of, sub_self]
@@ -86,7 +87,7 @@ def ofSubOfOne (g : G) : aug R G := (exists_ofSubOfOne R G g).choose
 /--
 The short exact sequence
 
-    0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0.
+    `0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0`.
 
 -/
 def aug_shortExactSequence : ShortComplex (Rep R G) where
@@ -98,18 +99,18 @@ def aug_shortExactSequence : ShortComplex (Rep R G) where
   zero := ε_comp_ι R G
 
 /--
-The sequence
+The sequence in `Rep R G`:
 
-  0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0
+  `0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0`
 
-is a short exact sequence of G-modules.
+is a short exact sequence.
 -/
 lemma isShortExactSequence  : (aug_shortExactSequence R G).ShortExact := sorry
 
 /--
 The sequence
 
-  0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0
+  `0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0`
 
 is a short exact sequence of `H`-modules for any subgroup `H` of `G`.
 -/
@@ -117,44 +118,72 @@ lemma isShortExactSequence' (H : Subgroup G) :
     ((aug_shortExactSequence R G).map (res H)).ShortExact := by
   sorry
 
-lemma _root_.groupCohomology.of_coinduced (A : Rep R G) (n : ℕ):
-    IsZero (groupCohomology ((ihom (leftRegular R G)).obj A) (n + 1)) := by sorry
 
-lemma _root_.Rep.leftRegular.isZero_groupCohomology [Finite G] (n : ℕ) :
-    IsZero (groupCohomology (leftRegular R G) (n+1)) := by
-  /-
-  show that if `G` is finite then `leftRegular R G` is coinduced from `trivial R G R`.
-  Then apply `groupCohomology.ofcoinduced`.
-  -/
-  sorry
+def _root_.Rep.leftRegular.iso_coind' [Fintype G] : leftRegular R G ≅ coind'.obj (trivial R G R) where
+  hom := {
+    hom := ofHom {
+      toFun f := {
+        toFun v := ∑ x : G, f x * v x
+        map_add' := sorry
+        map_smul' := sorry
+      }
+      map_add' := sorry
+      map_smul' := sorry
+    }
+    comm g := by
+      ext x y
+      change ∑ x : G, _ = _
+      rw [ModuleCat.hom_comp, LinearMap.comp_apply, LinearMap.comp_apply]
+      conv => {
+        right
+        left
+        left
+        change ((coind'.obj (trivial R G R)).ρ g)
+      }
+      conv => {
+        right
+        rw [coind'_obj_ρ_apply₂]
+        rw [trivial_def, LinearMap.id_apply]
+        dsimp
+      }
+      conv => {
+        right
+        simp only [Representation.ofMulAction_single, smul_eq_mul]
+      }
+      conv => {
+        left
+        right
+        intro z
+        left
+        change (ρReg g (leftRegular.of x)) z
+        rw [leftRegular.ρReg_apply_of]
+      }
+      /-
+      This is near enough for me to see that there is no sign error.
+      Obviously the proof above should be improved with much better API.
+      -/
+      sorry
+  }
+  inv := sorry
+  hom_inv_id := sorry
+  inv_hom_id := sorry
+-- lemma _root_.groupCohomology.of_coinduced (A : Rep R G) (n : ℕ):
+--     IsZero (groupCohomology ((ihom (leftRegular R G)).obj A) (n + 1)) := by sorry
 
-lemma _root_.groupCohomology.of_projective [Finite G] (P : Rep R G) [Projective P] (n : ℕ) :
-    IsZero (groupCohomology P (n+1)) :=
-  /-
-  Use the isomorphism in Mathlib between group cohomology and Ext.
-  -/
-  sorry
+lemma _root_.Rep.leftRegular.isAcyclic [Fintype G] :
+    (leftRegular R G).IsAcyclic := by
+  apply isAcyclic_of_iso (iso_coind' R G)
+  apply coind'_isAcyclic
 
 /--
-If `G` is a finite group and `H` is a subgroup of `G` then `H^{n+1}(H,R[G]) = 0`.
--/
-lemma _root_.Rep.leftRegular.isZero_groupCohomology' [Finite G] (n : ℕ) (H : Subgroup G) :
-    IsZero (groupCohomology (leftRegular R G ↓ H) (n + 1)) := by
-  /-
-  Show that `R[G]` is isomorphic as an `H`-module to a direct sum of copies of `R[H]`.
-  Then use `Rep.leftRegular.isZero_groupCohomology`.
-  -/
-  sorry
-
-/--
-The connecting homomorphism from H^{n+1}(G,R) to H^{n+2}(G,aug R G) is an isomorphism.
+The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.
 -/
 lemma cohomology_aug_succ_iso [Finite G] (n : ℕ) :
     IsIso (δ (isShortExactSequence R G) (n + 1) (n + 2) rfl) :=
   /-
   This connecting homomorphism is sandwiched between two modules H^{n+1}(G,R[G]) and H^{n+2}(G,R[G]),
   where P is the left regular representation.
-  Then use `Rep.leftRegular.isZero_groupCohomology` to show that both of these are zero.
+  Then use `Rep.leftRegular.isAcyclic` to show that both of these are zero.
   -/
   sorry
 
@@ -167,7 +196,8 @@ lemma H2_aug_isZero [Finite G] [NoZeroSMulDivisors ℕ R] : IsZero (H2 (aug R G)
 
 
 /--
-The connecting homomorphism from H^{n+1}(G,R) to H^{n+2}(G,aug R G) is an isomorphism.
+If `H` is a subgroup of a finite group `G` then the connecting homomorphism
+from `Hⁿ⁺¹(H,R)` to `Hⁿ⁺²(H,aug R G)` is an isomorphism.
 -/
 lemma cohomology_aug_succ_iso' [Finite G] (H : Subgroup G) (n : ℕ):
     IsIso (δ (isShortExactSequence' R G H) (n + 1) (n + 2) rfl) :=
@@ -177,7 +207,7 @@ lemma cohomology_aug_succ_iso' [Finite G] (H : Subgroup G) (n : ℕ):
   -/
   sorry
 
-def cohomology_aug_one_iso [Finite G] :
+def H0_iso [Finite G] :
     H0 (aug R G) ≅ ModuleCat.of R (R ⧸ Ideal.span {(Nat.card G : R)}) :=
   /-
   If Tate cohomology is defined, then this is proved in the same way as the previous
@@ -193,7 +223,7 @@ def cohomology_aug_one_iso [Finite G] :
   -/
   sorry
 
-def cohomology_res_aug_one_iso [Finite G] (H : Subgroup G) :
+def H0_iso' [Finite G] (H : Subgroup G) :
     H0 (aug R G ↓ H) ≅ ModuleCat.of R (R ⧸ Ideal.span {(Nat.card H : R)}) :=
   /-
   If Tate cohomology is defined, then this is proved in the same way as the previous

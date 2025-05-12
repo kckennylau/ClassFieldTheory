@@ -57,10 +57,10 @@ and that the sequence of `H`- invariants is also a short exact in `Rep R (G ⧸ 
 
 Then we have a commuting square
 
-`   Hⁿ(G ⧸ H, C)  ⟶   H^{n+1}(G ⧸ H, A) `
-`         |                 |           `
-`         ↓                 ↓           `
-`     Hⁿ(G , C)   ⟶   H^{n+1}(G,A)     `
+`   Hⁿ(G ⧸ H, Cᴴ)  ⟶   H^{n+1}(G ⧸ H, Aᴴ) `
+`         |                 |             `
+`         ↓                 ↓             `
+`     Hⁿ(G , C)    ⟶   H^{n+1}(G,A)       `
 
 where the horizontal maps are connecting homomorphisms
 and the vertical maps are inflation.

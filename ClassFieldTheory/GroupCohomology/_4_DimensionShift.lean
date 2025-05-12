@@ -129,14 +129,28 @@ This is isomorphic to the function space `G → M` on which `G` acts on both `G`
 -/
 abbrev coind' : Rep R G ⥤ Rep R G := (leftRegular R G).ihom
 
+/--
+This can be used to regard an element of `coind'.obj M` as a linear map of type
+`leftRegular R G →ₗ[R] M`.
+-/
+def asₗ {M : Rep R G} (f : coind'.obj M) : leftRegular R G →ₗ[R] M := f
+
 instance (M : Rep R G) : FunLike (coind'.obj M) (leftRegular R G) M :=
   inferInstanceAs (FunLike ((leftRegular R G) →ₗ[R] M) _ _)
+
+@[simp] lemma asₗ_apply {M : Rep R G} (f : coind'.obj M) (v : leftRegular R G) : asₗ f v = f v := rfl
 
 @[ext] lemma coind'.ext {M : Rep R G} (f₁ f₂ : coind'.obj M)
     (h : ∀ g : G, f₁ (leftRegular.of g) = f₂ (leftRegular.of g)) : f₁ = f₂ := by
   apply Finsupp.lhom_ext
   intro g c
   rw [←Finsupp.smul_single_one, map_smul, h, map_smul]
+
+lemma coind'_obj_ρ_apply {M : Rep R G} (g : G) (f : coind'.obj M) :
+  (coind'.obj M).ρ g f = M.ρ g ∘ₗ f ∘ₗ (leftRegular R G).ρ g⁻¹ := rfl
+
+lemma coind'_obj_ρ_apply₂ {M : Rep R G} (g : G) (f : coind'.obj M) (v : leftRegular R G):
+  (coind'.obj M).ρ g f v = M.ρ g (f ((leftRegular R G).ρ g⁻¹ v)) := rfl
 
 lemma coind'_map_apply {M N : Rep R G} (f₁ : M ⟶ N) (f₂ : coind'.obj M) (v : leftRegular R G) :
     coind'.map f₁ f₂ v = f₁ (f₂ v) := by rfl
@@ -268,7 +282,7 @@ def up : Rep R G ⥤ Rep R G where
 /--
 The short exact sequence
 
-  `0 ⟶ M ⟶ coind'.obj M ⟶ up M ⟶ 0`
+  `0 ⟶ M ⟶ coind'.obj M ⟶ up.obj M ⟶ 0`
 
 This can be used for dimension shifting because `coind'.obj M` is acyclic.
 -/
@@ -340,16 +354,27 @@ def up_δiso' (H : Subgroup G) (n : ℕ) :
 variable [Fintype G]
 
 def down_π : coind'.obj M ⟶ M where
-  hom := by
-    rw [coind']
-    apply ofHom
-    simp only [ihom_obj_V_carrier, ihom_obj_V_isAddCommGroup, ihom_obj_V_isModule]
-    exact {
+  hom := ofHom {
       toFun f := ∑ g : G, f (leftRegular.of g)
       map_add' := sorry
       map_smul' := sorry
     }
   comm := sorry
+
+lemma down_π_apply (f : coind'.obj M) : down_π M f = ∑ g : G, f (leftRegular.of g) := rfl
+
+def down_π' : coind' ⟶ 𝟭 (Rep R G) where
+  app M := down_π M
+  naturality X Y φ := by
+    dsimp only [Functor.id_obj, Functor.id_map]
+    ext f
+    rw [hom_apply, hom_apply]
+    simp only [hom_comp, Function.comp_apply, down_π_apply, map_sum]
+    rw [Finset.sum_congr rfl]
+    intro x _
+    rw [coind'_map_apply]
+
+
 
 instance : Epi (down_π M) :=
   /-
@@ -360,10 +385,18 @@ instance : Epi (down_π M) :=
   -/
   sorry
 
-def down : Rep R G := kernel (down_π M)
+
+def down : Rep R G ⥤ Rep R G where
+  obj M := kernel (down_π'.app M)
+  map φ := by
+    dsimp only [Functor.id_obj]
+    apply kernel.lift _ (kernel.ι _ ≫ coind'.map φ)
+    rw [Category.assoc, down_π'.naturality, ←Category.assoc, kernel.condition, zero_comp]
+  map_id := sorry
+  map_comp := sorry
 
 abbrev down_ses : ShortComplex (Rep R G) where
-  X₁ := down M
+  X₁ := down.obj M
   X₂ := coind'.obj M
   X₃ := M
   f := kernel.ι (down_π M)
@@ -409,14 +442,14 @@ instance down_δ_isIso' (H : Subgroup G) (n : ℕ) :
 /--
 The isomorphism `H^{n+1}(G,up M) ≅ H^{n+2}(G,M)`.
 -/
-def down_δiso (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology (down M) (n + 2) :=
+def down_δiso (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology (down.obj M) (n + 2) :=
   asIso (δ (down_shortExact M) (n + 1) (n + 2) rfl)
 
 /--
 The isomorphism `H^{n+1}(H,up M) ≅ H^{n+2}(H,M)`.
 -/
 def down_δiso' (H : Subgroup G) (n : ℕ) :
-    groupCohomology (M ↓ H) (n + 1) ≅ groupCohomology ((down M) ↓ H) (n + 2) :=
+    groupCohomology (M ↓ H) (n + 1) ≅ groupCohomology ((down.obj M) ↓ H) (n + 2) :=
   asIso (δ (down_shortExact' M H) (n + 1) (n + 2) rfl)
 
 end dimensionShift
