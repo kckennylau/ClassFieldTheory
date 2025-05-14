@@ -46,11 +46,11 @@ def longExactSequence₃ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : �
     zero := sorry
 
 lemma isLongExact₁ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
+    (longExactSequence₁ hS n).Exact := sorry
 lemma isLongExact₂ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
+    (longExactSequence₁ hS n).Exact := sorry
 lemma isLongExact₃ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
-    (longExactSequence₁ hS n).ShortExact := sorry
+    (longExactSequence₁ hS n).Exact := sorry
 
 end groupCohomology
 end Long_Exact_Sequences
