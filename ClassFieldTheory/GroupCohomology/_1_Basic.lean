@@ -58,10 +58,7 @@ instance mine₂ (A B : Rep R G) :
   map_zero f := map_zero f.val
 
 /-
-# TODO
-find out why this hack is needed, and why the previous instance isn't working.
-
-(asked on zulip.)
+This hack (the next two instances) will be removed after the relevant PR is merged.
 -/
 instance (A : Rep R G) (H : Type) [MulAction G H] :
     MulActionHomClass (Action.HomSubtype _ _ A (ofMulAction R G H)) R A (ofMulAction R G H) :=
@@ -191,18 +188,22 @@ lemma Rep.leftRegularHomEquiv_symm_comp {A B : Rep R G} (f : A ⟶ B) (a : A) :
   congr
   exact A.leftRegularHomEquiv.right_inv a
 
-lemma Rep.exists_kernelι_eq {A B : Rep R G} (f : A ⟶ B) (a : A) (ha : f a = 0) :
-    ∃ k : kernel f (C := Rep R G), kernel.ι f k = a := by
-  let g : leftRegular R G ⟶ A := (leftRegularHomEquiv A).symm a
+/--
+If `f : M₁ ⟶ M₂` is a morphism in `Rep R G` and `f m = 0`, then
+there exists `k : kernel f` such that `kernel.ι _ k = m`.
+-/
+lemma Rep.exists_kernelι_eq {M₁ M₂ : Rep R G} (f : M₁ ⟶ M₂) (m : M₁) (hm : f m = 0) :
+    ∃ k : kernel f (C := Rep R G), kernel.ι f k = m := by
+  let g : leftRegular R G ⟶ M₁ := (leftRegularHomEquiv M₁).symm m
   have : g ≫ f = 0
-  · rw [leftRegularHomEquiv_symm_comp, ha, map_zero]
+  · rw [leftRegularHomEquiv_symm_comp, hm, map_zero]
   let lift : leftRegular R G ⟶ kernel f := kernel.lift f g this
   use leftRegularHomEquiv (kernel f) lift
   rw [leftRegularHomEquiv_apply]
-  change (lift ≫ kernel.ι f) (Finsupp.single 1 1) = a
+  change (lift ≫ kernel.ι f) (Finsupp.single 1 1) = m
   rw [kernel.lift_ι]
-  convert (leftRegularHomEquiv_apply A g).symm
-  change a = A.leftRegularHomEquiv (A.leftRegularHomEquiv.symm a)
+  convert (leftRegularHomEquiv_apply M₁ g).symm
+  change m = M₁.leftRegularHomEquiv (M₁.leftRegularHomEquiv.symm m)
   rw [LinearEquiv.apply_symm_apply]
 
 
@@ -239,4 +240,3 @@ To check whether the underlying sequence is exact in `ModuleCat R`, we can use t
 
 
 end Rep
-

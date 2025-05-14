@@ -7,6 +7,7 @@ open CategoryTheory
   Limits
   Rep
   groupCohomology
+  HomologicalComplex
 
 variable {R G : Type} [CommRing R] [Group G]
 
@@ -26,14 +27,28 @@ notation M " ↑ " H => (Rep.invariants' H).obj M
 --infix : 80 " ↑ " => fun (M : Rep R G) (H : Subgroup G) [H.Normal] ↦ (Rep.invariants' H).obj M
 
 
+
+def groupCohomology.cochain_infl :
+    invariants' H ⋙ cochainsFunctor R (G ⧸ H) ⟶ cochainsFunctor R G := sorry -- current PR
+
 /--
-The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)`.
+# TODO :
+  move this to the file `Basic.lean`.
+
+The `n`-th group cohomology functor is the composition of the cochains functor and the
+`n`-homology functor.
 -/
-def groupCohomology.infl (n : ℕ) : Rep.invariants' H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n where
-  app M := sorry -- current PR
-  naturality := sorry
+lemma groupCohomology.functor_eq_cochainsFunctor_comp_homology (n : ℕ) :
+    functor R G n = cochainsFunctor R G ⋙ homologyFunctor _ _ n := rfl
 
-
+/--
+The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformation.
+This is defined using the inflation map on cocycles.
+-/
+noncomputable def groupCohomology.infl (n : ℕ) :
+    Rep.invariants' H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n := by
+  dsimp only [functor_eq_cochainsFunctor_comp_homology, ←Functor.assoc]
+  exact (groupCohomology.cochain_infl H) ◫ 𝟙 _
 
 /--
 Suppose we have a short exact sewuence `0 ⟶ A ⟶ B ⟶ C ⟶ 0` in `Rep R G`.
@@ -41,7 +56,7 @@ If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R (G �
 
   `0 ⟶ Aᴴ ⟶ Bᴴ ⟶ Cᴴ ⟶ 0`.
 -/
-lemma infl_ofShortExact {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+lemma invariants'_shortExact_ofShortExact {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     (hS' : IsZero (H1 (S.X₁ ↓ H))) : (S.map (invariants' H)).ShortExact :=
   /-
   This is the opening section of the long exact sequence. The next term is `H¹(H,S.X₁)`, which
@@ -67,10 +82,26 @@ and the vertical maps are inflation.
 -/
 lemma infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     (hS' : (S.map (invariants' H)).ShortExact)  (i j : ℕ) (hij : i + 1 = j) :
-    (infl H i).app _ ≫ δ hS i j hij = δ hS' i j hij ≫ (infl H j).app _
+    δ hS' i j hij ≫ (infl H j).app _ = (infl H i).app _ ≫ δ hS i j hij
     := by
-  /-
-  This will essentially be `HomologicalComplex.HomologySequence.δ_naturality`, but it relies on
-  definitions which are current PRs.
-  -/
-  sorry
+  let C := S.map (cochainsFunctor R G)
+  let S' := S.map (invariants' H)
+  let C' := S'.map (cochainsFunctor R (G ⧸ H))
+  let φ : C' ⟶ C := {
+    τ₁ := by
+        change (cochainsFunctor _ _).obj S'.X₁ ⟶ (cochainsFunctor _ _).obj S.X₁
+        exact (cochain_infl H).app S.X₁
+    τ₂ := by
+        change (cochainsFunctor _ _).obj S'.X₂ ⟶ (cochainsFunctor _ _).obj S.X₂
+        exact (cochain_infl H).app S.X₂
+    τ₃ := by
+        change (cochainsFunctor _ _).obj S'.X₃ ⟶ (cochainsFunctor _ _).obj S.X₃
+        exact (cochain_infl H).app S.X₃
+    comm₁₂ := ((cochain_infl H).naturality S.f).symm
+    comm₂₃ := ((cochain_infl H).naturality S.g).symm
+  }
+  have ses₁ : C.ShortExact := sorry -- current PR
+  have ses₂ : C'.ShortExact := sorry -- current PR
+  convert HomologySequence.δ_naturality φ ses₂ ses₁ i j hij
+  · sorry --should be `rfl` after defn of `groupCohomology.δ` included in current PR
+  · sorry --should be `rfl` after defn of `groupCohomology.δ` included in current PR
