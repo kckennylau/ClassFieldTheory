@@ -229,7 +229,7 @@ class FiniteClassFormation where
   hypothesis₁ : Prop := ∀ H : Subgroup G, IsZero (H1 (M ↓ H))
   hypothesis₂ (H : Subgroup G) := Submodule.span R {σ ↡ H} = ⊤
   hypothesis₂' (H : Subgroup G) :=
-    (Submodule.span R {σ ↡ H}).annihilator = Ideal.span {(Nat.card G : R)}
+    (Submodule.span R {σ ↡ H}).annihilator = Ideal.span {(Nat.card H : R)}
 
 def H2Map₂ {A B : Rep R G} (f : A ⟶ B) : H2 A ⟶ H2 B := H2Map (MonoidHom.id G) f
 

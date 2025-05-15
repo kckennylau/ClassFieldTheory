@@ -22,7 +22,7 @@ This is the map from the coinvariants of `M : Rep R G` to the invariants, induce
 `m ↦ ∑ g : G, M.ρ g m`.
 -/
 def TateNorm (M : Rep R G) : (inhomogeneousChains M).X 0 ⟶
-    (groupCohomology.inhomogeneousCochains M).X 0 := by
+    (inhomogeneousCochains M).X 0 := by
   sorry
 
 lemma TateNorm_comp_d (M : Rep R G) : TateNorm M ≫ (inhomogeneousCochains M).d 0 1 = 0 :=

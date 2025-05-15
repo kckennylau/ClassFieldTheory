@@ -76,7 +76,7 @@ theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
 
 theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
     (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
-    Mono (inflationRestriction H n M).f :=
+    Mono (inflationRestriction H (n + 1) M).f :=
   /-
   The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is a current PR.
   For the inductive step, use the fact that the following square commutes by `infl_δ_naturality`.
@@ -91,7 +91,7 @@ theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
 
 theorem inflation_restriction_exact (n : ℕ) {M : Rep R G}
     (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
-    (inflationRestriction H n M).Exact :=
+    (inflationRestriction H (n + 1) M).Exact :=
   /-
   The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is a current PR.
   For the inductive step, use the fact that the following diagram commutes by

@@ -38,18 +38,18 @@ def groupCohomology.cochain_infl :
 The `n`-th group cohomology functor is the composition of the cochains functor and the
 `n`-homology functor.
 -/
-lemma groupCohomology.functor_eq_cochainsFunctor_comp_homology (n : ℕ) :
-    functor R G n = cochainsFunctor R G ⋙ homologyFunctor _ _ n := rfl
+noncomputable def groupCohomology.functor_iso_cochainsFunctor_comp_homology (n : ℕ) :
+    functor R G n ≅ cochainsFunctor R G ⋙ homologyFunctor _ _ n := Iso.refl _
 
 /--
 The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformation.
 This is defined using the inflation map on cocycles.
 -/
 noncomputable def groupCohomology.infl (n : ℕ) :
-    Rep.invariants' H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n := by
-  dsimp only [functor_eq_cochainsFunctor_comp_homology, ←Functor.assoc]
-  exact (groupCohomology.cochain_infl H) ◫ 𝟙 _
+    Rep.invariants' H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n :=
+  (groupCohomology.cochain_infl H) ◫ 𝟙 (homologyFunctor _ _ n)
 
+#check infl
 /--
 Suppose we have a short exact sewuence `0 ⟶ A ⟶ B ⟶ C ⟶ 0` in `Rep R G`.
 If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R (G ⧸ H)`:
