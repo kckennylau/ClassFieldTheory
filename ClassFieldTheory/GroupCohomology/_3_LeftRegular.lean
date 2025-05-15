@@ -208,7 +208,7 @@ by
 The module over the group algebra corresponding to `leftRegular R G` is isomorphic to
 the group algebra. This is used in proving that `leftRegular R G` is free, and hence projective.
 -/
-def equiv_MonoidAlgebra :
+noncomputable def equiv_MonoidAlgebra :
     (Representation.ofMulAction R G G).asModule  ≃ₗ[MonoidAlgebra R G] MonoidAlgebra R G where
       toFun := id
       map_add' := by tauto

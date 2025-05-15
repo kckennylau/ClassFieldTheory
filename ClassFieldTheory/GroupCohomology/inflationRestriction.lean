@@ -51,10 +51,10 @@ theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
     · /-
       By `hM`, we have `H¹(H,M)= 0` so we have a short exact sequence
 
-        `0 ⟶ Mᴴ ⟶ (coind' M)ᴴ ⟶ (up M)ᴴ ⟶ 0`.
+        `0 ⟶ Mᴴ ⟶ (coind'₁ M)ᴴ ⟶ (up M)ᴴ ⟶ 0`.
 
       The isomorphism required is the connecting homomorphism in `G ⧸ H`-cohomology
-      from this short exact sequence. It is a isomorphism because `(coind' M)ᴴ` is acyclic.
+      from this short exact sequence. It is a isomorphism because `(coind'₁ M)ᴴ` is acyclic.
       -/
       specialize hM 0 (Nat.zero_lt_succ n)
       sorry

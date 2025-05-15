@@ -56,18 +56,18 @@ example (M : Rep R G) (H : Subgroup G) (h : H) :
 example (M : Rep R G) (H : Subgroup G) :
   (M ↓ H).V = M.V := by simp
 
-instance (H : Type) [Group H] (f : H →* G) : PreservesLimits (Action.res (ModuleCat R) f) :=
-  Action.preservesLimitsOfSize_of_preserves (Action.res (ModuleCat R) f) <|
-    Action.preservesLimits_forget (ModuleCat R) G
+instance (H : Type) [Group H] (f : H →* G) : PreservesLimits (Action.res.{1,0,0,0} (ModuleCat R) f) := by
+  apply Action.preservesLimitsOfSize_of_preserves (Action.res (ModuleCat R) f)
+  exact Action.preservesLimits_forget (ModuleCat R) G
 
-instance (H : Type) [Group H] (f : H →* G) : ReflectsLimits (Action.res (ModuleCat R) f) :=
+instance (H : Type) [Group H] (f : H →* G) : ReflectsLimits (Action.res.{1,0,0,0} (ModuleCat R) f) :=
   reflectsLimits_of_reflectsIsomorphisms
 
-instance (H : Type) [Group H] (f : H →* G) : PreservesColimits (Action.res (ModuleCat R) f) :=
+instance (H : Type) [Group H] (f : H →* G) : PreservesColimits (Action.res.{1,0,0,0} (ModuleCat R) f) :=
   Action.preservesColimitsOfSize_of_preserves (Action.res (ModuleCat R) f) <|
-    Action.preservesColimits_forget (ModuleCat R) G
+  Action.preservesColimits_forget (ModuleCat R) G
 
-instance (H : Type) [Group H] (f : H →* G) : ReflectsColimits (Action.res (ModuleCat R) f) :=
+instance (H : Type) [Group H] (f : H →* G) : ReflectsColimits (Action.res.{1,0,0,0} (ModuleCat R) f) :=
   reflectsColimits_of_reflectsIsomorphisms
 
 /--

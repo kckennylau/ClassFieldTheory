@@ -56,7 +56,7 @@ def representation : Representation R G (carrier σ) where
       ext v : 1
       rw [LinearMap.comp_apply]
       dsimp only [Prod.fst_add, Prod.snd_add, Submodule.coe_add, Finsupp.coe_add, Pi.add_apply,
-        Prod.mk_add_mk, LinearMap.one_apply, AddHom.toFun_eq_coe, RingHom.id_apply, AddHom.coe_mk,
+        Prod.mk_add_mk, Module.End.one_apply, AddHom.toFun_eq_coe, RingHom.id_apply, AddHom.coe_mk,
         Prod.smul_fst, Prod.smul_snd, SetLike.val_smul, Finsupp.coe_smul, Pi.smul_apply,
         smul_eq_mul, Prod.smul_mk, LinearMap.coe_inl, LinearMap.coe_mk, LinearMap.coe_comp,
         Function.comp_apply]
@@ -72,19 +72,19 @@ def representation : Representation R G (carrier σ) where
     · ext v : 1
       simp
   map_mul' g₁ g₂ := by
-    simp only [map_mul, LinearMap.mul_apply, equalizer_as_kernel]
+    simp only [map_mul, Module.End.mul_apply, equalizer_as_kernel]
     ext v
     · simp only [LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_inl,
-      Function.comp_apply, map_zero, zero_add, LinearMap.mul_apply, map_sum, map_smul]
+      Function.comp_apply, map_zero, zero_add, Module.End.mul_apply, map_sum, map_smul]
     · simp only [LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_inl,
-      Function.comp_apply, map_zero, zero_add, LinearMap.mul_apply, map_sum, map_smul]
+      Function.comp_apply, map_zero, zero_add, Module.End.mul_apply, map_sum, map_smul]
       sorry
     · simp only [LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_inr,
       Function.comp_apply, map_zero, Finsupp.coe_zero, Pi.zero_apply, zero_smul,
-      Finset.sum_const_zero, add_zero, LinearMap.mul_apply]
+      Finset.sum_const_zero, add_zero, Module.End.mul_apply]
     · simp only [LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_inr,
       Function.comp_apply, map_zero, Finsupp.coe_zero, Pi.zero_apply, zero_smul,
-      Finset.sum_const_zero, add_zero, LinearMap.mul_apply]
+      Finset.sum_const_zero, add_zero, Module.End.mul_apply]
 
 
 def _root_.Rep.split : Rep R G := Rep.of (split.representation σ)

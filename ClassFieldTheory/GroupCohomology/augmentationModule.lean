@@ -119,7 +119,7 @@ lemma isShortExactSequence' (H : Subgroup G) :
   sorry
 
 
-def _root_.Rep.leftRegular.iso_coind' [Fintype G] : leftRegular R G ≅ coind'.obj (trivial R G R) where
+def _root_.Rep.leftRegular.iso_coind'₁ [Fintype G] : leftRegular R G ≅ coind'₁.obj (trivial R G R) where
   hom := {
     hom := ofHom {
       toFun f := {
@@ -138,11 +138,11 @@ def _root_.Rep.leftRegular.iso_coind' [Fintype G] : leftRegular R G ≅ coind'.o
         right
         left
         left
-        change ((coind'.obj (trivial R G R)).ρ g)
+        change ((coind'₁.obj (trivial R G R)).ρ g)
       }
       conv => {
         right
-        rw [coind'_obj_ρ_apply₂]
+        rw [coind'₁_obj_ρ_apply₂]
         rw [trivial_def, LinearMap.id_apply]
         dsimp
       }
@@ -172,8 +172,8 @@ def _root_.Rep.leftRegular.iso_coind' [Fintype G] : leftRegular R G ≅ coind'.o
 
 lemma _root_.Rep.leftRegular.isAcyclic [Fintype G] :
     (leftRegular R G).IsAcyclic := by
-  apply isAcyclic_of_iso (iso_coind' R G)
-  apply coind'_isAcyclic
+  apply isAcyclic_of_iso (iso_coind'₁ R G)
+  apply coind'₁_isAcyclic
 
 /--
 The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.
