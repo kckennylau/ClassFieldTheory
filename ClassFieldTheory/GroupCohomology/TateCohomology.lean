@@ -3,19 +3,18 @@ import ClassFieldTheory.GroupCohomology._5_DimensionShift
 
 open
   CategoryTheory
+  Limits
   groupCohomology
   groupHomology
   Rep
   dimensionShift
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G] [Fintype G]
+variable {G : Type} [Group G] [Finite G]
 
 noncomputable section
 
 namespace groupCohomology
-
-
 
 /--
 This is the map from the coinvariants of `M : Rep R G` to the invariants, induced by the map
@@ -38,7 +37,7 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
   d
   | Int.ofNat i, Int.ofNat j            => (inhomogeneousCochains M).d i j
   | Int.ofNat _, Int.negSucc _          => 0
-  | -1,0                                =>  TateNorm M
+  | -1,0                                => TateNorm M
   | -1, Int.ofNat (j + 1)               => 0
   | -1, Int.negSucc _                   => 0
   | Int.negSucc (i + 1), Int.ofNat j    => 0
@@ -55,9 +54,10 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
   | Int.negSucc (i + 1), Int.ofNat j => by tauto
   | Int.negSucc (i + 1), Int.negSucc j => by
       convert (inhomogeneousChains M).shape (i + 1) j
-      rw [ComplexShape.up_Rel, ComplexShape.down_Rel, Int.negSucc_coe', Int.negSucc_coe',
-        sub_add_cancel, ←neg_add', neg_inj, eq_comm]
-      norm_cast
+      rw [ComplexShape.up_Rel, ComplexShape.down_Rel, Int.negSucc_eq, Int.negSucc_eq,
+        Nat.cast_add, Nat.cast_one, neg_add, neg_add, neg_add, add_comm, ←add_assoc, add_left_inj,
+        add_comm, add_assoc, neg_add_cancel, add_zero, neg_eq_iff_eq_neg, neg_neg, Nat.cast_inj,
+        add_left_inj, Eq.comm]
   d_comp_d' i j k hij hjk := by
     cases i with
     | ofNat i =>
@@ -92,15 +92,16 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
             cases k with
             | ofNat k =>
               exfalso
-              simp only [Int.negSucc_coe, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,
+              simp only [Int.negSucc_eq, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,
                 Int.ofNat_eq_coe, ComplexShape.up_Rel, neg_add_cancel_comm,
                 Nat.neg_cast_eq_cast] at hjk
-              simp only [Int.negSucc_coe, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,
-                hjk.1, zero_add, ComplexShape.up_Rel, neg_add_cancel_comm, add_eq_left] at hij
+              simp only [Int.negSucc_eq, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,
+                hjk.1, CharP.cast_eq_zero, zero_add, ComplexShape.up_Rel, neg_add_cancel_comm,
+                add_eq_left] at hij
               rw [←neg_add, neg_eq_zero, add_comm] at hij
               norm_cast at hij
             | negSucc k =>
-              simp only [Nat.cast_one, Int.negSucc_coe, Nat.cast_add, neg_add_rev, Int.reduceNeg,
+              simp only [Nat.cast_one, Int.negSucc_eq, Nat.cast_add, neg_add_rev, Int.reduceNeg,
                 ComplexShape.up_Rel, neg_add_cancel_comm, add_right_inj] at hij hjk
               rw [←neg_add, neg_eq_iff_eq_neg, neg_neg] at hij hjk
               norm_cast at hij hjk
@@ -188,52 +189,59 @@ lemma TateCohomology.cochainsFunctor_Exact {S : ShortComplex (Rep R G)}
 /--
 The connecting homomorphism in group cohomology induced by a short exact sequence of `G`-modules.
 -/
-noncomputable abbrev TateCohomology.δ {S : ShortComplex (Rep ℤ G)} (hS : S.ShortExact)
+noncomputable abbrev TateCohomology.δ {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     (n : ℤ) : (TateCohomology n).obj S.X₃ ⟶ (TateCohomology (n + 1)).obj S.X₁ :=
-  (TateCohomology.cochainsFunctor_Exact hS).δ _ _ rfl
+  (TateCohomology.cochainsFunctor_Exact hS).δ n (n + 1) rfl
 
 
-
--------------------
-
-/-
-Here is another definition of Tate cohomology, this time using dimension-shifting.
+/--
+All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.
 -/
+lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj ((coind₁ G).obj A ↓ H)) :=
+  /-
+  For `n > 0` this is proved elsewhere for `groupCohomology`.
+  For `n < -1` this is proved elsewhere for `groupHomology` (and relies on a current PR).
+  The cases `n = 0` and `n = -1` need to be proved here.
+  -/
+  sorry -- requires current PR.
 
-def H (n : ℕ) : Rep R G ⥤ ModuleCat R where
-  obj M := groupCohomology M n
-  map f := map (MonoidHom.id G) f n
-  map_id M := sorry
-  map_comp := sorry
-
-def Tate : ℤ → Rep R G ⥤ ModuleCat R
-  | 0 => down ⋙ H 1
-  | Int.ofNat (n + 1) => H (n + 1)
-  | Int.negSucc 0 => down ⋙ down ⋙ H 1
-  | Int.negSucc (n + 1) => down ⋙ Tate (Int.negSucc n)
-
-lemma Tate_natSucc (n : ℕ) : Tate (n + 1) = H (R := R) (G := G) (n + 1) := by
-  norm_cast
-  rw [Tate.eq_def]
-
-lemma Tate_zero : Tate 0 = down ⋙ H (R := R) (G := G) 1 := by
-  rw [Tate]
-
-lemma Tate_neg_one : Tate (-1 : ℤ)  = down ⋙ down ⋙ H 1 (R := R) (G := G) := by
-  change Tate (Int.negSucc 0) = _
-  rw [Tate]
-
-lemma Tate_ofNeg (n : ℕ) :
-    Tate (R := R) (G := G) (-(n + 2) : ℤ) = down ⋙ Tate (-(n + 1) : ℤ) := by
-  change Tate (Int.negSucc (n + 1) ) = down ⋙ Tate (Int.negSucc n)
-  rw [Tate]
-
-/-
-# TODO
-
-State long exact sequences in Tate cohomology and prove them by dimension-shifting.
+/--
+All of the Tate cohomology groups of `coind₁'.obj M ↓ H` are zero.
 -/
+lemma TateCohomology_coind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ H)) :=
+  /-
+  It is shown earier that `coind₁'.obj M ≅ (coind₁ G).obj M.V`, so we can use the previous result.
+  -/
+  sorry
 
+lemma TateCohomology_ind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ H)) :=
+  /-
+  It is shown earier that `ind₁'.obj M ≅ coind₁'.obj M`, so we can use the previous result.
+  -/
+  sorry
+
+instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (up_shortExact M) n) :=
+  /-
+  This follows from `TateCohomology_coind₁'`.
+  -/
+  sorry
+
+instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (down_shortExact M) n) := by
+  /-
+  This follows from `TateCohomology_coind₁'`.
+  -/
+  sorry
+
+def upδiso_Tate (n : ℤ) (M : Rep R G) :
+    (TateCohomology n).obj (up.obj M) ≅ (TateCohomology (n + 1)).obj M :=
+  asIso (TateCohomology.δ (up_shortExact M) n)
+
+def downδiso_Tate (n : ℤ) (M : Rep R G) :
+    (TateCohomology n).obj M ≅ (TateCohomology (n + 1)).obj (down.obj M) :=
+  asIso (TateCohomology.δ (down_shortExact M) n)
 
 end groupCohomology
 end

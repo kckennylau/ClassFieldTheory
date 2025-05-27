@@ -4,13 +4,17 @@ import ClassFieldTheory.GroupCohomology._5_DimensionShift
 
 /-!
 Let `M : Rep R G`, where `G` is a finite cyclic group.
-We construct an isomorphism
+We construct an exact sequence
+
+  `0 ⟶ M ⟶ coind₁'.obj M ⟶ ind₁'.obj M ⟶ M ⟶ 0`.
+
+Using this sequence, we construct an isomorphism
 
   `dimensionShift.up.obj M ≅ dimensionShift.down.obj M`.
 
 Using this, construct isomorphisms
 
-  `Hⁿ(G,M) ≅ H^{n+2}(G,M)`.
+  `Hⁿ⁺¹(G,M) ≅ Hⁿ⁺³(G,M)`.
 
 -/
 
