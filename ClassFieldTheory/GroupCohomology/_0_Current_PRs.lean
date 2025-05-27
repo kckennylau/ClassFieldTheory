@@ -60,8 +60,9 @@ section Inflation_Restriction
 
 namespace groupCohomology
 
-abbrev _root_.Rep.quotientToInvariants (M : Rep R G) (S : Subgroup G) [S.Normal] : Rep R (G ⧸ S) :=
-  sorry
+-- PR merged.
+-- abbrev _root_.Rep.quotientToInvariants (M : Rep R G) (S : Subgroup G) [S.Normal] : Rep R (G ⧸ S) :=
+--   sorry
 
 variable (M : Rep R G) (S : Subgroup G) [S.Normal]
 

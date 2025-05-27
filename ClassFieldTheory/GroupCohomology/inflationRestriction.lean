@@ -2,7 +2,7 @@ import Mathlib
 import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._1_inflation
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
-import ClassFieldTheory.GroupCohomology._4_DimensionShift
+import ClassFieldTheory.GroupCohomology._5_DimensionShift
 
 noncomputable section
 
@@ -61,7 +61,7 @@ theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
     have iso₂ {i : ℕ} : groupCohomology (up.obj M) (i + 1) ≅ groupCohomology M (i + 2)
     · apply up_δiso M i
     have iso₃ {i : ℕ} : groupCohomology ((up.obj M) ↓ H) (i + 1) ≅ groupCohomology (M ↓ H) (i + 1 + 1)
-    · apply up_δiso' M H i
+    · apply up_δiso_res M H i
     have : ∀ i, (i < n → IsZero (groupCohomology ((up.obj M) ↓ H) (i + 1)))
     · intro i hi
       exact IsZero.of_iso (hM _ (by simpa)) iso₃

@@ -1,8 +1,6 @@
 import Mathlib
--- import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._1_restriction
--- import ClassFieldTheory.GroupCohomology.CyclicGroup_v2
 
 /-!
 An object `M : Rep R G` is called acyclic if
@@ -38,9 +36,7 @@ open
   CategoryTheory.Limits
   groupCohomology
 
-variable {R : Type} [CommRing R]
-variable {G : Type} [Group G]
-
+variable {R G : Type _} [CommRing R]  [Group G]
 /--
 A representation `M : Rep R G` is acyclic if the cohomology groups `Hⁿ(H,M)` are all zero
 for every subgroup `H` of `G` and every `n > 0`.
@@ -54,3 +50,12 @@ lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsAcyclic) : M.
   · exact (functor _ _ n.succ).mapIso ((res H).mapIso f)
   apply IsZero.of_iso (hN H n) this
 
+def Rep.IsHomologyAcyclic.{u} (M : Rep R G) : Prop :=
+  ∀ (H : Subgroup G), ∀ n : ℕ, IsZero.{u,u+1} (groupHomology (M ↓ H) (n + 1))
+
+lemma Rep.isHomologyAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsHomologyAcyclic) :
+    M.IsHomologyAcyclic := by
+  sorry
+
+lemma groupCohomology.isZero_of_isAcyclic {M : Rep R G} (hM : M.IsAcyclic) (n : ℕ) :
+    IsZero (groupCohomology M (n + 1)) := IsZero.of_iso (hM ⊤ n) (rest_top_iso _ _)

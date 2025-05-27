@@ -1,7 +1,7 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 import ClassFieldTheory.GroupCohomology.inflationRestriction
-import ClassFieldTheory.GroupCohomology._5_CyclicGroup_v2
+import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
 
 open
   CategoryTheory

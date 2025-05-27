@@ -46,7 +46,7 @@ This is notation for `(Rep.res H).obj M`, which is an abbreviation of
 `(Action.res (ModuleCat R) H.subtype).obj M`
 -/
 notation M "↓" H => (res H).obj M
---infixr:80 " ↓ "   => fun (M : Rep R G) (H : Subgroup G) ↦ (Rep.res H).obj M
+
 /-
 `simp` lemmas for `Action.res` also work for `Rep.res` because it is an abbreviation:
 -/
@@ -166,6 +166,17 @@ lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (H : S
   -/
   sorry
 
+
+/--
+The restriction map in cohomology from `Hⁿ(G,M)` to `Hⁿ(⊤,M ↓ G)` is an isomorphism.
+This is useful when we have a hypothesis concerning `Hⁿ(H,M ↓ H)` for all subgroups `H` of `G`,
+for example `Rep.IsAcyclic`.
+-/
+def rest_top_iso (M : Rep R G) (n : ℕ) : groupCohomology M n ≅ groupCohomology (M ↓ ⊤) n where
+  hom := (rest ⊤ n).app M
+  inv := sorry
+  hom_inv_id := sorry
+  inv_hom_id := sorry
 
 end groupCohomology
 

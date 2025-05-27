@@ -2,7 +2,7 @@ import Mathlib
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 import ClassFieldTheory.GroupCohomology._1_restriction
 import ClassFieldTheory.GroupCohomology._3_LeftRegular
-import ClassFieldTheory.GroupCohomology._4_DimensionShift
+import ClassFieldTheory.GroupCohomology._5_DimensionShift
 
 
 /-!
@@ -119,61 +119,30 @@ lemma isShortExactSequence' (H : Subgroup G) :
   sorry
 
 
-def _root_.Rep.leftRegular.iso_coind'₁ [Fintype G] : leftRegular R G ≅ coind'₁.obj (trivial R G R) where
+/--
+The left regular representation is isomorphic to `ind₁'.obj (trivial R G R)`
+-/
+def _root_.Rep.leftRegular.iso_ind₁' : leftRegular R G ≅ ind₁'.obj (trivial R G R) where
   hom := {
-    hom := ofHom {
-      toFun f := {
-        toFun v := ∑ x : G, f x * v x
-        map_add' := sorry
-        map_smul' := sorry
-      }
-      map_add' := sorry
-      map_smul' := sorry
-    }
+    hom := ofHom LinearMap.id
     comm g := by
-      ext x y
-      change ∑ x : G, _ = _
-      rw [ModuleCat.hom_comp, LinearMap.comp_apply, LinearMap.comp_apply]
-      conv => {
-        right
-        left
-        left
-        change ((coind'₁.obj (trivial R G R)).ρ g)
-      }
-      conv => {
-        right
-        rw [coind'₁_obj_ρ_apply₂]
-        rw [trivial_def, LinearMap.id_apply]
-        dsimp
-      }
-      conv => {
-        right
-        simp only [Representation.ofMulAction_single, smul_eq_mul]
-      }
-      conv => {
-        left
-        right
-        intro z
-        left
-        change (ρReg g (leftRegular.of x)) z
-        rw [leftRegular.ρReg_apply_of]
-      }
-      /-
-      This is near enough for me to see that there is no sign error.
-      Obviously the proof above should be improved with much better API.
-      -/
-      sorry
+      ext : 1
+      change (leftRegular R G).ρ g = (ind₁'.obj (trivial R G R)).ρ g
+      ext
+      simp [ind₁'_obj_ρ_apply]
   }
-  inv := sorry
-  hom_inv_id := sorry
-  inv_hom_id := sorry
--- lemma _root_.groupCohomology.of_coinduced (A : Rep R G) (n : ℕ):
---     IsZero (groupCohomology ((ihom (leftRegular R G)).obj A) (n + 1)) := by sorry
+  inv := {
+    hom := ofHom LinearMap.id
+    comm := sorry
+  }
 
-lemma _root_.Rep.leftRegular.isAcyclic [Fintype G] :
+/--
+For a finite group, the left regular representation is acyclic.
+-/
+lemma _root_.Rep.leftRegular.isAcyclic [Finite G] [DecidableEq G]:
     (leftRegular R G).IsAcyclic := by
-  apply isAcyclic_of_iso (iso_coind'₁ R G)
-  apply coind'₁_isAcyclic
+  apply isAcyclic_of_iso (iso_ind₁' R G)
+  apply ind₁'_isAcyclic
 
 /--
 The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.
