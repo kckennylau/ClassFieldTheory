@@ -77,12 +77,12 @@ lemma Representation.map₁_comm (g : G) :
   intro
   simp [mul_assoc]
 
-
+omit [Finite G] [DecidableEq G] in
 lemma Representation.map₁_comp_coind_ι :
     map₁ (R := R) (G := G) (A := A) ∘ₗ coind₁'_ι = 0 := by
   ext; simp
 
-
+omit [Finite G] [DecidableEq G] in
 lemma Representation.map₁_ker :
     LinearMap.ker (map₁ (R := R) (G := G) (A := A)) = LinearMap.range coind₁'_ι :=
   sorry
@@ -90,11 +90,13 @@ lemma Representation.map₁_ker :
 @[simps!] def Representation.map₂ : (G →₀ A) →ₗ[R] (G →₀ A) :=
   LinearMap.id - lmapDomain _ _ (fun x ↦ x * gen G)
 
+omit [Finite G] [DecidableEq G] in
 @[simp] lemma Representation.map₂_comp_lsingle (x : G) :
     map₂ (R := R) (G := G) (A := A) ∘ₗ lsingle x = lsingle x - lsingle (x * gen G) := by
   ext
   simp [map₂, LinearMap.sub_comp]
 
+omit [Finite G] [DecidableEq G] in
 lemma Representation.map₂_comm (g : G) :
     map₂ ∘ₗ ρ.ind₁' g = ρ.ind₁' g ∘ₗ map₂ := by
   ext x : 1
@@ -102,6 +104,7 @@ lemma Representation.map₂_comm (g : G) :
     LinearMap.comp_sub, ind₁'_comp_lsingle, ←LinearMap.comp_assoc, map₂_comp_lsingle, mul_assoc,
     LinearMap.sub_comp, ind₁'_comp_lsingle]
 
+omit [Finite G] [DecidableEq G] in
 lemma Representation.ind₁'_π_comp_map₂ :
     ind₁'_π ∘ₗ map₂ (R := R) (G := G) (A := A) = 0 := by
   ext : 1
@@ -148,10 +151,12 @@ def map₂ : ind₁' (R := R) (G := G) ⟶ ind₁' where
   }
   naturality := sorry
 
+omit [Finite G] [DecidableEq G] in
 lemma map₂_app_gg_ind₁'_π_app :  map₂.app M ≫ ind₁'_π.app M = 0 := by
   ext : 2
   apply Representation.ind₁'_π_comp_map₂
 
+omit [Finite G] [DecidableEq G] in
 lemma map₂_gg_ind₁'_π : map₂ (R := R) (G := G) ≫ ind₁'_π = 0 := by
   ext : 2
   apply map₂_app_gg_ind₁'_π_app
@@ -203,9 +208,9 @@ def periodicitySequence : CochainComplex (Rep R G) (Fin 4) where
 
 lemma periodicitySequence_exactAt_one : (periodicitySequence M).ExactAt 1 := sorry
 
-lemma periodicitySequence_exactAt_two : (periodicitySequence M).ExactAt 1 := sorry
+lemma periodicitySequence_exactAt_two : (periodicitySequence M).ExactAt 2 := sorry
 
-def up_iso_down : up.obj M ≅ down.obj M :=
+def up_obj_iso_down_obj : up.obj M ≅ down.obj M :=
   /-
   `up.obj M` is the cokernel of the first map is `periodicitySequence`,
   so is isomorphic to the image of the second map. This in turn is isomorphic to the
@@ -213,15 +218,21 @@ def up_iso_down : up.obj M ≅ down.obj M :=
   -/
   sorry
 
-def periodicCohomology (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology M (n + 3) :=
-  /-
-  We have isomorphisms
+def up_iso_down : up (R := R) (G := G) ≅ down where
+  hom := {
+    app M := (up_obj_iso_down_obj M).hom
+    naturality := sorry
+  }
+  inv := {
+    app M := (up_obj_iso_down_obj M).inv
+    naturality := sorry
+  }
 
-    `Hⁿ⁺¹(G,M) ≅ Hⁿ⁺²(G,down M)` and  `Hⁿ⁺²(G, up M) ≅ Hⁿ⁺³(G,M)`
-
-  and an isomorphism `up M ≅ down M`.
-  -/
-  sorry
+def periodicCohomology (n : ℕ) :
+    functor R G (n + 1) ≅ functor R G (n + 3) := by
+  apply Iso.trans (down_δiso_natTrans n)
+  apply Iso.trans (isoWhiskerRight up_iso_down.symm _)
+  apply up_δiso_natTrans
 
 /--
 Let `M` be a representation of a finite cyclic group `G`.
@@ -234,5 +245,116 @@ lemma isZero_ofH1_ofH2 {M : Rep R G} (h1 : IsZero (groupCohomology M 1))
   | one => exact h2
   | more n ih _ =>
     apply IsZero.of_iso ih
-    symm
-    apply periodicCohomology
+    apply (periodicCohomology n).symm.app
+
+
+
+section six_term_sequence
+variable {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+
+def herbrandSixTermSequence : CochainComplex (ModuleCat R) (Fin 6) where
+  X
+  | 0 => groupCohomology S.X₁ 2
+  | 1 => groupCohomology S.X₂ 2
+  | 2 => groupCohomology S.X₃ 2
+  | 3 => groupCohomology S.X₁ 1
+  | 4 => groupCohomology S.X₂ 1
+  | 5 => groupCohomology S.X₃ 1
+  d
+  | 0,1 => (functor R G 2).map S.f
+  | 1,2 => (functor R G 2).map S.g
+  | 2,3 => δ hS 2 3 rfl ≫ (periodicCohomology 0).inv.app S.X₁
+  | 3,4 => (functor R G 1).map S.f
+  | 4,5 => (functor R G 1).map S.g
+  | 5,0 => δ hS 1 2 rfl
+  | _,_ => 0
+  shape i j _ := by fin_cases i,j <;> tauto
+  d_comp_d' i _ _ hij hjk := by
+    simp only [ComplexShape.up_Rel, Fin.isValue] at hij hjk
+    rw [←hjk,←hij]
+    sorry
+
+
+lemma herbrandSixTermSequence_exactAt (i : Fin 6) : (herbrandSixTermSequence hS).ExactAt i :=
+  /-
+  It should be possible to get this out of Mathlib.
+  -/
+  sorry
+
+def herbrandQuotient : ℚ := Nat.card (groupCohomology M 2) / Nat.card (groupCohomology M 1)
+
+lemma herbrandQuotient_nonzero_of_shortExact₃
+  (h₁ : S.X₁.herbrandQuotient ≠ 0) (h₂ : S.X₂.herbrandQuotient ≠ 0) :
+  S.X₃.herbrandQuotient ≠ 0 := sorry
+
+lemma herbrandQuotient_nonzero_of_shortExact₂
+  (h₁ : S.X₁.herbrandQuotient ≠ 0) (h₃ : S.X₃.herbrandQuotient ≠ 0) :
+  S.X₂.herbrandQuotient ≠ 0 := sorry
+
+lemma herbrandQuotient_nonzero_of_shortExact₁
+  (h₁ : S.X₂.herbrandQuotient ≠ 0) (h₃ : S.X₃.herbrandQuotient ≠ 0) :
+  S.X₁.herbrandQuotient ≠ 0 := sorry
+
+lemma herbrandQuotient_eq_of_shortExact
+    (h₁ : S.X₁.herbrandQuotient ≠ 0) (h₂ : S.X₂.herbrandQuotient ≠ 0)
+    (h₃ : S.X₃.herbrandQuotient ≠ 0) :
+    S.X₂.herbrandQuotient = S.X₁.herbrandQuotient * S.X₃.herbrandQuotient :=
+  /-
+  We have a six term long exact sequence of finite `R`-modules.
+  Hence the products of the orders of the even terms is
+  equal to the product of the orders of the odd terms.
+  This implies the relation.
+  -/
+  sorry
+
+end six_term_sequence
+
+end Rep
+
+namespace Representation
+
+variable [Fintype G]
+variable {A : Type} [AddCommGroup A] [Module R A]
+variable (ρ : Representation R G A)
+
+def oneSubGen : A →ₗ[R] A := 1 - ρ (gen G)
+
+def norm  : A →ₗ[R] A := ∑ g : G, ρ g
+
+lemma oneSubGen_comp_norm : oneSubGen ρ ∘ₗ norm ρ = 0 := sorry
+
+lemma norm_comp_oneSubGen : norm ρ ∘ₗ oneSubGen ρ = 0 := sorry
+
+end Representation
+
+namespace Rep
+variable [Fintype G] (M : Rep R G)
+open HomologicalComplex
+/--
+Let `G` be a finite cyclic group or order `n` generated by `g`, and let `M` be an `RG`-module.
+This is the complex `Fin 2` indexed complex of `R` modules whose
+objects are both `M` with morphisms given by `1- g` and `1 + g + ... + g ^ (n-1)`.
+-/
+@[simps] def herbrandComplex : CochainComplex (ModuleCat R) (Fin 2) where
+  X _ := M.V
+  d
+  | 0,0 => 0
+  | 0,1 => ofHom M.ρ.oneSubGen
+  | 1,0 => ofHom M.ρ.norm
+  | 1,1 => 0
+  shape i j:= by fin_cases i <;> fin_cases j <;> tauto
+  d_comp_d' i _ _ hij hjk := by
+    simp only [ComplexShape.up_Rel, Fin.isValue] at hij hjk
+    fin_cases i <;> simp [←hij,←hjk] <;> ext : 1
+    · exact M.ρ.norm_comp_oneSubGen
+    · exact M.ρ.oneSubGen_comp_norm
+
+def herbrandH0_iso_groupCohomology_two : homology (herbrandComplex M) 0 ≅ groupCohomology M 2 :=
+  sorry
+
+def herbrandH1_iso_groupCohomology_one : homology (herbrandComplex M) 1 ≅ groupCohomology M 1 :=
+  sorry
+
+
+
+end Rep

@@ -1,7 +1,7 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology.augmentationModule
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
-import ClassFieldTheory.GroupCohomology.Acyclic_criterion
+import ClassFieldTheory.GroupCohomology._8_Acyclic_criterion
 
 open
   CategoryTheory
@@ -212,7 +212,6 @@ lemma splits : ι σ ∘ cocycle σ ∈ twoCoboundaries (split σ) := by
 -/
 instance : AddCommMonoid (H1 M) := AddCommGroup.toAddCommMonoid
 instance : AddCommMonoid (H2 M) := AddCommGroup.toAddCommMonoid
-#synth AddCommMonoid (H0 M)
 
 /--
 The restriction of `σ` to a subgroup `H`.

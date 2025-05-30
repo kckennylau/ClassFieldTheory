@@ -159,6 +159,16 @@ instance up_δ_isIso (n : ℕ) : IsIso (δ (up_shortExact M) (n + 1) (n + 2) rfl
 def up_δiso (n : ℕ) : groupCohomology (up.obj M) (n + 1) ≅ groupCohomology M (n + 2) :=
   asIso (δ (up_shortExact M) (n + 1) (n + 2) rfl)
 
+def up_δiso_natTrans (n : ℕ) : up ⋙ functor R G (n + 1) ≅ functor R G (n + 2) where
+  hom := {
+    app M := (up_δiso M n).hom
+    naturality := sorry
+  }
+  inv := {
+    app M := (up_δiso M n).inv
+    naturality := sorry
+  }
+
 /--
 The connecting homomorphism from `H^{n+1}(G,dimensionShift M)` to `H^{n+2}(G,M)` is
 an epimorphism (i.e. surjective).
@@ -298,6 +308,16 @@ instance down_δ_isIso  (n : ℕ) : IsIso (δ (down_shortExact M) (n + 1) (n + 2
 
 def down_δiso (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology (down.obj M) (n + 2) :=
   asIso (δ (down_shortExact M) (n + 1) (n + 2) rfl)
+
+def down_δiso_natTrans (n : ℕ) : functor R G (n + 1) ≅ down ⋙ functor R G (n + 2) where
+  hom := {
+    app M := (down_δiso M n).hom
+    naturality := sorry
+  }
+  inv := {
+    app M := (down_δiso M n).inv
+    naturality := sorry
+  }
 
 /--
 The connecting homomorphism `Hⁿ⁺¹(H,down.obj M ↓ H) ⟶ Hⁿ⁺²(H, M ↓ H)` is an isomorphism

@@ -1,6 +1,6 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
-import ClassFieldTheory.GroupCohomology.inflationRestriction
+import ClassFieldTheory.GroupCohomology._7_inflationRestriction
 import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
 
 open

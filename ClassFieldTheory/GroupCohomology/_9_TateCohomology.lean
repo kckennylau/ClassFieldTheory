@@ -150,36 +150,17 @@ lemma TateCohomology.eq_groupCohomology (n : ℕ) (M : Rep R G) :
   sorry
 
 
-lemma TateCohomology.eq_groupHomology (n : ℕ) (M : Rep R G) :
-    (TateCohomology (-n - 2)).obj M = groupHomology M (n + 1) := by
+def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
+    (TateCohomology (-n - 2)).obj M ≅ groupHomology M (n + 1) := by
+  convert Iso.refl _
   sorry
-  -- rw [TateCohomology, HomologicalComplex.homology]
-  -- congr 1
-  -- simp only [HomologicalComplex.sc, HomologicalComplex.shortComplexFunctor, CochainComplex.prev,
-  --   CochainComplex.next, ChainComplex.prev, ChainComplex.next_nat_succ]
-  -- have this₁ : -(n : ℤ) - 2 - 1 = Int.negSucc (n + 2)
-  -- · calc
-  --   _ = - (n + 2 : ℤ) - 1 := by ring
-  --   _ = Int.negSucc (n + 2) := rfl
-  -- have this₂ : -(n : ℤ) - 2 = Int.negSucc (n + 1)
-  -- · calc
-  --   _ = - (n + 1 : ℤ) - 1 := by ring
-  --   _ = Int.negSucc (n + 1) := rfl
-  -- have this₃ : -(n : ℤ) - 2 + 1 = Int.negSucc n
-  -- · calc
-  --   _ = - (n + 1 : ℤ) := by ring
-  --   _ = Int.negSucc n := rfl
-  -- rw [this₃,this₁,this₂]
-  -- rfl
 
 /-
 The next two statements say that `TateComplexFunctor` is an exact functor.
 -/
-instance TateCohomology.exact1 :
-    CategoryTheory.Limits.PreservesFiniteLimits (TateComplexFunctor (R := R) (G := G)) :=
+instance : PreservesFiniteLimits (TateComplexFunctor (R := R) (G := G)) :=
   sorry
-instance TateCohomology.exact2 :
-    CategoryTheory.Limits.PreservesFiniteColimits (TateComplexFunctor (R := R) (G := G)) :=
+instance : PreservesFiniteColimits (TateComplexFunctor (R := R) (G := G)) :=
   sorry
 
 lemma TateCohomology.cochainsFunctor_Exact {S : ShortComplex (Rep R G)}

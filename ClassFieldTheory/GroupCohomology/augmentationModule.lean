@@ -10,22 +10,21 @@ Let `R` be a commutative ring and `G` a group.
 We define the augmentation module `aug R G : Rep R G` to be the kernel of
 the augmentation map "ε : R[G] ⟶ R".
 
-We show that there is a short exact sequence of `H`-modules for every subgroup `H` of `G`.
+We construct the short exact sequence of `H`-modules for every subgroup `H` of `G`.
 
-  0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0.
+  `0 ⟶ aug R G ⟶ R[G] ⟶ R ⟶ 0`.
 
 In the case that `G` is finite, the representation `R[G]` is coinduced, and so has
-trivial cohomology (with respect to any subgroup `H`). This implies that the connecting homomorphism
+trivial cohomology (with respect to any subgroup `H`).
+This implies that the connecting homomorphisms give isomorphisms for all `n > 0`
 
-  H^n(H,R) ⟶ H^{n+1}(H, aug R G)
-
-are isomorphisms for all `n > 0`.
+  `Hⁿ(H,R) ≅ Hⁿ⁺¹(H, aug R G)`.
 
 We also have isomorphisms
 
-  H¹(H,aug R G) ≅ R ⧸ |H|R,
+  `H¹(H,aug R G) ≅ R ⧸ |H|R`,
 
-  H²(H,aug R G) ≅ 0, assuming `NoZeroSMulDivisors ℕ R`.
+  `H²(H,aug R G) ≅ 0`, assuming `NoZeroSMulDivisors ℕ R`.
 
 -/
 
@@ -38,8 +37,7 @@ open
   groupCohomology
   BigOperators
 
-variable (R : Type) [CommRing R]
-variable (G : Type) [Group G]
+variable (R G: Type) [CommRing R] [Group G]
 
 noncomputable section AugmentationModule
 
