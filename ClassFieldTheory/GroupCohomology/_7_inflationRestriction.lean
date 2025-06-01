@@ -24,55 +24,6 @@ def inflationRestriction (n : ℕ) (M : Rep R G) : ShortComplex (ModuleCat R) wh
   g := (rest H (n + 1)).app M
   zero := sorry -- uses current PR for definitions.
 
-/--
-A weak form of the inflation restriction sequence.
-This states the existence of a sequence but doesn't describe the maps.
-It's sufficient for proving that various cohomology groups are trivial.
-
-To prove a stronger version, we need that inflation and restriction commute with the
-connecting homomorphisms defined by short exact sequences.
--/
-theorem  weak_inflation_restriction (n : ℕ) {M : Rep R G}
-    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
-    ∃ infRes : ShortComplex (ModuleCat R),
-    ∃ φ₁ : infRes.X₁ ≅ groupCohomology (M.quotientToInvariants H) (n + 1),
-    ∃ φ₂ : infRes.X₂ ≅ groupCohomology M (n + 1),
-    ∃ φ₃ : infRes.X₂ ≅ groupCohomology (M ↓ H) (n + 1),
-    infRes.Exact ∧ Mono infRes.f := by
-  revert M
-  induction n with
-  | zero =>
-    -- from current PR.
-    sorry
-  | succ n ih =>
-    intro M hM
-    have iso₁ {i : ℕ} : groupCohomology ((up.obj M).quotientToInvariants H) (i + 1)
-        ≅ groupCohomology (M.quotientToInvariants H) (i + 2)
-    · /-
-      By `hM`, we have `H¹(H,M)= 0` so we have a short exact sequence
-
-        `0 ⟶ Mᴴ ⟶ (coind'₁ M)ᴴ ⟶ (up M)ᴴ ⟶ 0`.
-
-      The isomorphism required is the connecting homomorphism in `G ⧸ H`-cohomology
-      from this short exact sequence. It is a isomorphism because `(coind'₁ M)ᴴ` is acyclic.
-      -/
-      specialize hM 0 (Nat.zero_lt_succ n)
-      sorry
-    have iso₂ {i : ℕ} : groupCohomology (up.obj M) (i + 1) ≅ groupCohomology M (i + 2)
-    · apply up_δiso M i
-    have iso₃ {i : ℕ} : groupCohomology ((up.obj M) ↓ H) (i + 1) ≅ groupCohomology (M ↓ H) (i + 1 + 1)
-    · apply up_δiso_res M H i
-    have : ∀ i, (i < n → IsZero (groupCohomology ((up.obj M) ↓ H) (i + 1)))
-    · intro i hi
-      exact IsZero.of_iso (hM _ (by simpa)) iso₃
-    specialize ih this
-    obtain ⟨S, φ₁, φ₂, φ₃, hS₁, hS₂⟩ := ih
-    use S
-    use φ₁ ≪≫ iso₁
-    use φ₂ ≪≫ iso₂
-    use φ₃ ≪≫ iso₃
-
-
 
 theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
     (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :

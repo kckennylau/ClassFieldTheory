@@ -38,9 +38,6 @@ abbrev cocycle := (H2π_surjective σ).choose
 -/
 lemma cocycle_spec : H2π M (cocycle σ) = σ := (H2π_surjective σ).choose_spec
 
-
---variable (σ : twoCocycles M)
-
 def representation : Representation R G (carrier σ) where
   toFun g := {
     toFun v := {
@@ -151,7 +148,7 @@ def shortExactSequence : ShortComplex (Rep R G) where
 /--
 The sequence
 
-  0 ⟶ M ⟶ split σ ⟶ aug R G ⟶ 1
+`  0 ⟶ M ⟶ split σ ⟶ aug R G ⟶ 1  `
 
 is a short exact sequence in `Rep R G`.
 -/
@@ -170,8 +167,6 @@ lemma res_isShortExact (H : Subgroup G) : ((shortExactSequence σ).map (res H)).
   -/
   sorry
 
-
-
 /--
 The function from the group `G` to the splitting module of a 2-cocycle `σ`,
 which takes `g : G` to ([1]-[g], σ (g,1)).
@@ -182,7 +177,6 @@ noncomputable def τ (g : G) : split σ :=
   ⟨aug.ofSubOfOne R G g, M.ρ g (cocycle σ (1,1))⟩
 
 open leftRegular Classical
-
 
 /--
 Given a 2-cocycle `σ`, the image of `σ` in the splitting module of `σ` is equal to the
@@ -234,10 +228,8 @@ def H2Map₂ {A B : Rep R G} (f : A ⟶ B) : H2 A ⟶ H2 B := H2Map (MonoidHom.i
 
 variable (H : Subgroup G)
 
-#check ((Action.res (ModuleCat R) H.subtype).map (ι σ))
-#check H2Map₂ ((Action.res (ModuleCat R) H.subtype).map (ι σ))
 /--
-If `σ` generates H²(G,M) then the map H²(G,M) ⟶ H²(G,split σ) is zero.
+If `σ` generates `H²(G,M)` then the map `H²(G,M) ⟶ H²(G,split σ)` is zero.
 -/
 lemma TateTheorem_lemma_1 [FiniteClassFormation σ] : H2Map₂ ((res H).map (ι σ)) = 0 :=
   /-
@@ -302,7 +294,7 @@ lemma TateTheorem_lemma_4 [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
 
   We therefore have a long exact sequence containing
 
-    H²(G,M) ⟶ H²(G,split) ⟶ 0.
+    `H²(G,M) ⟶ H²(G,split) ⟶ 0.`
 
   We have shown in `TateTheorem_lemma_1` that the map above is zero.
   -/
@@ -313,11 +305,13 @@ The splitting module is acyclic.
 -/
 lemma isAcyclic [IsSolvable G] [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
     (split σ).IsAcyclic := by
-  apply Acyclic_ofH1_ofH2_of_solvable (split σ)
+  apply Acyclic_ofH1_ofH2_of_solvable (split σ) 0 0
   · intro H
-    apply TateTheorem_lemma_3
+    apply IsZero.of_iso (TateTheorem_lemma_4 σ H)
+    apply isoH2
   · intro H
-    apply TateTheorem_lemma_4
+    apply IsZero.of_iso (TateTheorem_lemma_3 σ H)
+    apply isoH1
 
 
 
@@ -325,7 +319,7 @@ lemma isAcyclic [IsSolvable G] [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ
 
 # TODO
 
-3. *Tate's Theorem* (The statement below is slightly vague)
+3. **Tate's Theorem** (The statement below is slightly vague)
 
 Assuming that `M` satisfies the conditions above for all subgroups of `G`,
 prove that Hⁿ(G,split) = 0 for all `n` (if this is Tate cohomology).
@@ -337,13 +331,13 @@ This is proved by induction on the subgroup of `G`.
 It's proved for cyclic `G` by periodicity together with (3.)
 For solvable groups, the inductive step is by inflation-restriction.
 For a general group notince that the p-Sylov subgroup of Hⁿ(G,split) is isomorphic to
-a subgroup of Hⁿ(Gₚ,split), where Gₚ is a Sylow p-subgroup of G. We then use the fact that
-Gₚ is solvable.
+a subgroup of `Hⁿ(Gₚ,split)`, where `Gₚ` is a Sylow `p`-subgroup of `G`. We then use the fact that
+`Gₚ` is solvable.
 
 Note that for local class field theory, it's enough to prove in the case that `G` is solvable.
 
-4. define an isomorphism between Hⁿ(G,R) and H^{n+1}(G,aug R G), which we have already seen
-is isomorphic to H^{n+2}(G,R).
+4. define an isomorphism between `Hⁿ(G,R)` and `Hⁿ⁺¹(G,aug R G)`, which we have already seen
+is isomorphic to `Hⁿ⁺²(G,R)`.
 -/
 
 end Rep.split
