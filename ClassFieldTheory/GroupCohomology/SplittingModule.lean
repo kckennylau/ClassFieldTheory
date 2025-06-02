@@ -199,7 +199,7 @@ Given a 2-cocycle `σ : Z²(G,M)`, the image of `σ` in `Z²(G,split σ)` is a c
 lemma splits : ι σ ∘ cocycle σ ∈ twoCoboundaries (split σ) := by
   use τ σ
   ext : 1
-  rw [groupCohomology.dOne_apply, Function.comp_apply, τ_property]
+  rw [groupCohomology.dOne_hom_apply, Function.comp_apply, τ_property]
 
 /-
 # Warning : the following looks like a bad idea, but let's live with it for now.

@@ -15,7 +15,7 @@ The proof requires the inflation-restriction sequence in the following generalit
 Let `H` be a normal subgroup of `G` and assume that `Hʳ(H,M) = 0` for all `0 < r < n`. Then we have an
 exact sequence
 
-  0 ⟶ Hⁿ(G ⧸ H, Mᴴ) ⟶ Hⁿ(G,M) ⟶ Hⁿ(H,M).
+  `0 ⟶ Hⁿ(G ⧸ H, Mᴴ) ⟶ Hⁿ(G,M) ⟶ Hⁿ(H,M)`.
 
 Note that the result remains true without the assumption that `G` is solvable. The more general
 result is needed for global class field theory but not local class field theory because the Galois

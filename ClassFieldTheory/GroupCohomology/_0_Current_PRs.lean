@@ -56,38 +56,6 @@ end groupCohomology
 end Long_Exact_Sequences
 
 
-section Inflation_Restriction
-
-namespace groupCohomology
-
--- PR merged.
--- abbrev _root_.Rep.quotientToInvariants (M : Rep R G) (S : Subgroup G) [S.Normal] : Rep R (G ⧸ S) :=
---   sorry
-
-variable (M : Rep R G) (S : Subgroup G) [S.Normal]
-
-@[simps X₁ X₂ X₃]
-noncomputable def H1InfRes :
-    ShortComplex (ModuleCat R) where
-  X₁ := H1 (M.quotientToInvariants S)
-  X₂ := H1 M
-  X₃ := H1 ((Action.res _ S.subtype).obj M)
-  f := H1Map (QuotientGroup.mk' S) sorry
-  g := H1Map S.subtype (𝟙 _)
-  zero := sorry
-
-/-- The inflation map `H¹(G ⧸ S, A^S) ⟶ H¹(G, A)` is a monomorphism. -/
-instance : Mono (H1InfRes M S).f := sorry
-
-/-- Given a `G`-representation `A` and a normal subgroup `S ≤ G`, the short complex
-`H¹(G ⧸ S, A^S) ⟶ H¹(G, A) ⟶ H¹(S, A)` is exact. -/
-lemma H1InfRes_exact : (H1InfRes M S).Exact :=sorry
-
-end groupCohomology
-
-end Inflation_Restriction
-
-
 noncomputable section Homology -- from #21740, #21754
 
 def groupHomology.inhomogeneousChains (M : Rep R G) :

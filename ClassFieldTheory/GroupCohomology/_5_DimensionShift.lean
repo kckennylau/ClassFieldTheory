@@ -206,14 +206,6 @@ lemma ind₁'_π.app_hom : (ind₁'_π.app M).hom = ofHom Representation.ind₁'
 lemma ind₁'_π.app_apply (f : ind₁'.obj M) :
     (ind₁'_π.app M) f = Finsupp.sum f (fun _ ↦ LinearMap.id (R := R)) := rfl
 
--- lemma ind₁'_π.app_naturality {M₁ M₂ : Rep R G} (φ : M₁ ⟶ M₂) :
---     ind₁'.map φ ≫ ind₁'_π.app M₂ = ind₁'_π.app M₁ ≫ φ := by
---   ext : 2
---   apply Representation.ind₁_π_naturality
---   intro g
---   change hom (φ.hom ≫ Action.ρ M₂ g) = hom (Action.ρ M₁ g ≫ φ.hom)
---   rw [φ.comm]
-
 def down : Rep R G ⥤ Rep R G where
   obj M := kernel (ind₁'_π.app M)
   map φ := by
@@ -240,46 +232,6 @@ lemma down_shortExact_res (H : Subgroup G) :
     ((down_ses M).map (res H)).ShortExact := by
   rw [res_respectsShortExact]
   exact down_shortExact M
-
--- /-- (Requires current PR - long exact sequences in group homology.)
--- The connecting homomorphism from `H₁(G,M)` to `H₀(G,down M)` is
--- an epimorphism (i.e. surjective).
--- -/
--- lemma down_δ_zero_epi : Epi (groupHomology.δ (down_shortExact M) 1 0 rfl) :=
---   /-
---   The next term in the long exact sequence is zero by `groupCohomology.ofCoind₁`.
---   -/
---   sorry
-
--- /--
--- The connecting homomorphism from `Hₙ₊₂(G,M)` to `Hₙ₊₁(G,down M)` is an
--- isomorphism.
--- -/
--- instance down_δ_isIso (n : ℕ) : IsIso (groupHomology.δ (down_shortExact M) (n + 2) (n + 1) rfl) :=
---   /-
---   This map is sandwiched between two zeros by `groupCohomology.ofCoind₁`.
---   -/
---   sorry
-
--- instance down_δ_isIso' (H : Subgroup G) (n : ℕ) :
---     IsIso (groupHomology.δ (down_shortExact_res M H) (n + 2) (n + 1) rfl) :=
---   /-
---   This map is sandwiched between two zeros by `groupCohomology.ofCoind₁`.
---   -/
---   sorry
--- /--
--- The isomorphism `H^{n+1}(G,up M) ≅ H^{n+2}(G,M)`.
--- -/
--- def down_δiso (n : ℕ) : groupHomology M (n + 2) ≅ groupHomology (down.obj M) (n + 1) :=
---   asIso (δ (down_shortExact M) (n + 1) (n + 2) rfl)
-
--- /--
--- The isomorphism `H^{n+1}(H,up M) ≅ H^{n+2}(H,M)`.
--- -/
--- def down_δiso' (H : Subgroup G) (n : ℕ) :
---     groupCohomology (M ↓ H) (n + 2) ≅ groupCohomology ((down.obj M) ↓ H) (n + 1) :=
---   asIso (δ (down_shortExact_res M H) (n + 1) (n + 2) rfl)
-
 
 variable [DecidableEq G] [Finite G]
 

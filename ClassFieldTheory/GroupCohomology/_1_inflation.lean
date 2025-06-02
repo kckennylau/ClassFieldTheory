@@ -14,7 +14,7 @@ variable {R G : Type} [CommRing R] [Group G]
 variable (H : Subgroup G) [H.Normal]
 
 noncomputable def Rep.invariants' (H : Subgroup G) [H.Normal] : Rep R G ⥤ Rep R (G ⧸ H) where
-  obj M := M.quotientToInvariants H --current PR
+  obj M := M.quotientToInvariants H
   map f := sorry
 
 instance : (invariants' (R := R) H).PreservesZeroMorphisms := sorry

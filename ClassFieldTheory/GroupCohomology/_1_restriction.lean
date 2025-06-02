@@ -12,6 +12,7 @@ open
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
 
+-- # TODO : move this to a more sensible file.
 /--
 If `M` is a trivial representation of a finite group `G` and `M` is torsion-free
 then `H¹(G,M) = 0`.
@@ -85,16 +86,8 @@ An object of `Rep R G` is zero iff the underlying `R`-module is zero.
 -/
 lemma isZero_iff (M : Rep R G) : IsZero M ↔ IsZero (M.V) := by
   simp only [IsZero.iff_id_eq_zero]
-  constructor
-  · --This case should follow using the fact that `Action.forget` preserves zero-morphisms.
-    intro h
-    ext v
-    change 𝟙 M v = 0
-    rw [h]
-    rfl
-  · intro h
-    ext : 1
-    exact h
+  apply Action.hom_ext_iff
+
 
 /--
 An object of `Rep R G` is zero iff its restriction to a subgroup is zero.
@@ -120,8 +113,6 @@ lemma res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
   A representation is projective iff it is a direct summand of a free module over the group ring.
   This lemma follows because "R[G]" is free as an "R[H]"-module (a basis is given by a set of
   coset representatives).
-
-  There is perhaps a better proof than this.
   -/
   sorry
 
@@ -135,7 +126,6 @@ The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a natural transformati
 def rest (H : Subgroup G) (n : ℕ) : functor R G n ⟶ Rep.res H ⋙ functor R H n  where
   app M               := map H.subtype (𝟙 (M ↓ H)) n
   naturality M₁ M₂ f  := by
-    dsimp
     sorry
 
 lemma rest_app (H : Subgroup G) (n : ℕ) (M : Rep R G) :
