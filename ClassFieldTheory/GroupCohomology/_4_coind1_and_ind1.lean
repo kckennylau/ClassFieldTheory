@@ -365,7 +365,7 @@ variable (R G V)
   left_inv := sorry
   right_inv := sorry
 
-lemma ind₁_equiv_Coind₁_comm [DecidableEq G] [Finite G] (g : G) :
+lemma ind₁_equiv_coind₁_comm [DecidableEq G] [Finite G] (g : G) :
     ind₁_equiv_coind₁ R G V ∘ₗ ind₁ R G V g = coind₁ R G V g ∘ₗ ind₁_equiv_coind₁ R G V :=
   ind₁_toCoind₁_comm g
 
@@ -411,7 +411,7 @@ def coind₁_iso_fTrivial_comp_coindFunctor : coind₁ G ≅ fTrivial Unit ⋙ c
 /--
 Coinduced representations are acyclic.
 -/
-theorem coind₁_isAcyclic (A : ModuleCat R) : ((coind₁ G).obj A).IsAcyclic :=
+instance coind₁_isAcyclic (A : ModuleCat R) : ((coind₁ G).obj A).IsAcyclic :=
   /-
   There are many ways to prove this. The following method uses none of the
   technology of homological algebra, so it should be fairly easy to formalize.
@@ -462,12 +462,9 @@ def coind₁_quotientToInvariants_iso (A : ModuleCat R) (H : Subgroup G) [H.Norm
 /--
 The `H`-invariants of `(coind₁ G).obj A` form an acyclic representation of `G ⧸ H`.
 -/
-lemma coind₁_quotientToInvariants_isAcyclic (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
-    (((coind₁ G).obj A).quotientToInvariants H).IsAcyclic := by
-  apply Rep.isAcyclic_of_iso
-  apply Rep.coind₁_quotientToInvariants_iso
-  exact coind₁_isAcyclic (G ⧸ H) A
-
+instance coind₁_quotientToInvariants_isAcyclic (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
+    (((coind₁ G).obj A).quotientToInvariants H).IsAcyclic :=
+  Rep.isAcyclic_of_iso (Rep.coind₁_quotientToInvariants_iso _ _ _)
 
 variable {G}
 
@@ -516,7 +513,8 @@ The inclusion of a representation `M` of `G` in the coinduced representation `co
   hom_inv_id := sorry
   inv_hom_id := sorry
 
-@[simps] def coind₁'_iso_forget₂_ggg_coind₁ : coind₁' ≅ forget₂ (Rep R G) (ModuleCat R) ⋙ coind₁ G where
+@[simps] def coind₁'_iso_forget₂_ggg_coind₁ :
+    coind₁' ≅ forget₂ (Rep R G) (ModuleCat R) ⋙ coind₁ G where
   hom := {
     app M := M.coind₁'_obj_iso_coind₁.hom
     naturality := sorry
@@ -528,8 +526,15 @@ The inclusion of a representation `M` of `G` in the coinduced representation `co
   hom_inv_id := sorry
   inv_hom_id := sorry
 
-lemma coind₁'_isAcyclic : (coind₁'.obj M).IsAcyclic :=
-  isAcyclic_of_iso (coind₁'_obj_iso_coind₁ M) (coind₁_isAcyclic G M.V)
+instance coind₁'_isAcyclic : (coind₁'.obj M).IsAcyclic :=
+  isAcyclic_of_iso (coind₁'_obj_iso_coind₁ M)
+
+instance coind₁'_quotientToInvariants_isAcyclic (H : Subgroup G) [H.Normal] :
+    ((coind₁'.obj M).quotientToInvariants H).IsAcyclic := by
+  have : (coind₁'.obj M).quotientToInvariants H ≅ ((coind₁ G).obj M.V).quotientToInvariants H
+  · sorry
+  apply isAcyclic_of_iso this
+
 
 variable (G)
 
@@ -740,11 +745,11 @@ lemma ind₁'_iso_coind₁'_app_apply [Finite G] (f : G →₀ M.V) (x : G) :
     simp
 
 
-lemma ind₁_isAcyclic [Finite G] : IsAcyclic ((ind₁ G).obj A) :=
-  isAcyclic_of_iso (ind₁_obj_iso_coind₁_obj A) (coind₁_isAcyclic G A)
+instance ind₁_isAcyclic [Finite G] : IsAcyclic ((ind₁ G).obj A) :=
+  isAcyclic_of_iso (ind₁_obj_iso_coind₁_obj A)
 
-lemma ind₁'_isAcyclic [Finite G] : IsAcyclic (ind₁'.obj M) :=
-  isAcyclic_of_iso (ind₁'_obj_iso M) (ind₁_isAcyclic M.V)
+instance ind₁'_isAcyclic [Finite G] : IsAcyclic (ind₁'.obj M) :=
+  isAcyclic_of_iso (ind₁'_obj_iso M)
 
 lemma coind₁_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} ((coind₁ G).obj A) :=
   isHomologyAcyclic_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm (ind₁_isHomologyAcyclic G A)

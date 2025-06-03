@@ -4,7 +4,7 @@ import ClassFieldTheory.GroupCohomology._9_TateCohomology
 
 noncomputable section
 
-variable {R G : Type} [CommRing R] [Group G] [Fintype G] [DecidableEq G] [IsCyclic G]
+variable {R G : Type} [CommRing R] [Group G] [Finite G] [DecidableEq G] [IsCyclic G]
 variable {A : Type} [AddCommGroup A] [Module R A] (ρ : Representation R G A)
 
 open CategoryTheory
@@ -15,7 +15,6 @@ open CategoryTheory
 namespace Representation
 
 abbrev oneSubGen : A →ₗ[R] A := 1 - ρ (gen G)
-abbrev norm : A →ₗ[R] A := ∑ g : G, ρ g
 abbrev herbrandZ0 := ker ρ.oneSubGen
 abbrev herbrandZ1 := ker ρ.norm
 abbrev herbrandB0 := range ρ.norm
@@ -25,9 +24,9 @@ lemma herbrandB0_le_herbrandZ0 : ρ.herbrandB0 ≤ ρ.herbrandZ0 := sorry
 
 lemma herbrandB1_le_herbrandZ1 : ρ.herbrandB1 ≤ ρ.herbrandZ1 := sorry
 
-def herbrandH0 := ρ.herbrandZ0 ⧸ (ρ.herbrandB0.submoduleOf ρ.herbrandZ0)
+abbrev herbrandH0 := ρ.herbrandZ0 ⧸ (ρ.herbrandB0.submoduleOf ρ.herbrandZ0)
 
-def herbrandH1 := ρ.herbrandZ1 ⧸ (ρ.herbrandB0.submoduleOf ρ.herbrandZ1)
+abbrev herbrandH1 := ρ.herbrandZ1 ⧸ (ρ.herbrandB0.submoduleOf ρ.herbrandZ1)
 
 def herbrandQuotient : ℚ := Nat.card ρ.herbrandH0 / Nat.card ρ.herbrandH1
 

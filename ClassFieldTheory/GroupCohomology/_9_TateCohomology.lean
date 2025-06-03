@@ -8,11 +8,24 @@ open
   groupHomology
   Rep
   dimensionShift
+  LinearMap
 
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G] [Finite G]
 
 noncomputable section
+
+namespace Representation
+variable {A : Type} [AddCommGroup A] [Module R A] (ρ : Representation R G A)
+
+def norm : A →ₗ[R] A :=
+  let _ := Fintype.ofFinite G
+  ∑ g : G, ρ g
+
+lemma norm_comm (g : G) : ρ.norm ∘ₗ ρ g = ρ g ∘ₗ ρ.norm := sorry
+
+
+end Representation
 
 namespace groupCohomology
 
@@ -22,6 +35,10 @@ This is the map from the coinvariants of `M : Rep R G` to the invariants, induce
 -/
 def TateNorm (M : Rep R G) : (inhomogeneousChains M).X 0 ⟶
     (inhomogeneousCochains M).X 0 := by
+  /-
+  The linear map part will be `M.ρ.norm` after groupHomology is merged.
+  The commuting property will be `M.ρ.norm_comm`.
+  -/
   sorry
 
 lemma TateNorm_comp_d (M : Rep R G) : TateNorm M ≫ (inhomogeneousCochains M).d 0 1 = 0 :=
@@ -107,7 +124,7 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
               norm_cast at hij hjk
               rw [←hij, add_comm 1 i]
               dsimp
-              convert (inhomogeneousChains M).d_comp_d' (i + 1+1) (i + 1) i rfl rfl
+              convert (inhomogeneousChains M).d_comp_d' _ _ i rfl rfl
               have : i = k := by linarith
               rw [this]
 
@@ -135,32 +152,14 @@ def TateComplexFunctor : Rep R G ⥤ CochainComplex (ModuleCat R) ℤ where
 def TateCohomology (n : ℤ) : Rep R G ⥤ ModuleCat R :=
   TateComplexFunctor ⋙ HomologicalComplex.homologyFunctor _ _ n
 
-lemma TateCohomology.eq_groupCohomology (n : ℕ) (M : Rep R G) :
-    (TateCohomology (n + 1)).obj M = groupCohomology M (n + 1) := by
-  rw [TateCohomology, HomologicalComplex.homologyFunctor]
-  congr 1
-  simp only [Functor.comp_obj]
-  rw [HomologicalComplex.homology, groupCohomology, HomologicalComplex.homology]
-  congr 1
-  rw [TateComplexFunctor]
-  dsimp
-  rw [TateComplex]
-  rw [HomologicalComplex.sc, HomologicalComplex.shortComplexFunctor,
-    CochainComplex.prev, CochainComplex.next, add_sub_cancel_right]
-  sorry
-
-
-def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
-    (TateCohomology (-n - 2)).obj M ≅ groupHomology M (n + 1) := by
-  convert Iso.refl _
-  sorry
-
 /-
 The next two statements say that `TateComplexFunctor` is an exact functor.
 -/
-instance : PreservesFiniteLimits (TateComplexFunctor (R := R) (G := G)) :=
+instance TateComplexFunctor_preservesFiniteLimits :
+    PreservesFiniteLimits (TateComplexFunctor (R := R) (G := G)) :=
   sorry
-instance : PreservesFiniteColimits (TateComplexFunctor (R := R) (G := G)) :=
+instance TateComplexFunctor_preservesFiniteColimits :
+    PreservesFiniteColimits (TateComplexFunctor (R := R) (G := G)) :=
   sorry
 
 lemma TateCohomology.cochainsFunctor_Exact {S : ShortComplex (Rep R G)}
@@ -174,6 +173,32 @@ noncomputable abbrev TateCohomology.δ {S : ShortComplex (Rep R G)} (hS : S.Shor
     (n : ℤ) : (TateCohomology n).obj S.X₃ ⟶ (TateCohomology (n + 1)).obj S.X₁ :=
   (TateCohomology.cochainsFunctor_Exact hS).δ n (n + 1) rfl
 
+def TateCohomology.iso_groupCohomology (n : ℕ) (M : Rep R G) :
+    (TateCohomology (n + 1)).obj M ≅ groupCohomology M (n + 1) := by
+  convert Iso.refl _
+  sorry
+
+def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
+    (TateCohomology (-n - 2)).obj M ≅ groupHomology M (n + 1) := by
+  convert Iso.refl _
+  sorry
+
+def TateCohomology_zero_iso (M : Rep R G) : (TateCohomology 0).obj M ≅
+    ModuleCat.of R (M.ρ.invariants ⧸ (range M.ρ.norm).submoduleOf M.ρ.invariants) :=
+  sorry
+
+def TateCohomology_neg_one_iso (M : Rep R G) : (TateCohomology (-1)).obj M ≅
+    ModuleCat.of R (ker M.ρ.norm ⧸
+    (Submodule.span R (⋃ g : G, range (1 - M.ρ g))).submoduleOf (ker M.ρ.norm)) :=
+  sorry
+
+def TateCohomology_zero_iso_of_isTrivial (M : Rep R G) [M.ρ.IsTrivial] : (TateCohomology 0).obj M ≅
+    ModuleCat.of R (M.V ⧸ (range (Nat.card G : M.V →ₗ[R] M.V))) :=
+  sorry
+
+def TateCohomology_neg_one_iso_of_isTrivial (M : Rep R G) [M.ρ.IsTrivial] :
+    (TateCohomology (-1)).obj M ≅ ModuleCat.of R (ker (Nat.card G : M.V →ₗ[R] M.V)):=
+  sorry
 
 /--
 All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.

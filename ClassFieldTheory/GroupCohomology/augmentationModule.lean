@@ -137,10 +137,9 @@ def _root_.Rep.leftRegular.iso_ind₁' : leftRegular R G ≅ ind₁'.obj (trivia
 /--
 For a finite group, the left regular representation is acyclic.
 -/
-lemma _root_.Rep.leftRegular.isAcyclic [Finite G] [DecidableEq G]:
-    (leftRegular R G).IsAcyclic := by
-  apply isAcyclic_of_iso (iso_ind₁' R G)
-  apply ind₁'_isAcyclic
+instance _root_.Rep.leftRegular.isAcyclic [Finite G] [DecidableEq G]:
+    (leftRegular R G).IsAcyclic :=
+  isAcyclic_of_iso (iso_ind₁' R G)
 
 /--
 The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.

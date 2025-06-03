@@ -29,7 +29,7 @@ theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
     (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ H) (i + 1))) :
     Mono (inflationRestriction H (n + 1) M).f :=
   /-
-  The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is a current PR.
+  The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is in Mathlib.
   For the inductive step, use the fact that the following square commutes by `infl_δ_naturality`.
 
   ` Hⁿ⁺¹(G⧸H,Mᴴ)     ⟶  Hⁿ⁺¹(G,M)    `

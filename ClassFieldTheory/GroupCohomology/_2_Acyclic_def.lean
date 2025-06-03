@@ -41,14 +41,15 @@ variable {R G : Type _} [CommRing R]  [Group G]
 A representation `M : Rep R G` is acyclic if the cohomology groups `Hⁿ(H,M)` are all zero
 for every subgroup `H` of `G` and every `n > 0`.
 -/
-def Rep.IsAcyclic (M : Rep R G) : Prop :=
-  ∀ (H : Subgroup G), ∀ n : ℕ, IsZero (groupCohomology (M ↓ H) (n + 1))
+class Rep.IsAcyclic (M : Rep R G) : Prop where
+  zero {H : Subgroup G} {n : ℕ} : IsZero (groupCohomology (M ↓ H) (n + 1))
 
-lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsAcyclic) : M.IsAcyclic := by
+lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) [N.IsAcyclic] : M.IsAcyclic := by
+  constructor
   intro H n
   have : (functor R H n.succ).obj (M ↓ H) ≅ (functor R H n.succ).obj (N ↓ H)
   · exact (functor _ _ n.succ).mapIso ((res H).mapIso f)
-  apply IsZero.of_iso (hN H n) this
+  apply IsZero.of_iso IsAcyclic.zero this
 
 def Rep.IsHomologyAcyclic.{u} (M : Rep R G) : Prop :=
   ∀ (H : Subgroup G), ∀ n : ℕ, IsZero.{u,u+1} (groupHomology (M ↓ H) (n + 1))
@@ -57,5 +58,6 @@ lemma Rep.isHomologyAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsHomol
     M.IsHomologyAcyclic := by
   sorry
 
-lemma groupCohomology.isZero_of_isAcyclic {M : Rep R G} (hM : M.IsAcyclic) (n : ℕ) :
-    IsZero (groupCohomology M (n + 1)) := IsZero.of_iso (hM ⊤ n) (rest_top_iso _ _)
+lemma groupCohomology.isZero_of_isAcyclic {M : Rep R G} [M.IsAcyclic] (n : ℕ) :
+    IsZero (groupCohomology M (n + 1)) :=
+  IsZero.of_iso Rep.IsAcyclic.zero (rest_top_iso _ _)
