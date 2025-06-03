@@ -564,7 +564,7 @@ def ind₁ : ModuleCat R ⥤ Rep R G where
 instance (A : ModuleCat R) : FunLike ((ind₁ G).obj A) G A :=
   inferInstanceAs (FunLike (G →₀ A) _ _)
 
-lemma ind₁_isHomologyAcyclic (A : ModuleCat R) : IsHomologyAcyclic ((ind₁ G).obj A) :=
+instance ind₁_isHomologyAcyclic (A : ModuleCat R) : IsHomologyAcyclic ((ind₁ G).obj A) :=
   sorry -- relies on current PR (defn of group homology).
 
 @[ext] lemma ind₁_obj.ext {A : ModuleCat R} (f₁ f₂ : (ind₁ G).obj A) (h : ⇑f₁ = ⇑f₂) :
@@ -674,8 +674,9 @@ def ind₁'_iso_forget₂_ggg_ind₁ : ind₁' ≅ forget₂ (Rep R G) (ModuleCa
   inv_hom_id := sorry
 
 universe u
-lemma ind₁'_isHomologyAcyclic : IsHomologyAcyclic.{u} (ind₁'.obj M) :=
-  isHomologyAcyclic_of_iso (ind₁'_obj_iso M) (ind₁_isHomologyAcyclic.{u} G M.V)
+instance ind₁'_isHomologyAcyclic : IsHomologyAcyclic.{u} (ind₁'.obj M) :=
+  let _ := (ind₁_isHomologyAcyclic.{u} G M.V)
+  isHomologyAcyclic_of_iso (ind₁'_obj_iso M)
 
 section FiniteGroup
 
@@ -744,17 +745,16 @@ lemma ind₁'_iso_coind₁'_app_apply [Finite G] (f : G →₀ M.V) (x : G) :
     rw [hx]
     simp
 
-
 instance ind₁_isAcyclic [Finite G] : IsAcyclic ((ind₁ G).obj A) :=
   isAcyclic_of_iso (ind₁_obj_iso_coind₁_obj A)
 
 instance ind₁'_isAcyclic [Finite G] : IsAcyclic (ind₁'.obj M) :=
   isAcyclic_of_iso (ind₁'_obj_iso M)
 
-lemma coind₁_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} ((coind₁ G).obj A) :=
-  isHomologyAcyclic_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm (ind₁_isHomologyAcyclic G A)
+instance coind₁_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} ((coind₁ G).obj A) :=
+  isHomologyAcyclic_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm
 
-lemma coind₁'_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} (coind₁'.obj M) :=
-  isHomologyAcyclic_of_iso.{u} (coind₁'_obj_iso_coind₁ M) (coind₁_isHomologyAcyclic M.V)
+instance coind₁'_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} (coind₁'.obj M) :=
+  isHomologyAcyclic_of_iso.{u} (coind₁'_obj_iso_coind₁ M)
 
 end FiniteGroup

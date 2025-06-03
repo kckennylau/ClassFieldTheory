@@ -51,10 +51,10 @@ lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) [N.IsAcyclic] : M.IsAcy
   · exact (functor _ _ n.succ).mapIso ((res H).mapIso f)
   apply IsZero.of_iso IsAcyclic.zero this
 
-def Rep.IsHomologyAcyclic.{u} (M : Rep R G) : Prop :=
-  ∀ (H : Subgroup G), ∀ n : ℕ, IsZero.{u,u+1} (groupHomology (M ↓ H) (n + 1))
+class Rep.IsHomologyAcyclic.{u} (M : Rep R G) : Prop where
+  zero (H : Subgroup G) (n : ℕ) : IsZero.{u,u+1} (groupHomology (M ↓ H) (n + 1))
 
-lemma Rep.isHomologyAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) (hN : N.IsHomologyAcyclic) :
+lemma Rep.isHomologyAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) [N.IsHomologyAcyclic] :
     M.IsHomologyAcyclic := by
   sorry
 

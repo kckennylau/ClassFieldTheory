@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
 import ClassFieldTheory.GroupCohomology._4_coind1_and_ind1
 
 /-!
@@ -287,4 +288,62 @@ def down_δiso_res (H : Subgroup G) (n : ℕ) :
 end dimensionShift
 
 end Rep
+
+namespace groupCohomology
+
+variable [Finite G]
+open Rep
+  dimensionShift
+
+/--
+All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.
+-/
+lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj ((Rep.coind₁ G).obj A ↓ H)) :=
+  /-
+  For `n > 0` this is proved elsewhere for `groupCohomology`.
+  For `n < -1` this is proved elsewhere for `groupHomology` (and relies on a current PR).
+  The cases `n = 0` and `n = -1` need to be proved here.
+  -/
+  sorry -- requires current PR.
+
+/--
+All of the Tate cohomology groups of `coind₁'.obj M ↓ H` are zero.
+-/
+lemma TateCohomology_coind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ H)) :=
+  /-
+  It is shown earier that `coind₁'.obj M ≅ (coind₁ G).obj M.V`, so we can use the previous result.
+  -/
+  sorry
+
+lemma TateCohomology_ind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+    IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ H)) :=
+  /-
+  It is shown earier that `ind₁'.obj M ≅ coind₁'.obj M`, so we can use the previous result.
+  -/
+  sorry
+
+instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (up_shortExact M) n) :=
+  /-
+  This follows from `TateCohomology_coind₁'`.
+  -/
+  sorry
+
+instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (down_shortExact M) n) := by
+  /-
+  This follows from `TateCohomology_coind₁'`.
+  -/
+  sorry
+
+def upδiso_Tate (n : ℤ) (M : Rep R G) :
+    (TateCohomology n).obj (up.obj M) ≅ (TateCohomology (n + 1)).obj M :=
+  asIso (TateCohomology.δ (up_shortExact M) n)
+
+def downδiso_Tate (n : ℤ) (M : Rep R G) :
+    (TateCohomology n).obj M ≅ (TateCohomology (n + 1)).obj (down.obj M) :=
+  asIso (TateCohomology.δ (down_shortExact M) n)
+
+end groupCohomology
+
 end

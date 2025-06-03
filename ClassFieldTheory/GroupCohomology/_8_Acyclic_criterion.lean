@@ -1,5 +1,7 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._5_DimensionShift
 import ClassFieldTheory.GroupCohomology._7_inflationRestriction
 import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
 
@@ -7,6 +9,8 @@ open
   CategoryTheory
   CategoryTheory.Limits
   groupCohomology
+  Rep
+  dimensionShift
 
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
@@ -14,7 +18,7 @@ variable {G : Type} [Group G]
 /--
 If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H` of `G` then `M` is acyclic.
 -/
-theorem groupCohomology.Acyclic_ofH1_ofH2_of_solvable [Finite G] [IsSolvable G]
+theorem groupCohomology.Acyclic_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
     (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
@@ -36,3 +40,23 @@ theorem groupCohomology.Acyclic_ofH1_ofH2_of_solvable [Finite G] [IsSolvable G]
   Therefore `Hʳ(H,M)=0` for all `r > 0`.
   -/
   sorry
+
+theorem groupCohomology.Acyclic_of_even_of_odd [Finite G]
+    (M : Rep R G) (n m : ℕ)
+    (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
+    (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
+    M.IsAcyclic := by
+  sorry
+
+
+instance Rep.dimensionShift.up_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
+    (up.obj M).IsAcyclic := sorry
+
+instance Rep.dimensionShift.down_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
+    (down.obj M).IsAcyclic := sorry
+
+lemma groupCohomology.TateCohomology_of_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] (n : ℤ) :
+    IsZero ((TateCohomology n).obj M) := sorry
+
+instance Rep.isHomologyAcyclic_of_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
+    M.IsHomologyAcyclic := sorry

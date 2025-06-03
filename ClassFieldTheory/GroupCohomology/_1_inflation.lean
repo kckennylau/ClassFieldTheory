@@ -80,7 +80,7 @@ Then we have a commuting square
 where the horizontal maps are connecting homomorphisms
 and the vertical maps are inflation.
 -/
-lemma infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     (hS' : (S.map (invariants' H)).ShortExact)  (i j : ℕ) (hij : i + 1 = j) :
     δ hS' i j hij ≫ (infl H j).app _ = (infl H i).app _ ≫ δ hS i j hij
     := by

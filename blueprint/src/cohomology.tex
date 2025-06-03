@@ -688,25 +688,38 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 
 \section{The inflation-restriction sequence}
 
-In this section $H$ is a normal subgroup of a group $G$ and $M$ is
-a representation of $G$ (over some commutative ring $R$).
-The subspace $M^H = \{m \in M | \forall h \in H, h \bullet m = 0\}$ is
-a representation of the quotient group $G / H$.
-Any n-chain $\sigma \in C^n(G/H,M^H)$ may be pulled back to an
-$n$-chain on $G$ with values in $n$. This defines a map of complexes
-\[
-	C^\bullet(G/H, M^H) \to C^\bullet(G,H).
-\]
-The corresponding map $H^\bullet(G/H, M^H) \to H^\bullet(G,M)$ is called the ``inflation map''.
 
-The restriction of an $n$-cochain $\sigma\in C^n(G,M)$ to the subgroup  $H$ is an $n$-cochain on $H$. Restriction of cochains gives a map of complexes
-\[
-	C^\bullet(G,M) \to C^\bullet(H,M).
-\]
-The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the ``restriction map''.
+\begin{definition}
+	\lean{groupCohomology.infl}
+	Let $H$ be a normal subgroup of a group $G$ and $M$ is
+	a representation of $G$ (over some commutative ring $R$).
+	The subspace $M^H = \{m \in M | \forall h \in H, h \bullet m = 0\}$ is
+	a representation of the quotient group $G / H$.
+	Any n-chain $\sigma \in C^n(G/H,M^H)$ may be pulled back to an
+	$n$-chain on $G$ with values in $n$. This defines a map of complexes
+	\[
+		C^\bullet(G/H, M^H) \to C^\bullet(G,H).
+	\]
+	The corresponding map $\infl : H^\bullet(G/H, M^H) \to H^\bullet(G,M)$
+	is called the ``inflation map''.
+\end{definition}
 
+
+\begin{definition}
+	\lean{groupCohomology.rest}
+	The restriction of an $n$-cochain $\sigma\in C^n(G,M)$ to a subgroup $H$
+	is an $n$-cochain on $H$. Restriction of cochains gives a map of complexes
+	\[
+		C^\bullet(G,M) \to C^\bullet(H,M).
+	\]
+	The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the
+	``restriction map''.
+\end{definition}
 
 \begin{theorem}
+	\lean{groupCohomology.inflationRestriction,
+		groupCohomology.inflation_restriction_mono,
+		groupCohomology.inflation_restriction_exact}
 	Assume that for all natural numbers $i < n$ we have $H^{i+1}(H,M)=0$.
 	Then the following sequence is exact:
 	\[
@@ -747,6 +760,7 @@ The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the 
 \end{proof}
 
 \begin{lemma}
+	\lean{groupCohomology.rest_δ_naturality}
 	Suppose we have a a short exact sequence of representations of $G$
 	\[
 			0 \to  A \to  B \to  C  \to  0.
@@ -764,16 +778,17 @@ The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the 
 \end{lemma}
 
 \begin{lemma}
-	If $H$ is a normal subgroup of $G$, and suppose we have a short exact
+	\lean{groupCohomology.infl_δ_naturality}
+	Let $H$ be a normal subgroup of $G$, and suppose we have a short exact
 	sequence of $G$-modules:
 	\[
 			0 \to  A \to  B \to  C  \to  0.
 	\]
-	Assume that the following is a short exact sequence of $G/H$-modules:
+	Assume also that the following is a short exact sequence of $G/H$-modules:
 	\[
 			0 \to  A^H \to  B^H \to  C^H  \to  0.
 	\]
-	Then the following square commutes
+	Then for all $n \in \N$ the following square commutes
 	\[
 		\begin{matrix}
 			H^{n}(G/H,C^H) & \to & H^{n+1}(G/H,A^H)\\
@@ -781,30 +796,77 @@ The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the 
 			H^n(G,C) & \to & H^{n+1}(G,A)
 		\end{matrix}.
 	\]
-	The vertical maps are inflation and the horizontal maps are the connecting homomorphisms from the long exact sequences.
+	The vertical maps are inflation and the horizontal maps are the connecting homomorphisms
+	from the long exact sequences.
 \end{lemma}
 
 
 \section{Periodicity for finite cyclic groups}
 
-In this section, $G$ is a finite cyclic group of order $n$. We shall write $g$ for a fixed generator of $G$. Let $M$ be a representation of $G$.
-There is a map $\coind_1'(M) \to \coind_1'(M)$ which takes $f : G \to M$ to the function
+Suppose now that $G$ is a finite cyclic group of order $n$.
+We shall write $g$ for a fixed generator of $G$.
+Let $M$ be a representation of $G$.
+
+
+\begin{definition}
+	\lean{Representation.map₁}
+	There is a map $\map_1 : \coind_1'(M) \to \coind_1'(M)$ which takes $f : G \to M$ to the function
+	\[
+		x \mapsto f(x) - f(g^{-1}x).
+	\]
+\end{definition}
+
+
+\begin{lemma}
+	\lean{Representation.map₁_ker}
+	The kernel of $\map_1$ consists of the constant functions $G \to M$, i.e. the image of the
+	map $M \to \coind_1'(M)$.
+\end{lemma}
+
+\begin{corollary}
+	The image of $\map_1$ is isomorphic to $\up(M)$.
+\end{corollary}
+
+Recall that since $G$ is finite, the representations $\coind_1'(M)$ and $\ind_1'(M)$
+are isomorphic, and we define $\map_2$ to be the corresponding map $\ind_1'(M) \to \ind_1'(M)$.
+This is given by
 \[
-	x \mapsto f(x) - f(g*x).
+	\map_2(f) (x) = f(x) - f(xg^{-1}).
 \]
-The kernel of this map consists of the constant functions $G \to M$, and the image is precisely the
-set of functions $G \to M$ whose values sum to zero.
-This means that we have an exact sequence
+
+\begin{lemma}
+	\lean{Representation.map₂_range}
+	The image of $\map_2 : \ind_1'(M) \to \ind_1'(M)$ is precisely the set of functions $G \to M$
+	which sum to zero. This is the kernel of the map $\ind_1'(M) \to M$.
+\end{lemma}
+
+
+
+
+The two lemmas show that we have a diagram with exact rows and vertical isomorphisms:
 \[
-	0 \to M \to \coind_1'(M) \to \coind_1'(M) \to M \to 0,
+	\begin{matrix}
+		0 \to M \to &\coind_1'(M)& \stackrel{\map_1}\to& \coind_1'(M)\\
+		& || &&|| \\
+		& \ind_1'(M)& \stackrel{\map_2}\to& \ind_1'(M) &\to M \to 0
+	\end{matrix},
 \]
-In particular we have an isomorphism of representations:
-\[
-	\up(M) \cong \down(M).
-\]
-(It will be more convenient in the long run to express this as an isomorphism of functors
-$\up \cong \down$.)
-This implies for all $n \in \N$, $H^{n+1}(G,M) \cong H^{n+3}(G,M)$.
+
+
+\begin{corollary}
+	\lean{Rep.up_iso_down}
+	In particular we have an isomorphism:
+	\[
+		\up(M) \cong \down(M).
+	\]
+	(It is more convenient in the long run to express this as an isomorphism of functors
+	$\up \cong \down$.)
+\end{corollary}
+
+\begin{corollary}
+	\lean{Rep.periodicCohomology}
+	For all $n \in \N$, $H^{n+1}(G,M) \cong H^{n+3}(G,M)$.
+\end{corollary}
 
 
 
@@ -817,12 +879,12 @@ This implies for all $n \in \N$, $H^{n+1}(G,M) \cong H^{n+3}(G,M)$.
 Recall that a representation $M$ of a group $G$ is \emph{acyclic} if for all subgroups $H$ of $G$
 and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 
-
 \begin{theorem}
+	\lean{groupCohomology.Acyclic_of_even_of_odd_of_solvable}
 	Let $M$ be a representation of a finite solvable group $G$.
 	Suppose we have positive natural numbers $e$ and $o$ with $e$ even and $o$ odd, such that for all subgroups $H$ of $G$ we have
 	\[
-		H^e(H,M) =0, \qquad H^o(H,M) = 0.
+		H^e(H,M) = 0, \qquad H^o(H,M) = 0.
 	\]
 	Then $M$ is acyclic.
 \end{theorem}
@@ -842,6 +904,7 @@ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 
 
 \begin{theorem}
+	\lean{groupCohomology.Acyclic_of_even_of_odd}
 	Let $M$ be a representation of a finite group $G$ (no longer assumed to be solvable).
 	Suppose we have positive natural numbers $e$ and $o$ with $e$ even and $o$ odd, such that for all subgroups $H$ of $G$ we have
 	\[
@@ -852,30 +915,37 @@ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 
 \begin{proof}
 	(Requires definition of corestriction, which is not yet in Mathlib).
-	Fix a prime number $p$ and let $S_p$ be the Sylow $p$-subgroup of $G$.
+	Let $H$ be a subgroup of $G$.
+	Fix a prime number $p$ and let $S_p$ be the Sylow $p$-subgroup of $H$.
 	Consider the composition of the restriction and corestriction maps
 	\[
-		H^{n+1}(G,M) \to H^{n+1}(S_p,M) \to H^{n+1}(G,M).
+		H^{n+1}(H,M) \to H^{n+1}(S_p,M) \to H^{n+1}(H,M).
 	\]
-	This composition is multiplication by the index $[G:S_p]$, and is therefore injective on the $p$-torsion
-	in $H^{n+1}(G,M)$.
+	This composition is multiplication by the index $[H:S_p]$,
+	and is therefore injective on the $p$-torsion
+	in $H^{n+1}(H,M)$.
 	However, the previous result implies (since $S_p$ is solvable) that $H^{n+1}(S_p,M)=0$.
 	Therefore $H^{n+1}(G,M)$ has zero $p$-torsion.
 	The same composition with $S_p$ replaced by the trivial subgroup implies that every element
-	of $H^{n+1}(G,M)$ is killed by $|G|$.
-	Therefore $H^{n+1}(G,M) = 0$.
+	of $H^{n+1}(H,M)$ is killed by $|H|$.
+	Therefore $H^{n+1}(H,M) = 0$.
 \end{proof}
 
 
-\begin{lemma}
-	If $M$ is an acyclic representation of a finite group $G$ then $\up(M)$ and $\down(M)$ are acyclic.
-\end{lemma}
+\begin{corollary}
+	\lean{Rep.dimensionShift.up_isAcyclic,
+		Rep.dimensionShift.down_isAcyclic}
+	If $M$ is an acyclic representation of a finite group $G$
+	then $\up(M)$ and $\down(M)$ are acyclic.
+\end{corollary}
 
 \begin{proof}
 	This follows from the previous result, together with the dimension shifting isomorphisms.
 \end{proof}
 
 \begin{theorem}
+	\lean{groupCohomology.TateCohomology_of_isAcyclic,
+		Rep.isHomologyAcyclic_of_isAcyclic}
 	Let $G$ be an acyclic representation of a finite group $G$.
 	Then for all integers $n$ and all subgroups $H$ of $G$ we have $H^n_{Tate}(H,M)=0$.
 	In particular $M$ is homology-acyclic.
@@ -979,7 +1049,8 @@ There is evidently a short exact sequence of representations of $G$.
 \end{proof}
 
 \begin{theorem}
-	Assume $R$ and $\sigma$ satisfy the conditions above. Then	$\Split(\sigma)$ is acyclic.
+	Assume $R$ and $\sigma$ satisfy the conditions above.
+	Then	$\Split(\sigma)$ is acyclic.
 \end{theorem}
 
 \begin{proof}
@@ -990,9 +1061,11 @@ There is evidently a short exact sequence of representations of $G$.
 		0 \to H^1(H,\Split(\sigma)) \to H^1(H,\aug(R,G)) \to H^2(H,M) \to H^2(H,\Split(\sigma))
 		\to 0.
 	\]
-	Since $\sigma|H$ generates $H^2(H,M)$, the previous lemma implies that the last map is zero, and in particular $H^2(H,\Split(\sigma))=0$ (this uses the fact that restriction is a natural
+	Since $\sigma|H$ generates $H^2(H,M)$, the previous lemma implies that the last map is zero,
+	and in particular $H^2(H,\Split(\sigma))=0$ (this uses the fact that restriction is a natural
 	transformation).
-	The $R$-modules $H^1(H,\aug(R,G))$ and $H^2(H,M)$ are both isomorphic to $R / |H|R$, and the map from one to the other is surjective.
+	The $R$-modules $H^1(H,\aug(R,G))$ and $H^2(H,M)$ are both isomorphic to $R / |H|R$,
+	and the map from one to the other is surjective.
 	Since every surjective $R$-module endomorphism of $R /|H|R$ is injective, the map
 	from $H^1(H,\aug(R,G))$ to $H^2(H,M)$ is injective.
 	Therefore $H^1(H,\Split(\sigma))=0$.

@@ -16,6 +16,8 @@ open
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G] (H : Subgroup G) [H.Normal]
 
+namespace groupCohomology
+
 def inflationRestriction (n : ℕ) (M : Rep R G) : ShortComplex (ModuleCat R) where
   X₁ := groupCohomology (M ↑ H) (n + 1)
   X₂ := groupCohomology M (n + 1)
@@ -56,5 +58,6 @@ theorem inflation_restriction_exact (n : ℕ) {M : Rep R G}
   -/
   sorry
 
+end groupCohomology
 
 end

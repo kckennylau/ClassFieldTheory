@@ -3,6 +3,7 @@ import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._1_inflation
 import ClassFieldTheory.GroupCohomology._1_restriction
+import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 import ClassFieldTheory.GroupCohomology._3_LeftRegular
 import ClassFieldTheory.GroupCohomology._4_coind1_and_ind1

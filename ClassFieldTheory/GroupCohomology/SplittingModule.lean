@@ -1,7 +1,7 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology.augmentationModule
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
 import ClassFieldTheory.GroupCohomology._8_Acyclic_criterion
+import ClassFieldTheory.GroupCohomology._9_augmentationModule
 
 open
   CategoryTheory
@@ -303,9 +303,9 @@ lemma TateTheorem_lemma_4 [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
 /--
 The splitting module is acyclic.
 -/
-lemma isAcyclic [IsSolvable G] [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
+lemma isAcyclic [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
     (split σ).IsAcyclic := by
-  apply Acyclic_ofH1_ofH2_of_solvable (split σ) 0 0
+  apply Acyclic_of_even_of_odd (split σ) 0 0
   · intro H
     apply IsZero.of_iso (TateTheorem_lemma_4 σ H)
     apply isoH2
@@ -314,33 +314,16 @@ lemma isAcyclic [IsSolvable G] [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ
     apply isoH1
 
 
+def TateCohomology_iso [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] (n : ℤ) :
+  (TateCohomology n).obj (trivial R G R) ≅ (TateCohomology (n + 2)).obj M := sorry
 
-/-
-
-# TODO
-
-3. **Tate's Theorem** (The statement below is slightly vague)
-
-Assuming that `M` satisfies the conditions above for all subgroups of `G`,
-prove that Hⁿ(G,split) = 0 for all `n` (if this is Tate cohomology).
-For class field theory, it is sufficient to prove this only for Tate cohomology in dimensions
-`0` and `-1`, but if Tate cohomology is not available
-then perhaps it makes sense to prove this is all positive dimensions.
-
-This is proved by induction on the subgroup of `G`.
-It's proved for cyclic `G` by periodicity together with (3.)
-For solvable groups, the inductive step is by inflation-restriction.
-For a general group notince that the p-Sylov subgroup of Hⁿ(G,split) is isomorphic to
-a subgroup of `Hⁿ(Gₚ,split)`, where `Gₚ` is a Sylow `p`-subgroup of `G`. We then use the fact that
-`Gₚ` is solvable.
-
-Note that for local class field theory, it's enough to prove in the case that `G` is solvable.
-
-4. define an isomorphism between `Hⁿ(G,R)` and `Hⁿ⁺¹(G,aug R G)`, which we have already seen
-is isomorphic to `Hⁿ⁺²(G,R)`.
--/
+def reciprocity_iso (N : Rep ℤ G) (τ : H2 N) [FiniteClassFormation τ] :
+    (TateCohomology 0).obj N ≅ ModuleCat.of ℤ (Additive (Abelianization G)) := by
+  symm
+  apply Iso.trans (Y := (TateCohomology (-2)).obj (trivial ℤ G ℤ))
+  · sorry
+  · apply TateCohomology_iso τ
 
 end Rep.split
-
 
 end Split
