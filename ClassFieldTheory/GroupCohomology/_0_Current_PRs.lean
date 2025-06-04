@@ -1,6 +1,7 @@
 import Mathlib
 
 open CategoryTheory
+    Rep
 
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G]
@@ -71,5 +72,8 @@ def groupHomology.chainsMap {H : Type} [Group H] (f : G →* H) {M : Rep R G} {M
 def groupHomology.Map {H : Type} [Group H] (f : G →* H) {M : Rep R G} {M' : Rep R H}
     (φ : M ⟶ (Action.res (ModuleCat R) f).obj M') (n : ℕ) : groupHomology M n ⟶ groupHomology M' n
     := sorry
+
+def groupHomology.one_trivial_int_iso :
+    groupHomology (trivial ℤ G ℤ) 1 ≅ ModuleCat.of ℤ (Additive (Abelianization G)) := sorry
 
 end Homology

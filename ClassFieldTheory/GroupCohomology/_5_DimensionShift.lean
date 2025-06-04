@@ -69,9 +69,8 @@ The map from `M` to its coinduced representation is a monomorphism.
 -/
 instance : Mono (coind₁'_ι.app M) := by
   /-
-  This is because the map is injective.
-  (Choose `v` in `R[G]` such that `ε R G v = 1`; for example we can take
-  `v := leftRegular.of 1`. Then we have `m = (coind₁'_ι.app M m).toFun v`.)
+  The function which takes `m : M` to the constant
+  function on `G` with value `m` is clearly injective.
   -/
   sorry
 

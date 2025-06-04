@@ -392,6 +392,7 @@ lemma coind₁_map_hom (A B : ModuleCat R) (φ : A ⟶ B) :
 @[simp] lemma coind₁_map_apply₂ (A B : ModuleCat R) (φ : A ⟶ B) (f : G → A):
     ((coind₁ G).map φ) f = φ ∘ f := rfl
 
+-- # TODO : update Mathlib, remove fTrivial and replace it by trivialFunctor.
 /--
 The functor taking an `R`-module `A` to the trivial representation of `G` on `A`.
 -/

@@ -21,8 +21,9 @@ def norm : A →ₗ[R] A :=
   let _ := Fintype.ofFinite G
   ∑ g : G, ρ g
 
-lemma norm_comm (g : G) : ρ.norm ∘ₗ ρ g = ρ g ∘ₗ ρ.norm := sorry
+lemma norm_comm (g : G) : ρ g ∘ₗ ρ.norm = ρ.norm := sorry
 
+lemma norm_comm' (g : G) : ρ.norm ∘ₗ ρ g = ρ.norm := sorry
 
 end Representation
 
@@ -36,7 +37,6 @@ def TateNorm (M : Rep R G) : (inhomogeneousChains M).X 0 ⟶
     (inhomogeneousCochains M).X 0 := by
   /-
   The linear map part will be `M.ρ.norm` after groupHomology is merged.
-  The commuting property will be `M.ρ.norm_comm`.
   -/
   sorry
 
