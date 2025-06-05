@@ -1,29 +1,43 @@
-% In this file you should put the actual content of the blueprint.
-% It will be used both by the web and the print version.
-% It should *not* include the \begin{document}
-%
-% If you want to split the blueprint content into several files then
-% the current file can be a simple sequence of \input. Otherwise It
-% can start with a \section or \chapter for instance.
-
-
 \chapter{Group Cohomology}
 
 \section{Group cohomology and homology}
 
 Let $G$ be a group and $R$ a commutative ring.
-By a $G$-module, we shall mean an $R$-module $A$ with an action of $G$ by $R$-linear maps.
-If $S$ is a subgroup of $G$, then $M \down S$ will mean the same $R$-module $M$, but regarded only as a
-representation of $S$.
+By a \emph{representation of $G$ over $R$},
+we shall mean an $R$-module $A$ with an action of $G$ by $R$-linear maps.
+We'll write $\Mod(R)$ for the category of $R$-modules and $\Rep(R,G)$
+for the category of such representations.
+In Mathlib these are called \texttt{ModuleCat R} and \texttt{Rep R G}.
+
+If $S$ is a subgroup of $G$ and $M$ is a representation of $G$
+then $M \downarrow S$ will mean the same $R$-module $M$,
+but regarded only as a representation of $S$.
 We shall write $M^S$ for the $R$-submodule of $S$-invariant vectors in $M$.
 If the subgroup $S$ is normal then $M^S$ is a representation of the quotient group $G/S$.
 
-Given a represntation $M$ of $G$, there is a cochain comple of $R$-modules
+\begin{definition} \label{def:inflation restriction functors}
+	\lean{Rep.quotientToInvariantsFunctor,
+		Rep.res}
+	The map $M \mapsto M \downarrow S$ defines a functor $\Res : \Rep(R,G) \to \Rep(R,S)$.
+	If $S$ is a normal subgroup of $G$ then then map $M \mapsto M^S$ defines
+	a functor $\Inf : \Rep(R,G) \to \Rep(R, G/S)$.
+	These functors are called \emph{restriction} and \emph{inflation} respectively.
+\end{definition}
+
+\begin{lemma} \label{lem:restriction exact}
+	\lean{Rep.res_respectsShortExact}
+	Let $S$ be a subgroup of $G$.
+	A sequence $0 \to A \to B \to C \to 0$ is exact in $\Rep(R,G)$ if and only if
+	the sequence $0 \to A \downarrow S \to B \downarrow S \to C \downarrow S$ is exact
+	in $\Rep(R,S)$.
+\end{lemma}
+
+Given a representation $M$ of $G$, there is a cochain complex of $R$-modules
 \[
-	C^0(G,M) \stackrel{d_0}\to C^1(G,M)  \stackrel{d_1}\to C^2(G,M)  \stackrel{d_2}\to \cdots
+	C^0(G,M) \stackrel{d^0}\to C^1(G,M)  \stackrel{d^1}\to C^2(G,M)  \stackrel{d^2}\to \cdots
 \]
 where each term $C^n(G,M)$ is the space of functions $G^n \to M$ with some appropriately defined
-linear maps $d_i$.
+linear maps $d^i$ linking them.
 The zeroth module $C^0(G,M)$ should be interpreted as just $M$.
 The cochain complex $C^\bullet(G,M)$ is functorial in $M$ and is defined in Mathlib as
 \texttt{groupCohomology.cochainsFunctor}.
@@ -31,22 +45,40 @@ The cohomology groups of this chain complex are called the cohomology groups of 
 $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 \texttt{groupCohomology M n}, or \texttt{(groupCohomology.functor n).obj M}.
 
-If $H$ is a subgroup of $G$, then it is common to write $H^n(H,M)$ for the
-cohomology groups of $M \down H$.
-
-\begin{definition}
-	\label{def:acyclic}
-	\lean{Rep.IsAcyclic}
-	\leanok
-	A representation $M$ of $G$ is called \emph{acyclic} if for every subgroup $S \le G$
-	and every $n > 0$, $H^n(S,M) = 0$.
+\begin{definition} \label{def:restriction map}
+	\lean{groupCohomology.rest}
+	\uses{def:inflation restriction functors}
+	If $S$ is a subgroup of $G$, then we write $H^n(S,M)$ for the
+	cohomology groups of the restricted representation $M \downarrow S$.
+	If $f \in G^n \to M$ is an element of $C^n(G,M)$, then we may restrict $f$ to
+	a function $S^n \to M$. Restricting functions in this way defines a map of
+	cochain complexes $C^\bullet(G,M) \to C^\bullet(S,M)$, and hence a map of
+	cohomology groups
+	\[
+		\rest : H^n(G,M) \to H^n(S,M).
+	\]
+	This map is called the \emph{restriction map}.
 \end{definition}
 
+\begin{definition} \label{def:inflation map}
+	\lean{groupCohomology.cochain_infl,
+		groupCohomology.infl
+	}
+	\uses{def:inflation restriction functors}
+	If $S$ is a normal subgroup of $G$, then we write $H^n(G/S,M^S)$ for the
+	cohomology groups of the representation $M^S$ of $G/S$.
+	If $f \in (G/S)^n \to M^S$ is an element of $C^n(G/S,M^S)$, then we may ``inflate'' $f$ to
+	a function $G^n \to M$. This inflation process defines a map of
+	cochain complexes $C^\bullet(G/S,M^S) \to C^\bullet(G,M)$, and hence a map of
+	cohomology groups, called the \emph{inflation map}:
+	\[
+		\infl : H^n(G/S,M^H) \to H^n(G,M).
+	\]
+\end{definition}
 
 The following results are in a current PR.
 
-\begin{lemma}
-  \label{lem:cochainsFunctor exact}
+\begin{lemma} \label{lem:cochainsFunctor exact}
   The functor taking $M$ to $C^\bullet (G,M)$ is exact.
   I.e. if $0 \to A \to B \to C \to 0$ be a short exact sequence of $G$-modules.
   Then the corresponding sequence of cochain complexes is exact:
@@ -57,8 +89,7 @@ The following results are in a current PR.
 
 As a consequence of this, we have the following (also a current PR):
 
-\begin{definition}[Long exact sequences]
-  \label{def:cohomology Long exact sequence}
+\begin{definition} \label{def:cohomology long exact sequence}
   \lean{groupCohomology.δ,
 		groupCohomology.longExactSequence₁,
 		groupCohomology.longExactSequence₂,
@@ -75,78 +106,102 @@ As a consequence of this, we have the following (also a current PR):
   \]
 \end{definition}
 
+\begin{lemma} \label{lem:inflation restriction naturality}
+	\lean{groupCohomology.rest,
+		groupCohomology.infl,
+		groupCohomology.rest_δ_naturality,
+		groupCohomology.infl_δ_naturality}
+	\uses{
+		lem:restriction exact,
+		def:restriction map,
+		def:inflation map,
+		def:cohomology long exact sequence}
+	\leanok
+	Let $S$ be a subgroup of $G$ and suppose we have a short exact sequence
+	$0 \to A \to B \to C \to 0$ in $\Rep(R,G)$.
+	Then the following diagram commutes, where the rows are the long exact sequences
+	for $0 \to A \to B \to C \to 0$ and for its restriction to $S$,
+	and the vertical maps are restriction.
+	\[
+  	\begin{array}{ccccccc}
+			H^n(G,A) & \to & H^n(G,B) &\to &H^n(G,C)& \to& H^{n+1}(G,A)\\
+			\downarrow&&\downarrow&&\downarrow&&\downarrow \\
+			H^n(S,A) & \to & H^n(S,B) &\to &H^n(S,C)& \to& H^{n+1}(S,A)
+		\end{array}
+  \]
+	Suppose now that $S$ is a normal subgroup of $G$. Then we have for every
+	map $f : A \to B$ in $\Rep(R,G)$ a commuting square in which the vertical maps are inflation.
+	\[
+  	\begin{array}{ccccccc}
+			H^n(G/S,A^S) & \to & H^n(G/S,B^S)\\
+			\downarrow&&\downarrow \\
+			H^n(G,A) & \to & H^n(G,B)
+		\end{array}.
+	\]
+	If $0 \to A \to B \to C \to 0$ is exact in $\Rep(R,G)$ and its inflation
+	$0 \to A^S \to B^S \to C^S \to 0$ is exact in $Rep(R,G/S)$, then
+	we have a commutative diagram in which the rows are the corresponding long exact
+	sequences and the vertical maps are inflation:
+	\[
+  	\begin{array}{ccccccc}
+			H^n(G/S,A^S) & \to & H^n(G/S,B^S) &\to &H^n(G/S,C^S)& \to& H^{n+1}(G/S,A^S)\\
+			\downarrow&&\downarrow&&\downarrow&&\downarrow \\
+			H^n(G,A) & \to & H^n(G,B) &\to &H^n(G,C)& \to& H^{n+1}(G,A)
+		\end{array}.
+  \]
+\end{lemma}
 
-\begin{definition}
-	\label{def:group homology}
+\begin{definition} \label{def:group homology}
 	\lean{groupHomology.inhomogeneousChains,
 		groupHomology,
 		groupHomology.chainsMap,
 		groupHomology.Map}
-	There is also a chain complex $R$-modules:
+	There is also a chain complex of $R$-modules:
 	\[
-		\cdots \to C_2(G,M) \to C_1(G,M) \to C_0(G,M)
+		\cdots \stackrel{d_2}\to C_2(G,M) \stackrel{d_1}\to C_1(G,M) \stackrel{d_0}\to C_0(G,M)
 	\]
 	whose $n$-th term is the space of finitely supported functions
-	$f : G^n \to_0 M$, with appropriately defined boundary maps.
+	$f : G^n \to_0 M$, with appropriately defined boundary maps $d_n$.
 	In the case $n=0$ this is interpreted as meaning $C_0(G,M) = M$.
 	The homology groups of $C_n(G,M)$ are called the \emph{homology groups of $M$}
 	and are written $H_n(G,M)$.
 	These are not yet in Mathlib but are defined in a current PR.
 \end{definition}
 
+We also note the following, which is a current PR:
 
-\begin{definition}
-	\label{def:homology-acyclic}
-	\lean{Rep.IsHomologyAcyclic}
-	\uses{def:group homology}
-	\leanok
-	A representation $M$ of $G$ is called \emph{homology-acyclic} if for every subgroup $S \le G$
-	and every $n > 0$, $H_n(S,M) = 0$.
-\end{definition}
-
-
-
-We also note the following, which is a current PR (stated for group homology):
-
-\begin{lemma}
-	\label{lem:homology 1 Z}
+\begin{lemma}	\label{lem:homology 1 Z}
 	\lean{groupHomology.one_trivial_int_iso}
 	\leanok
 	There is a canonical isomorphism $H_{1}(G,\Z) \cong G^{ab}$.
 \end{lemma}
 
-
 \section{Tate Cohomology}
 
-\begin{definition}
-	\label{def:norm}
+\begin{definition} \label{def:norm}
 	\lean{Representation.norm,
 		groupCohomology.TateNorm}
+	\uses{def:group homology}
 	Let $G$ be a finite group and $M$ a representation of $G$ over a commutative ring $R$.
-	There is a canonical morphism of representations $N_G : M \to M$ called the \emph{norm},
+	There is a canonical linear map $N_G : M \to M$ called the \emph{norm},
 	defined by
 	\[
-		N_G(m) = \sum_{x \in G} g \bullet m.
+		N_G(m) = \sum_{g \in G} g \bullet m.
 	\]
-	We shall also regard the norm as a linear map from $C_0(G,M)$ to $C^0(G,M)$, both of which are
-	$M$, and in this context we'll call it the Tate norm.
+	We shall also regard the norm as a linear map from $C_0(G,M)$ to $C^0(G,M)$, both of which may
+	be identified with $M$.
 \end{definition}
 
-
-\begin{lemma}
-	\label{lem:norm comm}
+\begin{lemma}	\label{lem:norm comm}
 	\lean{Representation.norm_comm,
 		Representation.norm_comm'}
 	\uses{def:norm}
 	\leanok
-	For any $g \in G$ and $m \in M$ we have $g \bullet N_G m = N_G m$
-	and $N_G (g \bullet m) = N_G m$.
+	For any $g \in G$ and $m \in M$ we have $g \bullet N_G (m) = N_G (m)$
+	and $N_G (g \bullet m) = N_G (m)$.
 \end{lemma}
 
-
-
-\begin{lemma}
-	\label{lem:norm comp d}
+\begin{lemma}	\label{lem:norm comp d}
 	\lean{groupCohomology.TateNorm_comp_d}
 	\uses{def:norm, lem:norm comm}
 	\leanok
@@ -160,9 +215,7 @@ We also note the following, which is a current PR (stated for group homology):
 	$d^0 (N_G m) (g) = N_G m - g \bullet N_G m = 0$.
 \end{proof}
 
-
-\begin{lemma}
-	\label{lem:d comp norm}
+\begin{lemma}	\label{lem:d comp norm}
 	\lean{groupCohomology.d_comp_TateNorm}
 	\uses{def:norm, lem:norm comm, def:group homology}
 	The composition $N_G \circ d_0$ is zero.
@@ -173,14 +226,10 @@ We also note the following, which is a current PR (stated for group homology):
 	once group homology is merged into Mathlib.
 \end{proof}
 
-
-
-
-\begin{definition}
-	\label{def:Tate complex}
+\begin{definition} \label{def:Tate complex}
 	\lean{groupCohomology.TateComplex,
 		groupCohomology.TateComplexFunctor}
-	\uses{def:group homology,
+	\uses{
 		lem:norm comp d,
 		lem:d comp norm}
 	\leanok
@@ -199,58 +248,52 @@ We also note the following, which is a current PR (stated for group homology):
 	This construction is functorial in $M$.
 \end{definition}
 
-\begin{lemma}
-	\label{lem:Tate complex exactness}
+\begin{lemma}	\label{lem:Tate complex exactness}
   \lean{groupCohomology.TateComplexFunctor_preservesFiniteLimits,
     groupCohomology.TateComplexFunctor_preservesFiniteColimits}
 	\uses{def:Tate complex,
 		lem:cochainsFunctor exact}
 	\leanok
-  $C^\bullet_{Tate}$ is an exact functor from $Rep(R,G)$ to the category
+  $C^\bullet_{Tate}$ is an exact functor from $\Rep(R,G)$ to the category
   of cochain complexes of $R$-modules.
 \end{lemma}
 
 \begin{proof}
-	This should follow from the fact that $C^n(G,-)$ and $C_n(G,_)$ are exact functors.
+	This should follow from the fact that $C^n(G,-)$ and $C_n(G,-)$ are exact functors.
 \end{proof}
 
-
-\begin{definition}
-	\label{def:Tate cohomology}
+\begin{definition} \label{def:Tate cohomology}
 	\lean{groupCohomology.TateCohomology}
 	\uses{def:Tate complex}
 	For an integer $n$, we shall write $H^n_{Tate}(G,M)$ for the $n$-th cohomology of the complex
 	$C^n_{Tate}(G,M)$; this is called the $n$-th Tate cohomology of $M$,
 	and is often written $\hat H^n(G,M)$ or just $H^n(G,M)$ in the literature.
-	We define this as a functor from the category of representations of $G$ over $R$
-	to the category of $R$-modules.
+	We define this as a functor from $\Rep(R,G)$ to $\Mod(R)$.
 \end{definition}
 
-
-\begin{definition}
-	\label{def:Tate long exact sequence}
+\begin{definition} \label{def:Tate long exact sequence}
 	\lean{groupCohomology.TateCohomology.δ}
 	\uses{def:Tate cohomology,
 		lem:Tate complex exactness}
 	\leanok
-	Given any short exact sequence of representations
+	Suppose we have a short exact sequence in $\Rep(R,G)$:
 	\[
-		0 \to A \to B \to C \to 0,
+		0 \to A \to B \to C \to 0.
 	\]
-	there are connecting homomorphisms $\delta : H^n_{Tate}(G,C) \to H^{n+1}(G,A)$
+	By Lemma \ref{lem:Tate complex exactness} we obtain a short exact sequence of Tate complexes.
+	Hence there are connecting homomorphisms $\delta : H^n_{Tate}(G,C) \to H^{n+1}(G,A)$
 	such that the following is a long exact sequence:
 	\[
 		\cdots \to H^n_{Tate}(G,A) \to H^n_{Tate}(G,B) \to H^n_{Tate}(G,C)
 		\to H^{n+1}(G,A) \to H^{n+1}_{Tate}(G,B) \to \cdots
 	\]
-	By the lemma, every short exact sequence of representations gives rise to a long exact sequence
-of Tate cohomology groups.
+	The exactness statements are in Mathlib in the namespace
+	\texttt{HomologicalComplex.HomologySequence}.
 \end{definition}
 
 Our choice of indexing implies the following:
 
-\begin{lemma}
-	\label{lem:Tate cohomology is cohomology or homology}
+\begin{lemma}	\label{lem:Tate cohomology is cohomology or homology}
   \lean{groupCohomology.TateCohomology.iso_groupCohomology,
     groupCohomology.TateCohomology.iso_groupHomology}
 	\uses{def:Tate cohomology}
@@ -265,8 +308,7 @@ Our choice of indexing implies the following:
 The lemma above does not describe the groups $H^0_{Tate}$ or $H^{-1}_{Tate}$.
 They are described by the next two results.
 
-\begin{lemma}
-	\label{lem:Tate 0}
+\begin{lemma}	\label{lem:Tate 0}
 	\lean{groupCohomology.TateCohomology_zero_iso,
 		groupCohomology.TateCohomology_zero_iso_of_isTrivial}
 	\uses{def:Tate cohomology}
@@ -277,11 +319,14 @@ They are described by the next two results.
 \end{lemma}
 
 \begin{proof}
-	This cannot be done without the definition of group homology.
+	The $0$-cocycle submodule is the kernel of the map $d^0 : C^0(G,M) \to C^1(G,M)$.
+	This is the same as $H^0(G,M)$, which is $M^G$.
+	On the other hand $B^0(G,M)$ is by definition the image of $N_G : M \to M$.
+	However, this proof cannot yet be attempted in lean because the definition of
+	$C^{-1}_{Tate} = C_0$ relied on a current PR.
 \end{proof}
 
-\begin{lemma}
-	\label{lem:Tate -1}
+\begin{lemma}	\label{lem:Tate -1}
 	\lean{groupCohomology.TateCohomology_neg_one_iso,
 		groupCohomology.TateCohomology_neg_one_iso_of_isTrivial}
 	\uses{def:Tate cohomology}
@@ -293,149 +338,131 @@ They are described by the next two results.
 \end{lemma}
 
 \begin{proof}
-	This cannot be done without the definition of group homology.
+	This cannot be done until the definition of group homology is merged.
 \end{proof}
 
 
 
 \section{Coinduced and induced representations}
 
-\begin{definition}
-	\label{def:coind₁}
+
+\begin{definition}\label{def:acyclic}
+	\lean{Rep.IsAcyclic,
+		Rep.IsHomologyAcyclic}
+	\uses{def:group homology}
+	\leanok
+	Let $M$ be a representation of $G$ over a ring $R$.
+	\begin{itemize}
+		\item
+		$M$ is called \emph{acyclic} if for every subgroup $S \le G$
+		and every $n > 0$, $H^n(S,M) = 0$.
+		\item
+		$M$ is called \emph{homology-acyclic} if for every subgroup $S \le G$
+		and every $n > 0$, $H_n(S,M) = 0$.
+	\end{itemize}
+\end{definition}
+
+In this section we shall construct some acyclic and homology-acyclic representations.
+
+\begin{definition}\label{def:induced}
 	\lean{
 		Representation.coind₁,
 		Rep.coind₁_obj,
-		Rep.coind₁
+		Rep.coind₁,
+		Rep.ind₁
 	}
 	\leanok
-	Let $G$ be a group and $R$ a commutative ring.
-	For an $R$-module $A$, there is an representation of $G$ over $R$
-	on the space of all functions $f : G \to A$. The action of an element $g \in G$ on $f$
-	is defined by
-	\[
-		(g \bullet f) (x) = f(xg).
-	\]
-	This representation is called the coinduced representation and is denoted $\coind_1(G,A)$.
-	In fact $\coind_1(G,-)$ is a functor from the category of $R$-modules to the category of
-	representations
-	of $G$ over $R$.
+	Let $G$ be a group, $R$ a commutative ring and $A$ an $R$-module.
+	\begin{itemize}
+		\item
+		There is an representation of $G$ over $R$
+		on the space of all functions $f : G \to A$. The action of an element $g \in G$ on $f$
+		is defined by
+		\[
+			(g \bullet f) (x) = f(xg).
+		\]
+		This representation is called the coinduced representation and is denoted $\coind_1(G,A)$.
+		\item
+		There is an representation of $G$ over $R$
+		on the space of all finitely supported functions $f : G \to_0 A$.
+		The action of an element $g \in G$ on $f$ is defined by
+		\[
+			(g \bullet f) (x) = f(g^{-1}x).
+		\]
+		This representation is called the induced representation and is denoted $\ind_1(G,A)$.
+	\end{itemize}
+	More precisely, $\coind_1(G,-)$ and $\ind_1(G,-)$ are both functors from $\Mod(R)$ to $\Rep(R,G)$.
 \end{definition}
 
-\begin{lemma}
-	\label{lem:coind₁ acyclic}
+\begin{lemma}	\label{lem:coind₁ acyclic}
 	\lean{Rep.coind₁_isAcyclic}
 	\uses{def:acyclic,
-		def:coind₁}
+		def:induced}
 	\leanok
-	The representation $\coind_1(G,A)$ is acyclic. This means that
-	for any subgroup $H$ of $G$, the cohomology groups $H^{n+1}(H,\coind_1(G,A))$ are
-	all zero.
+	The representation $\coind_1(G,A)$ is acyclic.
 \end{lemma}
 
 \begin{proof}
-	There is an elementary proof outlined in lean file.
+	There is an elementary proof outlined in lean file involving cocycles.
+	A more intuitive method of proof would give a more general statement (Shapiro's Lemma).
 \end{proof}
 
-\begin{lemma}
-	\label{lem:coind₁ invariants}
-	\lean{Rep.coind₁_quotientToInvariants_iso}
-	\uses{def:coind₁}
-	\leanok
-	Let $H$ be a normal subgroup of $G$. Then $\coind_1(G,A)^H \cong \coind_1(G/H,A)$.
-\end{lemma}
-
-\begin{corollary}
-	\label{cor:coind₁ invariants acyclic}
-	\lean{Rep.coind₁_quotientToInvariants_isAcyclic}
-	\uses{lem:coind₁ invariants,
+\begin{lemma}	\label{lem:coind₁ invariants}
+	\lean{Rep.coind₁_quotientToInvariants_iso,
+		Rep.coind₁_quotientToInvariants_isAcyclic}
+	\uses{def:induced,
 		lem:coind₁ acyclic}
 	\leanok
-	Let $H$ be a normal subgroup of $G$ and let $M^H$ be the representation of $G/H$ on the
-	$H$-invariant vectors in $M$. Then $\coind_1(G,M)^H$ is acyclic as a representation of $G/H$.
-\end{corollary}
+	Let $S$ be a normal subgroup of $G$. Then $\coind_1(G,A)^S$ is isomorphic to $\coind_1(G/S,A)$.
+	In particular $\coind_1(G,A)^S$ is an acyclic representation of $G/S$.
+\end{lemma}
 
-\begin{proof}
-	\leanok
-	This follows directly from Lemmas \ref{lem:coind₁ invariants} and \ref{lem:coind₁ acyclic}.
-\end{proof}
-
-\begin{definition}
-	\label{def:ind₁}
-	\lean{Rep.ind₁}
-	\leanok
-	Let $G$ be a group and $R$ a commutative ring.
-	For an $R$-module $A$, there is an representation of $G$ over $R$
-	on the space of all finitely supported functions $f : G \to A$.
-	The action of an element $g \in G$ on $f$ is defined by
-	\[
-		(g \bullet f) (x) = f(g^{-1}x).
-	\]
-	This representation is called the induced representation and is denoted $\ind_1(G,A)$.
-	In fact $\ind_1(G,-)$ is a functor from the category of $R$-modules to the category of
-	representations	of $G$ over $R$.
-\end{definition}
-
-\begin{lemma}
-	\label{lem:ind₁ homology-acyclic}
+\begin{lemma}	\label{lem:ind₁ homology-acyclic}
 	\lean{Rep.ind₁_isHomologyAcyclic}
-	\uses{def:ind₁,
-		def:homology-acyclic}
+	\uses{def:induced,
+		def:acyclic}
 	\leanok
-	The representation $\ind_1(G,A)$ is homology-acyclic. This means that
-	for any subgroup $H$ of $G$, the homology groups $H_{n+1}(H,\ind_1(G,A))$ are
-	all zero.
+	The representation $\ind_1(G,A)$ is homology-acyclic.
 \end{lemma}
 
 \begin{proof}
-	There is an elementary proof, but this cannot be inserted until
+	There is an elementary proof, but this cannot be formalized until
 	the PR on group homology is merged.
 \end{proof}
 
-\begin{definition}
-	\label{def:ind₁ to coind₁}
+\begin{definition} \label{def:ind₁ to coind₁}
 	\lean{
 		Representation.ind₁_toCoind₁,
-		Rep.ind₁_toCoind₁}
-	\uses{def:coind₁, def:ind₁}
-	\leanok
-	There is a morphism of representations $\ind_1(G,A) \to \coind_1(G,A)$,
-	which takes a finitely supported function $f : G \to_0 A$ to the function
-	\[
-		x \mapsto f(x^{-1}).
-	\]
-	This map is an isomorphism of representations if the group $G$ is finite.
-\end{definition}
-
-\begin{lemma}
-	\label{lem:ind₁ to coind₁}
-	\lean{
+		Rep.ind₁_toCoind₁,
 		Representation.ind₁_toCoind₁,
 		Representation.ind₁_toCoind₁_comm,
 		Representation.ind₁_equiv_coind₁,
 		Rep.ind₁_toCoind₁,
 		Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite,
 		Rep.ind₁_iso_coind₁}
-	\uses{def:ind₁ to coind₁}
+	\uses{def:induced}
 	\leanok
-	The map $\ind_1(G,A) \to \coind_1(G,A)$ is a morphism of representations,
-	and is an isomorphism if $G$ is a finite group.
-\end{lemma}
+	There is a morphism of representations $\ind_1(G,A) \to \coind_1(G,A)$,
+	which takes a finitely supported function $f : G \to_0 A$ to the function
+	\[
+		x \mapsto f(x^{-1}).
+	\]
+	If the group $G$ is finite then this map is an isomorphism.
+\end{definition}
 
-
-\begin{corollary}
-	\label{cor:ind₁ is acyclic}
+\begin{corollary}	\label{cor:coind₁ homology-acyclic}
 	\lean{Rep.ind₁_isAcyclic,
 		Rep.coind₁_isHomologyAcyclic}
-	\uses{lem:ind₁ to coind₁,
+	\uses{def:ind₁ to coind₁,
 		lem:coind₁ acyclic,
-		lem:ind₁ is homology-acyclic}
+		lem:ind₁ homology-acyclic}
 	If the group $G$ is finite then $\coind_1(G,A)$ is homology-acyclic
 	and $\ind_1(G,A)$ is acyclic.
 \end{corollary}
 
 \begin{proof}
-	This follows directly from lemmas \ref{lem:ind₁ to coind₁},	\ref{lem:coind₁ acyclic}
-		and \ref{lem:ind₁ is homology-acyclic}.
+	This follows directly from \ref{def:ind₁ to coind₁},	\ref{lem:coind₁ acyclic}
+		and \ref{lem:ind₁ homology-acyclic}.
 	\leanok
 \end{proof}
 
@@ -444,8 +471,7 @@ They are described by the next two results.
 
 \subsection{Shifting $\up$}
 
-\begin{definition}
-	\label{def:coind₁'}
+\begin{definition} \label{def:coind₁'}
 	\lean{Representation.coind₁',
 		Rep.coind₁'}
 	Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
@@ -457,16 +483,14 @@ They are described by the next two results.
 	\]
 \end{definition}
 
-\begin{lemma}
-	\label{lem:coind₁' iso coind₁}
+\begin{lemma}	\label{lem:coind₁' iso coind₁}
 	\lean{Rep.coind₁'_obj_iso_coind₁}
-	\uses{def:coind₁, def:coind₁'}
+	\uses{def:induced, def:coind₁'}
 	\leanok
 	The representations $\coind_1'(M)$ and $\coind_1(G,M)$ of $G$ are isomorphic.
 \end{lemma}
 
-\begin{corollary}
-	\label{cor:coind₁' acyclic}
+\begin{corollary}	\label{cor:coind₁' acyclic}
 	\lean{Rep.coind₁'_isAcyclic}
 	\uses{lem:coind₁' iso coind₁,
 		lem:coind₁ acyclic}
@@ -479,89 +503,59 @@ They are described by the next two results.
 	\leanok
 \end{proof}
 
-\begin{corollary}
-	\label{cor:coind₁' invariants acyclic}
+\begin{corollary}	\label{cor:coind₁' invariants acyclic}
 	\lean{Rep.coind₁'_quotientToInvariants_isAcyclic}
-	\uses{lem:coind₁ invariants acyclic,
-		lem:coind₁' iso coind₁}
-	Let $H$ be a normal subgroup of $G$. Then $\coind_1'(M)^H$ is an acyclic representation of $G/H$.
+	\uses{lem:coind₁ invariants,
+		lem:coind₁' iso coind₁,
+		def:inflation restriction functors}
+	Let $S$ be a normal subgroup of $G$. Then $\coind_1'(M)^S$ is an acyclic representation of $G/S$.
 \end{corollary}
 
 \begin{proof}
 	We've seen in Lemma \ref{lem:coind₁' iso coind₁} that $\coind_1'(M)$
 	is isomorphic to $\coind_1(M)$.
-	We will need to define the $H$-invariants (Rep.quotientToInvariants)
-	as a functor from $\Rep(R,G)$ to $\Rep(R,G/H)$.
-	Then by functoriality, $\coind_1'(M)^H$ is isomorphic to $\coind_1(M)^H$,
-	which is already known to be acyclic (Lemma \ref{lem:coind₁ acyclic}).
+	Applying the functor $\Inf$, we obtain an isomorphim between $\coind_1'(M)^S$ and $\coind_1(M)^S$.
+	The result then follows from Lemma \ref{lem:coind₁ acyclic}.
 \end{proof}
 
-
-\begin{definition}
-	\label{def:coind₁'_ι}
-	\lean{Representation.coind₁'_ι}
-	\uses{def:coind₁'}
-	\leanok
-	There is a morphism $M \to \coind_1'(M)$ which takes a vector $m \in M$
-	to the constant function on $G$ with value $m$.
-\end{definition}
-
-\begin{lemma}
-	\label{lem:coind₁'_ι natural}
-	\lean{Rep.coind₁'_ι}
-	\uses{def:coind₁'_ι}
-	\leanok
-	The map $M \to \coind_1'(M)$ is a natural transformation from the identity
-	functor to $\coind₁'$.
-\end{lemma}
-
-\begin{lemma}
-	\label{lem:coind₁'_ι mono}
-	\lean{Rep.dimensionShift.instMonoAppCoind₁'_ι}
-	\uses{def:coind₁'_ι}
-	\leanok
-	The map $M \to coind₁'(M)$ is a monomorphism, i.e. injective.
-\end{lemma}
-
-\begin{proof}
-  The function which takes an element $m \in M$ to the constant
-  function on $G$ with value $m$ is clearly injective.
-\end{proof}
-
-\begin{definition}
-	\label{def:up}
-	\lean{Rep.dimensionShift.up}
-	\uses{def:coind₁'_ι}
-	We define $\up(M)$ to be the cokernel of the map $M \to \coind_1'(M)$,
-	and show that $\up$ is a functor from $\Rep(R,G)$ to $\Rep(R,G)$.
-\end{definition}
-
-\begin{definition}
-	\label{def:up ses}
-	\lean{Rep.dimensionShift.upSes,
+\begin{definition} \label{def:up}
+	\lean{Representation.coind₁'_ι,
+		Rep.coind₁'_ι,
+		Rep.dimensionShift.instMonoAppCoind₁'_ι,
+		Rep.dimensionShift.up,
+		Rep.dimensionShift.upSes,
 		Rep.dimensionShift.up_shortExact,
 		Rep.dimensionShift.up_shortExact_res}
-	\uses{def:up}
-	\leanok
-	We define a functor $\upSes$ which takes a representation $M$ to the complex
+	\uses{def:coind₁'}
+	There is an injective morphism $M \to \coind_1'(M)$ which takes a vector $m \in M$
+	to the constant function on $G$ with value $m$.
+	We define a representation $\up(M)$ to be the cokernel of this map, so that we have a short exact
+	sequence
 	\[
 		0 \to M \to \coind_1'(M) \to \up(M) \to 0.
 	\]
-	This is a short exact sequence in $\Rep(R,S)$ for any subgroup $S \le G$.
+	This construction is functorial in $M$, i.e. for every $f : M \to N$ in $\Rep(R,G)$,
+	there is a commutative diagram
+	\[
+		\begin{matrix}
+			0 & \to& M & \to & \coind_1'(M) & \to& \up(M) \to 0 \\
+			&&\downarrow &&\downarrow&&\downarrow \\
+			0 & \to& N & \to & \coind_1'(N) & \to& \up(N) \to 0 \\
+		\end{matrix}.
+	\]
 \end{definition}
 
-\begin{corollary}
-	\label{cor:up iso}
+\begin{corollary}	\label{cor:up iso}
 	\lean{Rep.dimensionShift.up_δ_zero_epi,
 		Rep.dimensionShift.up_δ_isIso,
-		Rep.dimensionShift.up_δis0,
+		Rep.dimensionShift.up_δiso,
 		Rep.dimensionShift.up_δ_zero_epi_res,
 		Rep.dimensionShift.up_δ_isIso_res,
 		Rep.dimensionShift.up_δiso_res}
-	\uses{def:up ses,
+	\uses{def:up,
 		cor:coind₁' acyclic}
 	\leanok
-	Let $S$ be a subgroup of $G$ and let $n \in \N$.
+	Let $S$ be any subgroup of $G$ and let $n \in \N$.
 	Then the connecting map from the long exact sequence $H^{n+1}(S,\up(M)) \to H^{n+2}(S,M)$ is an
 	isomorphism.
 	The corresponding map $H^{0}(S,\up(M)) \to H^{1}(S,M)$ is	surjective.
@@ -573,8 +567,7 @@ They are described by the next two results.
 	for all $r>0$.
 \end{proof}
 
-\begin{lemma}
-	\label{lem:up iso natural}
+\begin{lemma}	\label{lem:up iso natural}
 	\lean{Rep.dimensionShift.up_δiso_natTrans}
 	\uses{cor:up iso}
 	\leanok
@@ -590,7 +583,7 @@ They are described by the next two results.
 \end{lemma}
 
 \begin{proof}
-	This follows from \texttt{HomologicalComplex.HomologySequence.δ_naturality}
+	This follows from \texttt{HomologicalComplex.HomologySequence.$\delta$\_naturality}
 	because the short exact sequence $0 \to M \to \coind_1'(M) \to \up(M) \to 0$
 	is functorial in $M$.
 \end{proof}
@@ -598,8 +591,7 @@ They are described by the next two results.
 \subsection{Shifting $\down$}
 Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 
-\begin{definition}
-	\label{def:ind₁'}
+\begin{definition} \label{def:ind₁'}
 	\lean{Representation.ind₁',
 		Rep.ind₁'}
 	There is a representation $\ind_1' (M)$ on the $R$-module of finitely supported
@@ -611,9 +603,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	The map $\ind_1'$ is functorial in $M$.
 \end{definition}
 
-
-\begin{lemma}
-	\label{lem:ind₁' iso ind₁}
+\begin{lemma}	\label{lem:ind₁' iso ind₁}
 	\lean{
 		Representation.ind₁'_lequiv,
 		Representation.ind₁'_lequiv_comm,
@@ -621,7 +611,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 		Rep.ind₁'_iso_forget₂_ggg_ind₁,
 	}
 	\uses{def:ind₁',
-		def:ind₁}
+		def:induced}
 	\leanok
 	The representations $\ind_1'(M)$ and $\ind_1(G,M)$ are isomorphic; more precisely the
 	functors $\ind_1'$ and $\ind_1(G,-)$ are isomorphic.
@@ -636,8 +626,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	It remains to check linearity and naturality.
 \end{proof}
 
-\begin{corollary}
-	\label{cor:ind₁' homology-acyclic}
+\begin{corollary}	\label{cor:ind₁' homology-acyclic}
 	\lean{Rep.ind₁'_isHomologyAcyclic}
 	\uses{lem:ind₁' iso ind₁,
 		lem:ind₁ homology-acyclic}
@@ -652,13 +641,12 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 \end{proof}
 
 
-\begin{corollary}
-	\label{cor:ind₁' iso coind₁'}
+\begin{corollary}	\label{cor:ind₁' iso coind₁'}
 	\lean{Rep.ind₁'_iso_coind₁',
 		Rep.ind₁'_isAcyclic,
 		Rep.coind₁'_isHomologyAcyclic}
 	\uses{lem:ind₁' iso ind₁,
-		lem:ind₁ to coind₁,
+		def:ind₁ to coind₁,
 		lem:coind₁' iso coind₁}
 	\leanok
 	If the group $G$ is finite then $\ind_1'(M) \cong \coind_1'(M)$.
@@ -670,8 +658,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\leanok
 \end{proof}
 
-\begin{definition}
-	\label{def:ind₁'_π}
+\begin{definition} \label{def:ind₁'_π}
 	\lean{Representation.ind₁'_π,
 		Representation.ind₁'_π_comm}
 	\uses{def:ind₁'}
@@ -679,8 +666,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	which takes a finitely supported function $f : G \to_0 M$ to the sum $\sum_{x \in G} f (x)$.
 \end{definition}
 
-\begin{lemma}
-	\label{lem:ind₁'_π}
+\begin{lemma}	\label{lem:ind₁'_π}
 	\lean{Rep.ind₁'_π}
 	\uses{def:ind₁'_π}
 	\leanok
@@ -697,12 +683,39 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\]
 \end{lemma}
 
-\begin{definition}
+\begin{lemma}	\label{lem:ind₁'_π epi}
+	\lean{Rep.instEpiAppInd₁'_π}
+	\uses{def:ind₁'_π}
+	\leanok
+	The map $\ind_1'(M) \to M$ is surjective.
+\end{lemma}
+
+
+\begin{definition} \label{def:down}
+	\lean{Rep.dimensionShift.down}
+	\uses{def:ind₁'_π}
+	We define a functor $\down : \Rep(R,G) \to \Rep(R,G)$ which takes a representation
+	$M$ to the kernel of the map $\ind_1'(M) \to M$.
+\end{definition}
+
+\begin{definition} \label{def:down ses}
 	\lean{
-		Rep.dimensionShift.down,
 		Rep.dimensionShift.down_ses,
 		Rep.dimensionShift.down_shortExact,
-		Rep.dimensionShift.down_shortExact_res,
+		Rep.dimensionShift.down_shortExact_res
+	}
+	\uses{def:down,
+		lem:ind₁'_π epi}
+	\leanok
+	We define a functor $\upSes$ which takes a representation $M$ to the complex
+	\[
+		0 \to \down(M) \to \ind_1'(M) \to M \to 0.
+	\]
+	This is a short exact sequence in $\Rep(R,S)$ for any subgroup $S \le G$.
+\end{definition}
+
+\begin{lemma}	\label{lem:down iso}
+	\lean{
 		Rep.dimensionShift.down_δ_zero_epi,
 		Rep.dimensionShift.down_δ_zero_res_epi,
 		Rep.dimensionShift.down_δ_isIso,
@@ -711,88 +724,117 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 		Rep.dimensionShift.down_δ_res_isIso,
 		Rep.dimensionShift.down_δiso_res
 	}
-	There is an surjection $\ind_1'(M) \to M$ which takes a finitely supported
-	function $f : G \to_0 M$ to the sum $\sum_{x \in G} f (x)$.
-	We define $\down(M)$ to be the kernel of this map.
-	We therefore have a short exact sequence of representations.
+	\uses{def:down ses,
+		cor:ind₁' homology-acyclic}
+	\leanok
+	For any subgroup $S$ of $G$ and any $n \in \N$, connecting
+	map in the long exact sequence is an isomorphism:
 	\[
-		0 \to \down(M) \to \ind_1'(M) \to M \to 0.
+		H_{n+1}(S,\down(M)) \cong H_{n+2}(S,M).
 	\]
-	By the lemma, we have for any subgroup $H$ of $G$ and any $n \in \N$ an isomorphism:
-	\[
-		H_{n+1}(H,\down(M)) \cong H_{n+2}(H,M).
-	\]
-	It is convenient to define $\ind_1'$ and $\down$ as functors, and the isomorphism
-	above as an isomorphism of functors.
-\end{definition}
+	More precisely this is an isomorphism of functors.
+\end{lemma}
 
+\begin{proof}
+	This follows because $\ind_1'(M)$ is homology-acyclic.
+\end{proof}
 
-\begin{lemma}
+\begin{lemma} \label{lem:ind₁' coind₁' Tate-acyclic}
 	\lean{groupCohomology.TateCohomology_coind₁,
+		groupCohomology.TateCohomology_coind₁',
 		groupCohomology.TateCohomology_ind₁'}
+	\uses{cor:coind₁' acyclic,
+		cor:ind₁' iso coind₁',
+		cor:ind₁' homology-acyclic,
+		lem:Tate cohomology is cohomology or homology,
+		lem:Tate 0,
+		lem:Tate -1}
+	\leanok
 	If $M$ is a representation of a finite group $G$ then the representations
-	$\ind_1'(M)$ and $\coind_1'(M)$ are ``Tate-acyclic''. This means that for all
+	$\ind_1'(M)$ and $\coind_1'(M)$ are ``Tate-acyclic''.
+	This means that for all
 	subgroups $H$ of $G$ and all integers $n$, we have
 	$H^n_{Tate}(H,\coind_1'(M)) = 0$ and $H^n_{Tate}(H,\ind_1'(M)) = 0$.
 \end{lemma}
 
 \begin{proof}
-	By what we've already proved, it's sufficient to prove this in the cases $n = 0$ and $n = -1$.
-	These cases can be done by hand.
+	All of these representations are isomorphic to $\ind_1(M)$, so it's
+	sufficient to prove that $\ind_1$ is Tate-acyclic (this is the most convenient case to prove).
+	We already know that $\ind_1$ is both acyclic and homology-acyclic, so it
+	only remains to prove that $H^0_{Tate}(G,\ind_1(M))$ and $H^{-1}_{Tate}(G,\ind_1(M))$ are zero.
+
+	Recall that $\ind_1(M)$ is the space of functions $G \to_0 M$, and the action of $G$ is by
+	left-translation:
+	\[
+		(g \bullet f) (x) = f (x^{-1}g).
+	\]
+	We'll write $\single(x,m)$ for the function with value $m\in M$ at $x \in G$ and value $0$
+	elsewhere. With this notation we have
+	\[
+		g \bullet \single(x,m) = \single(gx,m).
+	\]
+
+	To prove that $H^0_{Tate}=0$, we use the isomorphism (Lemma \ref{lem:Tate 0})
+	\[
+		H^0_{Tate}(G,\ind_1(M)) \cong \ind_1(M)^G / N_G \ind_1(M).
+	\]
+	A function $f : G \to M$ is $G$-invariant if the function is constant with some value $m \in M$.
+	If this is the case then $f = N_G (\single(1,m))$. Therefore $H^0_{Tate} = 0$.
+
+	For the $n=-1$ case we use the isomorphism (Lemma \ref{lem:Tate -1}):
+	\[
+		H^{-1}_{Tate}(G,\coind_1(M))
+		\cong
+		\ker(N_G : \coind_1(M) \to \coind_1(M)) / \langle m - g \bullet m : m \in M, g \in G \rangle.
+	\]
+	Suppose $f:G \to M$ is in the kernel of $N_G$.
+	This implies $\sum_{x \in G} f(x) = 0$.
+	We can then write $f$ in the form
+	\[
+		f = \sum_{x \in G} (x \bullet \single(1,f(x)) - \single(1,f(x))).
+	\]
 \end{proof}
 
 
-% \subsection{Finite groups}
-
-% Suppose now that the group $G$ is finite.
-% In this case, there is an isomorphism or representations $\ind_1'(M) \cong \coind_1'(M)$ which takes $f : G \to_0 M$ to the function
-% \[
-% 	x \mapsto f(x^{-1}).
-% \]
-% As a consequence, the representations $\coind_1'(M)$ and $\ind_1'(M)$ are both
-% acyclic and homology-acyclic.
-
-% \begin{lemma}
-% 	If $M$ is a representation of a finite group $G$ then the representations
-% 	$\ind_1'(M)$ and $\coind_1'(M)$ are ``Tate-acyclic''. This means that for all
-% 	subgroups $H$ of $G$ and all integers $n$, we have
-% 	$H^n_{Tate}(H,\coind_1'(M)) = 0$ and $H^n_{Tate}(H,\ind_1'(M)) = 0$.
-% \end{lemma}
-
-% \begin{proof}
-% 	By the remark above, it's sufficient to prove this in the cases $n = 0$ and $n = -1$.
-% \end{proof}
-
-\begin{corollary}
+\begin{corollary}	\label{cor:Tate up down isos}
 	\lean{groupCohomology.instIsIsoModuleCatδ,
 		groupCohomology.instIsIsoModuleCatδ_1,
 		groupCohomology.upδiso_Tate,
 		groupCohomology.downδiso_Tate
 	}
-	If the group $G$ is finite then for every subgroup $H$ of $G$
+	\uses{
+		def:up,
+		def:down ses,
+		lem:ind₁' coind₁' Tate-acyclic,
+		def:Tate long exact sequence}
+	\leanok
+	If the group $G$ is finite then for every subgroup $S$ of $G$
 	and every $n \in \Z$ we have isomorphisms
 	\[
-		H^n_{Tate}(H, \up(M)) \cong H^{n+1}_{Tate}(H,M),
+		H^n_{Tate}(S, \up(M)) \cong H^{n+1}_{Tate}(S,M),
 		\qquad
-		H^{n+1}_{Tate}(H, \down(M)) \cong H^{n}_{Tate}(H,M).
+		H^{n+1}_{Tate}(S, \down(M)) \cong H^{n}_{Tate}(S,M).
 	\]
 \end{corollary}
 
-
-
+\begin{proof}
+	These are the connecting homomorphisms from the
+	short exact sequences linking $\up(M)$ and $\down(M)$ to $M$.
+	They are isomorphisms because $\coind_1'(M)$ and $\ind_1'(M)$ are Tate-acyclic.
+\end{proof}
 
 
 \section{The inflation-restriction sequence}
 
 
-\begin{definition}
+\begin{definition} \label{def:inflation}
 	\lean{groupCohomology.infl}
 	Let $H$ be a normal subgroup of a group $G$ and $M$ is
 	a representation of $G$ (over some commutative ring $R$).
 	The subspace $M^H = \{m \in M | \forall h \in H, h \bullet m = 0\}$ is
 	a representation of the quotient group $G / H$.
 	Any n-chain $\sigma \in C^n(G/H,M^H)$ may be pulled back to an
-	$n$-chain on $G$ with values in $n$. This defines a map of complexes
+	$n$-chain on $G$ with values in $H$. This defines a map of complexes
 	\[
 		C^\bullet(G/H, M^H) \to C^\bullet(G,H).
 	\]

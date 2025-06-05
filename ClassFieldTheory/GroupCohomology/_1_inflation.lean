@@ -13,23 +13,22 @@ variable {R G : Type} [CommRing R] [Group G]
 
 variable (H : Subgroup G) [H.Normal]
 
-noncomputable def Rep.invariants' (H : Subgroup G) [H.Normal] : Rep R G ⥤ Rep R (G ⧸ H) where
+noncomputable def Rep.quotientToInvariantsFunctor (H : Subgroup G) [H.Normal] :
+    Rep R G ⥤ Rep R (G ⧸ H) where
   obj M := M.quotientToInvariants H
   map f := sorry
 
-instance : (invariants' (R := R) H).PreservesZeroMorphisms := sorry
+instance : (quotientToInvariantsFunctor (R := R) H).PreservesZeroMorphisms := sorry
 
 set_option quotPrecheck false in
 /--
 `M ↑ H` means the `H` invariants of `M`, as a representation of `G ⧸ H`.
 -/
-notation M " ↑ " H => (Rep.invariants' H).obj M
---infix : 80 " ↑ " => fun (M : Rep R G) (H : Subgroup G) [H.Normal] ↦ (Rep.invariants' H).obj M
-
-
+notation M " ↑ " H => (Rep.quotientToInvariantsFunctor H).obj M
 
 def groupCohomology.cochain_infl :
-    invariants' H ⋙ cochainsFunctor R (G ⧸ H) ⟶ cochainsFunctor R G := sorry -- current PR
+    quotientToInvariantsFunctor H ⋙ cochainsFunctor R (G ⧸ H) ⟶ cochainsFunctor R G :=
+  sorry -- current PR
 
 /--
 # TODO :
@@ -46,18 +45,17 @@ The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformati
 This is defined using the inflation map on cocycles.
 -/
 noncomputable def groupCohomology.infl (n : ℕ) :
-    Rep.invariants' H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n :=
+    Rep.quotientToInvariantsFunctor H ⋙ (functor R (G ⧸ H) n) ⟶ functor R G n :=
   (groupCohomology.cochain_infl H) ◫ 𝟙 (homologyFunctor _ _ n)
 
-#check infl
 /--
 Suppose we have a short exact sewuence `0 ⟶ A ⟶ B ⟶ C ⟶ 0` in `Rep R G`.
 If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R (G ⧸ H)`:
 
   `0 ⟶ Aᴴ ⟶ Bᴴ ⟶ Cᴴ ⟶ 0`.
 -/
-lemma invariants'_shortExact_ofShortExact {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
-    (hS' : IsZero (H1 (S.X₁ ↓ H))) : (S.map (invariants' H)).ShortExact :=
+lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+    (hS' : IsZero (H1 (S.X₁ ↓ H))) : (S.map (quotientToInvariantsFunctor H)).ShortExact :=
   /-
   This is the opening section of the long exact sequence. The next term is `H¹(H,S.X₁)`, which
   is assumeed to be zero.
@@ -81,11 +79,11 @@ where the horizontal maps are connecting homomorphisms
 and the vertical maps are inflation.
 -/
 lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
-    (hS' : (S.map (invariants' H)).ShortExact)  (i j : ℕ) (hij : i + 1 = j) :
+    (hS' : (S.map (quotientToInvariantsFunctor H)).ShortExact)  (i j : ℕ) (hij : i + 1 = j) :
     δ hS' i j hij ≫ (infl H j).app _ = (infl H i).app _ ≫ δ hS i j hij
     := by
   let C := S.map (cochainsFunctor R G)
-  let S' := S.map (invariants' H)
+  let S' := S.map (quotientToInvariantsFunctor H)
   let C' := S'.map (cochainsFunctor R (G ⧸ H))
   let φ : C' ⟶ C := {
     τ₁ := by

@@ -110,6 +110,8 @@ lemma res_ofShortExact (H : Subgroup G) {S : ShortComplex (Rep R G)} (hS : S.Sho
 lemma res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
     Projective (P ↓ H) := by
   /-
+  *Note : this is probably probably not needed.*
+
   A representation is projective iff it is a direct summand of a free module over the group ring.
   This lemma follows because "R[G]" is free as an "R[H]"-module (a basis is given by a set of
   coset representatives).
