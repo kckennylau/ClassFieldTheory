@@ -1,6 +1,7 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._1_restriction
+import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
 
 /-!
 An object `M : Rep R G` is has trivial cohomology if
@@ -61,3 +62,8 @@ lemma Rep.trivialHomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialHomolog
 lemma groupCohomology.isZero_of_trivialCohomology {M : Rep R G} [M.TrivialCohomology] (n : ℕ) :
     IsZero (groupCohomology M (n + 1)) :=
   IsZero.of_iso Rep.TrivialCohomology.zero (rest_top_iso _ _)
+
+class Rep.TrivialTateCohomology [Finite G] (M : Rep R G) : Prop where
+  zero (H : Subgroup G) (n : ℤ) : IsZero ((TateCohomology (n + 1)).obj (M ↓ H))
+
+

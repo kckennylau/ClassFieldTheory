@@ -758,4 +758,6 @@ instance coind₁_trivialHomology [Finite G] : TrivialHomology.{u} ((coind₁ G)
 instance coind₁'_trivialHomology [Finite G] : TrivialHomology.{u} (coind₁'.obj M) :=
   trivialHomology_of_iso.{u} (coind₁'_obj_iso_coind₁ M)
 
+instance ind₁_trivialTateCohomology [Finite G] : TrivialTateCohomology ((ind₁ G).obj A) := sorry
+
 end FiniteGroup

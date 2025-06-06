@@ -25,18 +25,19 @@ groupCohomology.TateNorm_comp_d
 groupCohomology.d_comp_TateNorm
 groupCohomology.TateComplex
 groupCohomology.TateComplexFunctor
-groupCohomology.TateComplexFunctor_preservesFiniteLimits
-groupCohomology.TateComplexFunctor_preservesFiniteColimits
 groupCohomology.TateCohomology
-groupCohomology.TateCohomology.δ
 groupCohomology.TateCohomology.iso_groupCohomology
 groupCohomology.TateCohomology.iso_groupHomology
 groupCohomology.TateCohomology_zero_iso
 groupCohomology.TateCohomology_zero_iso_of_isTrivial
 groupCohomology.TateCohomology_neg_one_iso
 groupCohomology.TateCohomology_neg_one_iso_of_isTrivial
+groupCohomology.TateComplexFunctor_preservesFiniteLimits
+groupCohomology.TateComplexFunctor_preservesFiniteColimits
+groupCohomology.TateCohomology.δ
 Rep.TrivialCohomology
 Rep.TrivialHomology
+Rep.TrivialTateCohomology
 Representation.coind₁
 Rep.coind₁_obj
 Rep.coind₁
@@ -54,7 +55,8 @@ Rep.ind₁_toCoind₁
 Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite
 Rep.ind₁_iso_coind₁
 Rep.ind₁_trivialCohomology
-Rep.coind₁_trivialHomology
+Rep.coind₁_trivialHomology Rep.ind₁_trivialTateCohomology
+lem:Tate cohomology is cohomology or homology
 Representation.coind₁'
 Rep.coind₁'
 Rep.coind₁'_obj_iso_coind₁
@@ -107,13 +109,9 @@ groupCohomology.instIsIsoModuleCatδ
 groupCohomology.instIsIsoModuleCatδ_1
 groupCohomology.upδiso_Tate
 groupCohomology.downδiso_Tate
-groupCohomology.infl
-groupCohomology.rest
 groupCohomology.inflationRestriction
 groupCohomology.inflation_restriction_mono
 groupCohomology.inflation_restriction_exact
-groupCohomology.rest_δ_naturality
-groupCohomology.infl_δ_naturality
 Representation.map₁
 Representation.map₁_ker
 Representation.map₂_range

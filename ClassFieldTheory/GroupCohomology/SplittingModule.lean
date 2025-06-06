@@ -301,11 +301,11 @@ lemma TateTheorem_lemma_4 [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
   sorry
 
 /--
-The splitting module is acyclic.
+The splitting module is has trivial cohomology.
 -/
 lemma trivialCohomology [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
     (split σ).TrivialCohomology := by
-  apply Acyclic_of_even_of_odd (split σ) 0 0
+  apply trivialCohomology_of_even_of_odd (split σ) 0 0
   · intro H
     apply IsZero.of_iso (TateTheorem_lemma_4 σ H)
     apply isoH2

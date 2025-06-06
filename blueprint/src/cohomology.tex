@@ -26,6 +26,8 @@ If the subgroup $S$ is normal then $M^S$ is a representation of the quotient gro
 
 \begin{lemma} \label{lem:restriction exact}
 	\lean{Rep.res_respectsShortExact}
+	\uses{def:inflation restriction functors}
+	\leanok
 	Let $S$ be a subgroup of $G$.
 	A sequence $0 \to A \to B \to C \to 0$ is exact in $\Rep(R,G)$ if and only if
 	the sequence $0 \to A \downarrow S \to B \downarrow S \to C \downarrow S$ is exact
@@ -181,7 +183,7 @@ We also note the following, which is a current PR:
 \section{Tate Cohomology}
 
 Throughout this section, the group $G$ is assumed to be finite.
-Ander this assumption, we show that the homology and cohomology groups
+Under this assumption, we show that the homology and cohomology groups
 may both be regarded as part of a bigger cohomology theory, which is called Tate cohomology.
 
 \begin{definition} \label{def:norm}
@@ -217,7 +219,7 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 \begin{proof}
 	The map $d^0 : M \to (G \to M)$ is given by
 	$(d^0 m)(g) = m - g\bullet m$.
-	Using this formula, we obtain (by \ref{lem:norm comm})
+	Using this formula, we obtain (by Lemma \ref{lem:norm comm})
 	$d^0 (N_G m) (g) = N_G m - g \bullet N_G m = 0$.
 \end{proof}
 
@@ -232,14 +234,15 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	once group homology is merged into Mathlib.
 \end{proof}
 
-\begin{definition} \label{def:Tate complex}
+\begin{definition} \label{def:Tate cohomology}
 	\lean{groupCohomology.TateComplex,
-		groupCohomology.TateComplexFunctor}
+		groupCohomology.TateComplexFunctor,
+		groupCohomology.TateCohomology}
 	\uses{
 		lem:norm comp d,
 		lem:d comp norm}
 	\leanok
-	Recal that we have a cochain complex $C^n(G,M)$, indexed by $n \in \N$,
+	Recall that we have a cochain complex $C^n(G,M)$, indexed by $n \in \N$,
 	 whose cohomology is $H^n(G,M)$.
 	We also have a chain complex $C_n(G,M)$ whose homology is $H_n(G,M)$.
 	The terms $C^0(G,M)$ and $C_0(G,M)$ may both be identified with $M$.
@@ -254,53 +257,12 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	natural numbers $n$ we have $C^n_{Tate}(G,M) = C^n(G,M)$. This implies
 	$C^{-n-1}_{Tate}(G,M) = C_n(G,M)$.
 	This construction is functorial in $M$.
-\end{definition}
 
-\begin{lemma}	\label{lem:Tate complex exactness}
-  \lean{groupCohomology.TateComplexFunctor_preservesFiniteLimits,
-    groupCohomology.TateComplexFunctor_preservesFiniteColimits}
-	\uses{def:Tate complex,
-		lem:cochainsFunctor exact}
-	\leanok
-  $C^\bullet_{Tate}(G,-)$ is an exact functor from $\Rep(R,G)$ to the category
-  of cochain complexes of $R$-modules.
-\end{lemma}
-
-\begin{proof}
-	This follows from the fact that $C^n(G,-)$ and $C_n(G,-)$ are exact functors.
-	The proof cannot be formalized until exactness of $C_n(G,-)$ is merged.
-\end{proof}
-
-\begin{definition} \label{def:Tate cohomology}
-	\lean{groupCohomology.TateCohomology}
-	\uses{def:Tate complex}
 	For an integer $n$, we shall write $H^n_{Tate}(G,M)$ for the $n$-th cohomology of the complex
 	$C^n_{Tate}(G,M)$; this is called the $n$-th Tate cohomology of $M$,
 	and is often written $\hat H^n(G,M)$ or just $H^n(G,M)$ in the literature.
 	We define this as a functor from $\Rep(R,G)$ to $\Mod(R)$.
 \end{definition}
-
-\begin{definition} \label{def:Tate long exact sequence}
-	\lean{groupCohomology.TateCohomology.δ}
-	\uses{def:Tate cohomology,
-		lem:Tate complex exactness}
-	\leanok
-	Suppose we have a short exact sequence in $\Rep(R,G)$:
-	\[
-		0 \to A \to B \to C \to 0.
-	\]
-	By Lemma \ref{lem:Tate complex exactness} we obtain a short exact sequence of Tate complexes.
-	Hence there are connecting homomorphisms $\delta : H^n_{Tate}(G,C) \to H^{n+1}(G,A)$
-	such that the following is a long exact sequence:
-	\[
-		\cdots \to H^n_{Tate}(G,A) \to H^n_{Tate}(G,B) \to H^n_{Tate}(G,C)
-		\to H^{n+1}(G,A) \to H^{n+1}_{Tate}(G,B) \to \cdots
-	\]
-	The exactness statements are in Mathlib in the namespace
-	\texttt{HomologicalComplex.HomologySequence}.
-\end{definition}
-
-Our choice of indexing implies the following:
 
 \begin{lemma}	\label{lem:Tate cohomology is cohomology or homology}
   \lean{groupCohomology.TateCohomology.iso_groupCohomology,
@@ -342,10 +304,10 @@ Our choice of indexing implies the following:
 	the two remaining cases.
 
 	The $0$-cocycle submodule is the kernel of the map $d^0 : C^0(G,M) \to C^1(G,M)$.
-	This is the same as $H^0(G,M)$, which is $M^G$.
-	On the other hand $B^0(G,M)$ is by definition the image of $N_G : M \to M$.
+	This is the same as $H^0(G,M)$, which is isomorphic to $M^G$.
+	On the other hand $B^0_{Tate}(G,M)$ is by definition the image of $N_G : M \to M$.
 	However, this proof cannot yet be attempted in lean because the definition of
-	$C^{-1}_{Tate} = C_0$ relies on a current PR.
+	$C^{-1}_{Tate}(G,M) = C_0(G,M) \cong M$ relies on a current PR.
 
 	Similarly, $H_0(G,M)$ is the quotient of $M$ by
 	the submodule generated by the elements $m - g \bullet m$, and $H^{-1}_{Tate}(G,M)$
@@ -353,14 +315,51 @@ Our choice of indexing implies the following:
 	This cannot be formalized until group homology is merged.
 \end{proof}
 
+\begin{lemma}	\label{lem:Tate complex exactness}
+  \lean{groupCohomology.TateComplexFunctor_preservesFiniteLimits,
+    groupCohomology.TateComplexFunctor_preservesFiniteColimits}
+	\uses{def:Tate cohomology,
+		lem:cochainsFunctor exact}
+	\leanok
+  $C^\bullet_{Tate}(G,-)$ is an exact functor from $\Rep(R,G)$ to the category
+  of cochain complexes of $R$-modules.
+\end{lemma}
+
+\begin{proof}
+	This follows from the fact that $C^n(G,-)$ and $C_n(G,-)$ are exact functors.
+	The proof cannot be formalized until exactness of $C_n(G,-)$ is merged.
+\end{proof}
+
+\begin{definition} \label{def:Tate long exact sequence}
+	\lean{groupCohomology.TateCohomology.δ}
+	\uses{def:Tate cohomology,
+		lem:Tate complex exactness}
+	\leanok
+	Suppose we have a short exact sequence in $\Rep(R,G)$:
+	\[
+		0 \to A \to B \to C \to 0.
+	\]
+	By Lemma \ref{lem:Tate complex exactness} we obtain a short exact sequence of Tate complexes.
+	Hence there are connecting homomorphisms $\delta : H^n_{Tate}(G,C) \to H^{n+1}(G,A)$
+	such that the following is a long exact sequence:
+	\[
+		\cdots \to H^n_{Tate}(G,A) \to H^n_{Tate}(G,B) \to H^n_{Tate}(G,C)
+		\to H^{n+1}(G,A) \to H^{n+1}_{Tate}(G,B) \to \cdots
+	\]
+	The exactness statements are in Mathlib in the namespace
+	\texttt{HomologicalComplex.HomologySequence}.
+\end{definition}
+
+
+
 
 
 \section{Coinduced and induced representations}
 
-
-\begin{definition}\label{def:trivial cohomology}
+\begin{definition} \label{def:trivial cohomology}
 	\lean{Rep.TrivialCohomology,
-		Rep.TrivialHomology}
+		Rep.TrivialHomology,
+		Rep.TrivialTateCohomology}
 	\uses{def:group homology}
 	\leanok
 	Let $M$ be a representation of $G$ over a ring $R$.
@@ -371,10 +370,14 @@ Our choice of indexing implies the following:
 		\item
 		$M$ is said to have \emph{trivial homology} if for every subgroup $S \le G$
 		and every $n > 0$, $H_n(S,M) = 0$.
+		\item
+		Suppose the group $G$ is finite. Then $M$ is said to have \emph{trivial Tate cohomology} if for every subgroup $S \le G$
+		and every $n \in \Z$, $H^n_{Tate}(S,M) = 0$.
 	\end{itemize}
+	(We will later see that for a finite group $G$, the threee concepts are equivalent.)
 \end{definition}
 
-In this section we shall construct some representations with trivial homology and cohomology.
+In this section we shall construct certain representations with trivial homology and cohomology.
 
 \begin{definition}\label{def:induced}
 	\lean{
@@ -462,21 +465,67 @@ In this section we shall construct some representations with trivial homology an
 	If the group $G$ is finite then this map is an isomorphism.
 \end{definition}
 
-\begin{corollary}	\label{cor:coind₁ trivial homology}
+\begin{lemma}	\label{lem:induced trivial Tate}
 	\lean{Rep.ind₁_trivialCohomology,
-		Rep.coind₁_trivialHomology}
+		Rep.coind₁_trivialHomology
+		Rep.ind₁_trivialTateCohomology,
+		lem:Tate cohomology is cohomology or homology}
 	\uses{def:ind₁ to coind₁,
 		lem:coind₁ trivial cohomology,
 		lem:ind₁ trivial homology}
-	If the group $G$ is finite then $\coind_1(G,A)$ has trivial homology
-	and $\ind_1(G,A)$ has trivial cohomology.
-\end{corollary}
+	If the group $G$ is finite then $\ind_1(G,A)$ and $\coind_1(G,A)$ have trivial
+	Tate cohomology.
+\end{lemma}
 
 \begin{proof}
-	This follows directly from \ref{def:ind₁ to coind₁},	\ref{lem:coind₁ trivial cohomology}
-		and \ref{lem:ind₁ trivial homology}.
-	\leanok
+	These representations are isomorphic, so it's
+	sufficient to prove that $\ind_1(G,A)$ has trivial Tate cohomology
+	(this is the more convenient case to prove).
+	We already know that $\ind_1(G,A)$ has trivial homology.
+	Also, since it is isomorphic to $\coind_1(G,A)$, it must have trivial cohomology.
+	It only remains to prove that $H^0_{Tate}(S,\ind_1(M))$
+	and $H^{-1}_{Tate}(S,\ind_1(M))$ are zero	for all subgroups $S$ of $G$.
+
+	Recall that $\ind_1(G,M)$ is the space of functions $G \to_0 M$, and the action of $G$ is by
+	left-translation:
+	\[
+		(g \bullet f) (x) = f (x^{-1}g).
+	\]
+	We'll write $\single(x,m)$ for the function with value $m\in M$ at $x \in G$ and value $0$
+	elsewhere (this is called \texttt{Finsupp.single x m} in Mathlib).
+	With this notation we have
+	\[
+		g \bullet \single(x,m) = \single(gx,m).
+	\]
+
+	To prove that $H^0_{Tate}(S,\ind_1(G,A))=0$, we use the isomorphism
+	\ref{lem:Tate cohomology is cohomology or homology}
+	\[
+		H^0_{Tate}(S,\ind_1(G,A)) \cong \ind_1(G,A)^S / N_S \ind_1(G,A).
+	\]
+	A function $f : G \to M$ is $S$-invariant if $f$ is constant on cosets $Sg$ of $S$.
+	If we let $\{g_i\}$ be a set of coset representatives,
+	then we have $f = N_S (\sum_i \single(g_i, f(g_i)))$.
+	Therefore $H^0_{Tate}(S,\ind_1(G,A))=0$.
+
+	For the $n=-1$ case we use the isomorphism \ref{lem:Tate cohomology is cohomology or homology}:
+	\[
+		H^{-1}_{Tate}(S,\ind_1(G,A))
+		\cong
+		\ker(N_S : \ind_1(G,A) \to \ind_1(G,A)) /
+			\langle m - s \bullet m : m \in \ind_1(G,A), s \in S \rangle.
+	\]
+	Suppose $f:G \to M$ is in the kernel of $N_S$.
+	This implies that the sum of the values of $f$ over each coset of $S$ is zero.
+	We can then write $f$ in the form
+	\[
+		f = \sum_i \sum_{s \in S} (\single(sg_i, f(sg_i)) - \single(g_i,f(sg_i)))
+		= \sum_i \sum_{s \in S} (s \bullet \single(g_i, f(sg_i)) - \single(g_i,f(sg_i))).
+	\]
+	Therefore $f$ is in the span of the elements $m - s \bullet m$.
 \end{proof}
+
+
 
 
 \section{Dimension-shifting}
@@ -565,7 +614,8 @@ In this section we shall construct some representations with trivial homology an
 		Rep.dimensionShift.up_δiso,
 		Rep.dimensionShift.up_δ_zero_epi_res,
 		Rep.dimensionShift.up_δ_isIso_res,
-		Rep.dimensionShift.up_δiso_res}
+		Rep.dimensionShift.up_δiso_res}	\lean{Rep.dimensionShift.up_δiso_natTrans}
+
 	\uses{def:up,
 		cor:coind₁' trivial cohomology}
 	\leanok
@@ -573,31 +623,26 @@ In this section we shall construct some representations with trivial homology an
 	Then the connecting map from the long exact sequence $H^{n+1}(S,\up(M)) \to H^{n+2}(S,M)$ is an
 	isomorphism.
 	The corresponding map $H^{0}(S,\up(M)) \to H^{1}(S,M)$ is	surjective.
+
+	The isomorphism $H^{n+1}(G,\up(-)) \cong H^{n+2}(G,-)$ is an isomorphism of functors.
+	This means that for every morphism $f : M \to N$ of representations,
+	the following square commutes:
+	\[
+		\begin{matrix}
+			H^{n+1}(G,\up(M)) & \cong & H^{n+2}(G,M) \\
+			\downarrow && \downarrow \\
+			H^{n+1}(G,\up(N)) & \cong & H^{n+2}(G,N)
+		\end{matrix}.
+	\]
 \end{corollary}
 
 \begin{proof}
 	We have already shown in Corollary \ref{cor:coind₁' trivial cohomology}
 	that $\coind_1'(M)$ has trivial cohomology, so $H^{r}(S,\coind_1'(M))=0$
 	for all $r>0$.
-\end{proof}
 
-\begin{lemma}	\label{lem:up iso natural}
-	\lean{Rep.dimensionShift.up_δiso_natTrans}
-	\uses{cor:up iso}
-	\leanok
-	The isomorphism $H^{n+1}(G,\up(-)) \cong H^{n+2}(G,-)$ is an isomorphism of functors.
-	This means that for every morphism $f : M \to N$ of representations, the following square commutes:
-	\[
-		\begin{matrix}
-			H^{n+1}(G,\up(M)) & \cong & H^{n+2}(G,M) \\
-			\down && \down \\
-			H^{n+1}(G,\up(N)) & \cong & H^{n+2}(G,N)
-		\end{matrix}.
-	\]
-\end{lemma}
-
-\begin{proof}
-	This follows from \texttt{HomologicalComplex.HomologySequence.$\delta$\_naturality}
+	The commuting square follows from
+	\texttt{HomologicalComplex.HomologySequence.$\delta$\_naturality}
 	because the short exact sequence $0 \to M \to \coind_1'(M) \to \up(M) \to 0$
 	is functorial in $M$.
 \end{proof}
@@ -654,7 +699,6 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	have trivial homology.
 \end{proof}
 
-
 \begin{corollary}	\label{cor:ind₁' iso coind₁'}
 	\lean{Rep.ind₁'_iso_coind₁',
 		Rep.ind₁'_trivialCohomology,
@@ -664,7 +708,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 		lem:coind₁' iso coind₁}
 	\leanok
 	If the group $G$ is finite then $\ind_1'(M) \cong \coind_1'(M)$.
-	In particular $\coind_1'(M)$ has trivial homology and $\ind_1'(M)$ has trivial cohomology.
+	In particular $\ind_1'(M)$ and $\coind_1'(M)$ have both trivial homology and trivial cohomology.
 \end{corollary}
 
 \begin{proof}
@@ -672,60 +716,32 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\leanok
 \end{proof}
 
-\begin{definition} \label{def:ind₁'_π}
-	\lean{Representation.ind₁'_π,
-		Representation.ind₁'_π_comm}
-	\uses{def:ind₁'}
-	For any representation $M$, there is a morphism $\ind_1'(M) \to M$,
-	which takes a finitely supported function $f : G \to_0 M$ to the sum $\sum_{x \in G} f (x)$.
-\end{definition}
-
-\begin{lemma}	\label{lem:ind₁'_π}
-	\lean{Rep.ind₁'_π}
-	\uses{def:ind₁'_π}
-	\leanok
-	More precisely the map $\ind_1'(M) \to M$ is a morphism of functors from $\ind_1'$
-	to the identity functor on $\Rep(R,G)$.
-	This means that for every morphism $f : M \to N$ of representations, the following square
-	commutes
-	\[
-		\begin{matrix}
-			\ind_1'(M) & \to & \ind_1'(N) \\
-			\down && \down \\
-			M & \to &N
-		\end{matrix}.
-	\]
-\end{lemma}
-
-\begin{lemma}	\label{lem:ind₁'_π epi}
-	\lean{Rep.instEpiAppInd₁'_π}
-	\uses{def:ind₁'_π}
-	\leanok
-	The map $\ind_1'(M) \to M$ is surjective.
-\end{lemma}
-
-
 \begin{definition} \label{def:down}
-	\lean{Rep.dimensionShift.down}
-	\uses{def:ind₁'_π}
-	We define a functor $\down : \Rep(R,G) \to \Rep(R,G)$ which takes a representation
-	$M$ to the kernel of the map $\ind_1'(M) \to M$.
-\end{definition}
-
-\begin{definition} \label{def:down ses}
-	\lean{
+	\lean{Representation.ind₁'_π,
+		Representation.ind₁'_π_comm,
+		Rep.ind₁'_π, Rep.instEpiAppInd₁'_π,
+		Rep.dimensionShift.down,
 		Rep.dimensionShift.down_ses,
 		Rep.dimensionShift.down_shortExact,
 		Rep.dimensionShift.down_shortExact_res
 	}
-	\uses{def:down,
-		lem:ind₁'_π epi}
-	\leanok
-	We define a functor $\upSes$ which takes a representation $M$ to the complex
+	\uses{def:ind₁'}
+	For any representation $M$, there is a surjective morphism $\ind_1'(M) \to M$,
+	which takes a finitely supported function $f : G \to_0 M$ to the sum $\sum_{x \in G} f (x)$.
+	We define $\down(M)$ to be the kernel of this map.
+	There is therefore a short exact sequence
 	\[
 		0 \to \down(M) \to \ind_1'(M) \to M \to 0.
 	\]
-	This is a short exact sequence in $\Rep(R,S)$ for any subgroup $S \le G$.
+	Both $\down(M)$ and the short exact seqeunce are functors of $M$; this means that for
+	every map $f : M \to N$ in $\Rep(R,G)$, we have a commutative diagram:
+	\[
+		\begin{matrix}
+			\down(M) &\to &\ind_1'(M)& \to& M \\
+			\downarrow && \downarrow && \downarrow \\
+			\down(N) &\to &\ind_1'(N)& \to& N
+		\end{matrix} .
+	\]
 \end{definition}
 
 \begin{lemma}	\label{lem:down iso}
@@ -738,7 +754,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 		Rep.dimensionShift.down_δ_res_isIso,
 		Rep.dimensionShift.down_δiso_res
 	}
-	\uses{def:down ses,
+	\uses{def:down,
 		cor:ind₁' trivial homology}
 	\leanok
 	For any subgroup $S$ of $G$ and any $n \in \N$, connecting
@@ -753,60 +769,21 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	This follows because $\ind_1'(M)$ has trivial homology.
 \end{proof}
 
-\begin{lemma} \label{lem:ind₁' coind₁' trivial Tate}
+\begin{lemma} \label{lem:induced' trivial Tate}
 	\lean{groupCohomology.TateCohomology_coind₁,
 		groupCohomology.TateCohomology_coind₁',
 		groupCohomology.TateCohomology_ind₁'}
-	\uses{cor:coind₁' trivial cohomology,
+	\uses{lem:induced trivial Tate,
 		cor:ind₁' iso coind₁',
-		cor:ind₁' trivial homology,
-		lem:Tate cohomology is cohomology or homology}
+		lem:ind₁' iso ind₁}
 	\leanok
 	If $M$ is a representation of a finite group $G$ then the representations
-	$\ind_1'(M)$ and $\coind_1'(M)$ have ``trivial Tate cohomology''.
-	This means that for all
-	subgroups $H$ of $G$ and all integers $n$, we have
-	$H^n_{Tate}(H,\coind_1'(M)) = 0$ and $H^n_{Tate}(H,\ind_1'(M)) = 0$.
+	$\ind_1'(M)$ and $\coind_1'(M)$ have trivial Tate cohomology.
 \end{lemma}
 
 \begin{proof}
-	All of these representations are isomorphic to $\ind_1(M)$, so it's
-	sufficient to prove that $\ind_1$ has trivial Tate cohomology
-	(this is the most convenient case to prove).
-	We already know that $\ind_1$ has trivial homology and cohomology, so it
-	only remains to prove that $H^0_{Tate}(G,\ind_1(M))$ and $H^{-1}_{Tate}(G,\ind_1(M))$ are zero.
-
-	Recall that $\ind_1(M)$ is the space of functions $G \to_0 M$, and the action of $G$ is by
-	left-translation:
-	\[
-		(g \bullet f) (x) = f (x^{-1}g).
-	\]
-	We'll write $\single(x,m)$ for the function with value $m\in M$ at $x \in G$ and value $0$
-	elsewhere. With this notation we have
-	\[
-		g \bullet \single(x,m) = \single(gx,m).
-	\]
-
-	To prove that $H^0_{Tate}=0$, we use the isomorphism
-	\ref{lem:Tate cohomology is cohomology or homology}
-	\[
-		H^0_{Tate}(G,\ind_1(M)) \cong \ind_1(M)^G / N_G \ind_1(M).
-	\]
-	A function $f : G \to M$ is $G$-invariant if the function is constant with some value $m \in M$.
-	If this is the case then $f = N_G (\single(1,m))$. Therefore $H^0_{Tate} = 0$.
-
-	For the $n=-1$ case we use the isomorphism \ref{lem:Tate cohomology is cohomology or homology}:
-	\[
-		H^{-1}_{Tate}(G,\coind_1(M))
-		\cong
-		\ker(N_G : \coind_1(M) \to \coind_1(M)) / \langle m - g \bullet m : m \in M, g \in G \rangle.
-	\]
-	Suppose $f:G \to M$ is in the kernel of $N_G$.
-	This implies $\sum_{x \in G} f(x) = 0$.
-	We can then write $f$ in the form
-	\[
-		f = \sum_{x \in G} (x \bullet \single(1,f(x)) - \single(1,f(x))).
-	\]
+	This follows from \ref{lem:induced trivial Tate}
+	together with the isomorphisms \ref{cor:ind₁' iso coind₁'} and \ref{lem:ind₁' iso ind₁}.
 \end{proof}
 
 
@@ -818,8 +795,8 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	}
 	\uses{
 		def:up,
-		def:down ses,
-		lem:ind₁' coind₁' trivial Tate,
+		def:down,
+		lem:induced' trivial Tate,
 		def:Tate long exact sequence}
 	\leanok
 	If the group $G$ is finite then for every subgroup $S$ of $G$
@@ -840,187 +817,135 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 
 \section{The inflation-restriction sequence}
 
-
-\begin{definition} \label{def:inflation}
-	\lean{groupCohomology.infl}
-	Let $H$ be a normal subgroup of a group $G$ and $M$ is
-	a representation of $G$ (over some commutative ring $R$).
-	The subspace $M^H = \{m \in M | \forall h \in H, h \bullet m = 0\}$ is
-	a representation of the quotient group $G / H$.
-	Any n-chain $\sigma \in C^n(G/H,M^H)$ may be pulled back to an
-	$n$-chain on $G$ with values in $H$. This defines a map of complexes
-	\[
-		C^\bullet(G/H, M^H) \to C^\bullet(G,H).
-	\]
-	The corresponding map $\infl : H^\bullet(G/H, M^H) \to H^\bullet(G,M)$
-	is called the ``inflation map''.
-\end{definition}
-
-
-\begin{definition}
-	\lean{groupCohomology.rest}
-	The restriction of an $n$-cochain $\sigma\in C^n(G,M)$ to a subgroup $H$
-	is an $n$-cochain on $H$. Restriction of cochains gives a map of complexes
-	\[
-		C^\bullet(G,M) \to C^\bullet(H,M).
-	\]
-	The corresponding map $\rest : H^\bullet(G,M) \to H^\bullet(H,M)$ is called the
-	``restriction map''.
-\end{definition}
-
 \begin{theorem}
+	\label{thm:inflation restriction sequence}
 	\lean{groupCohomology.inflationRestriction,
 		groupCohomology.inflation_restriction_mono,
 		groupCohomology.inflation_restriction_exact}
-	Assume that for all natural numbers $i < n$ we have $H^{i+1}(H,M)=0$.
+	\uses{def:up,
+		cor:coind₁' invariants trivial cohomology,
+		lem:inflation restriction naturality}
+	\leanok
+	Let $S$ be a normal subgroup of a group $G$ and let $n$ be a positive integer.
+	Assume that for all natural numbers $0 <i < n$ we have $H^{i}(S,M)=0$.
 	Then the following sequence is exact:
 	\[
-		0 \to H^{n+1}(G/H, M^H) \to H^{n+1}(G,M) \to H^{n+1}(H,M),
+		0 \to H^{n}(G/S, M^S) \to H^{n}(G,M) \to H^{n}(S,M),
 	\]
 	where the first map is inflation and the second is restriction.
 \end{theorem}
 
 \begin{proof}
-	This is already in Mathlib for $n=0$, i.e. for cohomology in
-	dimension $1$.
-	We prove it in general by induction on $n$ using the dimension-shifting function $\up$.
+	This is already in Mathlib for $n=1$.
+	Assume the result is true for $n$; we will prove it for $n+1$
+	by dimension-shifting.
+
+	Let $M$ be a representation such that $H^i(S,M)=0$ for all $0 < i < n+1$.
+	This implies $H^i(S,up(M)) = 0$ for all $0 < i < n$.
+	Hence by the inductive hypothesis the following sequence is exact:
+	\[
+		0 \to H^n( G/S, \up(M)^S) \to H^n(G, \up(M)) \to H^n(S,\up(M)).
+	\]
 	Recall that we have a short exact sequence of representations of $G$:
 	\[
 		0 \to M \to \coind_1'(M) \to \up(M) \to 0.
 	\]
-	By assumption $H^1(H,M)=0$, so by taking $H$-invariants we obtain a short exact sequence of $G/H$-modules:
+	Since $0 < 1 < n+1$ we have $H^1(S,M)=0$,
+	so by taking $S$-invariants we obtain a short exact sequence of
+	$G/S$-modules:
 	\[
-		0 \to M^H \to \coind_1'(M)^H \to \up(M)^H \to 0.
+		0 \to M^S \to \coind_1'(M)^S \to \up(M)^S \to 0.
 	\]
-	Corresponding to this short exact sequence we have a long exact sequence in cohomology
-	containing the following section
+	By \ref{cor:coind₁' invariants trivial cohomology}, $\coind_1'(M)^S$ has trivial cohomology,
+	so we have an isomorphism
 	\[
-		 0 \to H^n(G/H, \up(M)^H) \to  H^{n+1}(G/H, M^H) \to 0
+		 H^n(G/S, \up(M)^S) \to H^{n+1}(G/S, M^S).
 	\]
-	We have a diagram where the horizontal maps are inflation and restriction maps and the vertical
-	maps are isomorphisms.
+	We now have a diagram where the horizontal maps are inflation and restriction maps
+	and the vertical maps are dimension-shifting isomorphisms.
 	\[
 		\begin{matrix}
-			0 &\to& H^{n}(G/H, \up(M)^H) &\to &H^{n}(G,\up(M)) & \to & H^n(H,\up(M)) \\
+			0 &\to& H^{n}(G/S, \up(M)^S) &\to &H^{n}(G,\up(M)) & \to & H^n(S,\up(M)) \\
 			  &   &   \downarrow              &    &  \downarrow         &     &  \downarrow  \\
-			0 &\to& H^{n+1}(G/H, M^H) &\to &H^{n+1}(G,M) & \to & H^{n+1}(H,M).
+			0 &\to& H^{n+1}(G/S, M^S) &\to &H^{n+1}(G,M) & \to & H^{n+1}(S,M).
 		\end{matrix}
 	\]
-	The top row is exact by the inductive hypothesis.
-	We must show that the second row is exact; this amounts to showing that the diagram commutes.
-	This follows from the next two lemmas.
+	The diagram commutes by \ref{lem:inflation restriction naturality}.
+	The first row is exact by the inductive hypothesis.
+	Therefore the second row is also exact.
 \end{proof}
 
-\begin{lemma}
-	\lean{groupCohomology.rest_δ_naturality}
-	Suppose we have a a short exact sequence of representations of $G$
-	\[
-			0 \to  A \to  B \to  C  \to  0.
-	\]
-	For every subgroup $H$ of $G$ the following square commutes:
-	\[
-		\begin{matrix}
-			H^{n}(G,C) & \to & H^{n+1}(G,A)\\
-			\downarrow & & \downarrow \\
-			H^n(H,C) & \to &H^{n+1}(H,A)
-		\end{matrix}.
-	\]
-	The vertical maps are restriction maps and the horizontal maps are the connecting homomorphisms
-	from the long exact sequence.
-\end{lemma}
 
-\begin{lemma}
-	\lean{groupCohomology.infl_δ_naturality}
-	Let $H$ be a normal subgroup of $G$, and suppose we have a short exact
-	sequence of $G$-modules:
-	\[
-			0 \to  A \to  B \to  C  \to  0.
-	\]
-	Assume also that the following is a short exact sequence of $G/H$-modules:
-	\[
-			0 \to  A^H \to  B^H \to  C^H  \to  0.
-	\]
-	Then for all $n \in \N$ the following square commutes
-	\[
-		\begin{matrix}
-			H^{n}(G/H,C^H) & \to & H^{n+1}(G/H,A^H)\\
-			\downarrow & & \downarrow \\
-			H^n(G,C) & \to & H^{n+1}(G,A)
-		\end{matrix}.
-	\]
-	The vertical maps are inflation and the horizontal maps are the connecting homomorphisms
-	from the long exact sequences.
-\end{lemma}
+
+
 
 
 \section{Periodicity for finite cyclic groups}
 
-Suppose now that $G$ is a finite cyclic group of order $n$.
-We shall write $g$ for a fixed generator of $G$.
-Let $M$ be a representation of $G$.
+I this section we shall assume that $G$ is a finite cyclic group of order $n$.
+We shall write $\gen$ for a fixed generator of $G$.
 
-
-\begin{definition}
-	\lean{Representation.map₁}
-	There is a map $\map_1 : \coind_1'(M) \to \coind_1'(M)$ which takes $f : G \to M$ to the function
+\begin{definition} \label{up iso down}
+	\lean{Representation.map₁,
+		Representation.map₁_ker,
+		Representation.map₂_range,
+		Rep.up_iso_down}
+	Given any representation $M$ of $G$, there is a map
+	$\map_1 : \coind_1'(M) \to \coind_1'(M)$ which takes a function $f : G \to M$ to the function
 	\[
-		x \mapsto f(x) - f(g^{-1}x).
+		x \mapsto f(x) - f(\gen^{-1}x).
 	\]
-\end{definition}
-
-
-\begin{lemma}
-	\lean{Representation.map₁_ker}
 	The kernel of $\map_1$ consists of the constant functions $G \to M$, i.e. the image of the
 	map $M \to \coind_1'(M)$.
-\end{lemma}
+	Hence by the first isomorphism theorem, the image of $\map_1$ is isomorphic to $\up(M)$.
 
-\begin{corollary}
-	The image of $\map_1$ is isomorphic to $\up(M)$.
-\end{corollary}
-
-Recall that since $G$ is finite, the representations $\coind_1'(M)$ and $\ind_1'(M)$
-are isomorphic, and we define $\map_2$ to be the corresponding map $\ind_1'(M) \to \ind_1'(M)$.
-This is given by
-\[
-	\map_2(f) (x) = f(x) - f(xg^{-1}).
-\]
-
-\begin{lemma}
-	\lean{Representation.map₂_range}
+	Since $G$ is finite, the representations $\coind_1'(M)$ and $\ind_1'(M)$
+	are isomorphic, and we define $\map_2$ to be the corresponding map $\ind_1'(M) \to \ind_1'(M)$.
+	This is given by
+	\[
+		\map_2(f) (x) = f(x) - f(x\gen).
+	\]
 	The image of $\map_2 : \ind_1'(M) \to \ind_1'(M)$ is precisely the set of functions $G \to M$
-	which sum to zero. This is the kernel of the map $\ind_1'(M) \to M$.
-\end{lemma}
+	which sum to zero. This is the kernel of the map $\ind_1'(M) \to M$,
+	which we are calling $\down(M)$.
 
-
-
-
-The two lemmas show that we have a diagram with exact rows and vertical isomorphisms:
-\[
-	\begin{matrix}
-		0 \to M \to &\coind_1'(M)& \stackrel{\map_1}\to& \coind_1'(M)\\
-		& || &&|| \\
-		& \ind_1'(M)& \stackrel{\map_2}\to& \ind_1'(M) &\to M \to 0
-	\end{matrix},
-\]
-
-
-\begin{corollary}
-	\lean{Rep.up_iso_down}
-	In particular we have an isomorphism:
+	We have commutative square with vertical isomorphisms:
+	\[
+		\begin{matrix}
+			\ind_1'(M) & \stackrel{\map_2}\to & \ind_1'(M).
+			\downarrow && \downarrow \\
+			\coind_1'(M) & \stackrel{\map_1}\to & \coind_1'(M) \\
+		\end{matrix}.
+	\]
+	It follows that $\image(\map_1) \cong \image(\map_2)$,
+	i.e.
 	\[
 		\up(M) \cong \down(M).
 	\]
-	(It is more convenient in the long run to express this as an isomorphism of functors
-	$\up \cong \down$.)
-\end{corollary}
+	This is an isomorphism of functors; i.e. for each map $f : M \to N$ in $\Rep(R,G)$
+	we have a commuting square:
+	\[
+		\begin{matrix}
+			\up(M) & \stackrel{\up(f)}\to & \up(N) \\
+			\downarrow && \downarrow \\
+			\down(M) & \stackrel{\down(f)}\to & \down(N)
+		\end{matrix}.
+	\]
+\end{definition}
 
-\begin{corollary}
+\begin{corollary} \label{cor:periodic cohomology}
 	\lean{Rep.periodicCohomology}
-	For all $n \in \N$, $H^{n+1}(G,M) \cong H^{n+3}(G,M)$.
+	Let $G$ be a finite cyclic group.
+	For all $n > 0$ and all representations $M$
+	we have an isomorphism $H^{n}(G,M) \cong H^{n+2}(G,M)$.
 \end{corollary}
 
+\begin{proof}
+	$H^{n}(G,M) \cong H^{n+1}(G,\down(M)) \cong H^{n+1}(G,\up(M)) \cong H^{n+2}(G,M)$.
+\end{proof}
 
+Of course it's also possible to deduce isomorphisms $H^n_{Tate}(G,M) \cong H^{n+2}_{Tate}(G,M)$
+for all $n \in \Z$, but we won't actually need these.
 
 
 

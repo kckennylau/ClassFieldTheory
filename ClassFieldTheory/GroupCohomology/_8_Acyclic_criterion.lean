@@ -18,7 +18,7 @@ variable {G : Type} [Group G]
 /--
 If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H` of `G` then `M` is acyclic.
 -/
-theorem groupCohomology.Acyclic_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
+theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
     (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
@@ -41,7 +41,7 @@ theorem groupCohomology.Acyclic_of_even_of_odd_of_solvable [Finite G] [IsSolvabl
   -/
   sorry
 
-theorem groupCohomology.Acyclic_of_even_of_odd [Finite G]
+theorem groupCohomology.trivialCohomology_of_even_of_odd [Finite G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
     (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
@@ -55,8 +55,8 @@ instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.Tri
 instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     (down.obj M).TrivialCohomology := sorry
 
-lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] (n : ℤ) :
-    IsZero ((TateCohomology n).obj M) := sorry
+lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] (M : Rep R G)
+    [M.TrivialCohomology] (n : ℤ) : IsZero ((TateCohomology n).obj M) := sorry
 
 instance Rep.trivialHomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     M.TrivialHomology := sorry
