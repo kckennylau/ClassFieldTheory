@@ -294,7 +294,7 @@ lemma TateTheorem_lemma_4 [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
 
   We therefore have a long exact sequence containing
 
-    `H²(G,M) ⟶ H²(G,split) ⟶ 0.`
+    `H²(G,M) ⟶ H²(G,split σ) ⟶ 0.`
 
   We have shown in `TateTheorem_lemma_1` that the map above is zero.
   -/
@@ -303,8 +303,8 @@ lemma TateTheorem_lemma_4 [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
 /--
 The splitting module is acyclic.
 -/
-lemma isAcyclic [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
-    (split σ).IsAcyclic := by
+lemma trivialCohomology [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
+    (split σ).TrivialCohomology := by
   apply Acyclic_of_even_of_odd (split σ) 0 0
   · intro H
     apply IsZero.of_iso (TateTheorem_lemma_4 σ H)

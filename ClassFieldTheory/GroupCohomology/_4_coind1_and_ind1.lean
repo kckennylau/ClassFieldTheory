@@ -412,7 +412,7 @@ def coind₁_iso_fTrivial_comp_coindFunctor : coind₁ G ≅ fTrivial Unit ⋙ c
 /--
 Coinduced representations are acyclic.
 -/
-instance coind₁_isAcyclic (A : ModuleCat R) : ((coind₁ G).obj A).IsAcyclic :=
+instance coind₁_trivialCohomology (A : ModuleCat R) : ((coind₁ G).obj A).TrivialCohomology :=
   /-
   There are many ways to prove this. The following method uses none of the
   technology of homological algebra, so it should be fairly easy to formalize.
@@ -463,9 +463,9 @@ def coind₁_quotientToInvariants_iso (A : ModuleCat R) (H : Subgroup G) [H.Norm
 /--
 The `H`-invariants of `(coind₁ G).obj A` form an acyclic representation of `G ⧸ H`.
 -/
-instance coind₁_quotientToInvariants_isAcyclic (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
-    (((coind₁ G).obj A).quotientToInvariants H).IsAcyclic :=
-  Rep.isAcyclic_of_iso (Rep.coind₁_quotientToInvariants_iso _ _ _)
+instance coind₁_quotientToInvariants_trivialCohomology (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
+    (((coind₁ G).obj A).quotientToInvariants H).TrivialCohomology :=
+  Rep.trivialCohomology_of_iso (Rep.coind₁_quotientToInvariants_iso _ _ _)
 
 variable {G}
 
@@ -527,14 +527,14 @@ The inclusion of a representation `M` of `G` in the coinduced representation `co
   hom_inv_id := sorry
   inv_hom_id := sorry
 
-instance coind₁'_isAcyclic : (coind₁'.obj M).IsAcyclic :=
-  isAcyclic_of_iso (coind₁'_obj_iso_coind₁ M)
+instance coind₁'_trivialCohomology : (coind₁'.obj M).TrivialCohomology :=
+  trivialCohomology_of_iso (coind₁'_obj_iso_coind₁ M)
 
-instance coind₁'_quotientToInvariants_isAcyclic (H : Subgroup G) [H.Normal] :
-    ((coind₁'.obj M).quotientToInvariants H).IsAcyclic := by
+instance coind₁'_quotientToInvariants_trivialCohomology (H : Subgroup G) [H.Normal] :
+    ((coind₁'.obj M).quotientToInvariants H).TrivialCohomology := by
   have : (coind₁'.obj M).quotientToInvariants H ≅ ((coind₁ G).obj M.V).quotientToInvariants H
   · sorry
-  apply isAcyclic_of_iso this
+  apply trivialCohomology_of_iso this
 
 
 variable (G)
@@ -565,7 +565,7 @@ def ind₁ : ModuleCat R ⥤ Rep R G where
 instance (A : ModuleCat R) : FunLike ((ind₁ G).obj A) G A :=
   inferInstanceAs (FunLike (G →₀ A) _ _)
 
-instance ind₁_isHomologyAcyclic (A : ModuleCat R) : IsHomologyAcyclic ((ind₁ G).obj A) :=
+instance ind₁_trivialHomology (A : ModuleCat R) : TrivialHomology ((ind₁ G).obj A) :=
   sorry -- relies on current PR (defn of group homology).
 
 @[ext] lemma ind₁_obj.ext {A : ModuleCat R} (f₁ f₂ : (ind₁ G).obj A) (h : ⇑f₁ = ⇑f₂) :
@@ -675,9 +675,9 @@ def ind₁'_iso_forget₂_ggg_ind₁ : ind₁' ≅ forget₂ (Rep R G) (ModuleCa
   inv_hom_id := sorry
 
 universe u
-instance ind₁'_isHomologyAcyclic : IsHomologyAcyclic.{u} (ind₁'.obj M) :=
-  let _ := (ind₁_isHomologyAcyclic.{u} G M.V)
-  isHomologyAcyclic_of_iso (ind₁'_obj_iso M)
+instance ind₁'_trivialHomology : TrivialHomology.{u} (ind₁'.obj M) :=
+  let _ := (ind₁_trivialHomology.{u} G M.V)
+  trivialHomology_of_iso (ind₁'_obj_iso M)
 
 section FiniteGroup
 
@@ -746,16 +746,16 @@ lemma ind₁'_iso_coind₁'_app_apply [Finite G] (f : G →₀ M.V) (x : G) :
     rw [hx]
     simp
 
-instance ind₁_isAcyclic [Finite G] : IsAcyclic ((ind₁ G).obj A) :=
-  isAcyclic_of_iso (ind₁_obj_iso_coind₁_obj A)
+instance ind₁_trivialCohomology [Finite G] : TrivialCohomology ((ind₁ G).obj A) :=
+  trivialCohomology_of_iso (ind₁_obj_iso_coind₁_obj A)
 
-instance ind₁'_isAcyclic [Finite G] : IsAcyclic (ind₁'.obj M) :=
-  isAcyclic_of_iso (ind₁'_obj_iso M)
+instance ind₁'_trivialCohomology [Finite G] : TrivialCohomology (ind₁'.obj M) :=
+  trivialCohomology_of_iso (ind₁'_obj_iso M)
 
-instance coind₁_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} ((coind₁ G).obj A) :=
-  isHomologyAcyclic_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm
+instance coind₁_trivialHomology [Finite G] : TrivialHomology.{u} ((coind₁ G).obj A) :=
+  trivialHomology_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm
 
-instance coind₁'_isHomologyAcyclic [Finite G] : IsHomologyAcyclic.{u} (coind₁'.obj M) :=
-  isHomologyAcyclic_of_iso.{u} (coind₁'_obj_iso_coind₁ M)
+instance coind₁'_trivialHomology [Finite G] : TrivialHomology.{u} (coind₁'.obj M) :=
+  trivialHomology_of_iso.{u} (coind₁'_obj_iso_coind₁ M)
 
 end FiniteGroup

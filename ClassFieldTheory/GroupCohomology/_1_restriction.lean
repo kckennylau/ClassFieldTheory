@@ -162,7 +162,7 @@ lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (H : S
 /--
 The restriction map in cohomology from `Hⁿ(G,M)` to `Hⁿ(⊤,M ↓ G)` is an isomorphism.
 This is useful when we have a hypothesis concerning `Hⁿ(H,M ↓ H)` for all subgroups `H` of `G`,
-for example `Rep.IsAcyclic`.
+for example `Rep.TrivialCohomology`.
 -/
 def rest_top_iso (M : Rep R G) (n : ℕ) : groupCohomology M n ≅ groupCohomology (M ↓ ⊤) n where
   hom := (rest ⊤ n).app M

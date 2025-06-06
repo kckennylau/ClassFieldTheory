@@ -137,9 +137,9 @@ def _root_.Rep.leftRegular.iso_ind₁' : leftRegular R G ≅ ind₁'.obj (trivia
 /--
 For a finite group, the left regular representation is acyclic.
 -/
-instance _root_.Rep.leftRegular.isAcyclic [Finite G] [DecidableEq G]:
-    (leftRegular R G).IsAcyclic :=
-  isAcyclic_of_iso (iso_ind₁' R G)
+instance _root_.Rep.leftRegular.trivialCohomology [Finite G] [DecidableEq G]:
+    (leftRegular R G).TrivialCohomology :=
+  trivialCohomology_of_iso (iso_ind₁' R G)
 
 /--
 The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.
@@ -149,7 +149,7 @@ lemma cohomology_aug_succ_iso [Finite G] (n : ℕ) :
   /-
   This connecting homomorphism is sandwiched between two modules H^{n+1}(G,R[G]) and H^{n+2}(G,R[G]),
   where P is the left regular representation.
-  Then use `Rep.leftRegular.isAcyclic` to show that both of these are zero.
+  Then use `Rep.leftRegular.trivialCohomology` to show that both of these are zero.
   -/
   sorry
 

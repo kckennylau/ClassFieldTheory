@@ -3,12 +3,12 @@ import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._1_restriction
 
 /-!
-An object `M : Rep R G` is called acyclic if
+An object `M : Rep R G` is has trivial cohomology if
 `Hⁿ(H,M)=0` for all `n > 0` and all subgroup `H` of `G`.
 
 We prove that if `G` is a finite solvable group, and `H¹(H,M) = H²(H,M) = 0` for
-all subgroup `H` of `G` then `M` is acyclic. This is used in proving that `split σ` is
-acyclic, where `σ` is a 2-cocycle in a finite class formation.
+all subgroup `H` of `G` then `M` has trivial cohomology. This is used in proving that `split σ` has
+trivial cohomology, where `σ` is a `2`-cocycle in a finite class formation.
 
 The proof requires the inflation-restriction sequence in the following generality:
 
@@ -38,26 +38,26 @@ open
 
 variable {R G : Type _} [CommRing R]  [Group G]
 /--
-A representation `M : Rep R G` is acyclic if the cohomology groups `Hⁿ(H,M)` are all zero
-for every subgroup `H` of `G` and every `n > 0`.
+A representation `M : Rep R G` has trivial cohomology if the cohomology groups `Hⁿ(H,M)`
+are zero for every subgroup `H` of `G` and every `n > 0`.
 -/
-class Rep.IsAcyclic (M : Rep R G) : Prop where
+class Rep.TrivialCohomology (M : Rep R G) : Prop where
   zero {H : Subgroup G} {n : ℕ} : IsZero (groupCohomology (M ↓ H) (n + 1))
 
-lemma Rep.isAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) [N.IsAcyclic] : M.IsAcyclic := by
+lemma Rep.trivialCohomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialCohomology] : M.TrivialCohomology := by
   constructor
   intro H n
   have : (functor R H n.succ).obj (M ↓ H) ≅ (functor R H n.succ).obj (N ↓ H)
   · exact (functor _ _ n.succ).mapIso ((res H).mapIso f)
-  apply IsZero.of_iso IsAcyclic.zero this
+  apply IsZero.of_iso TrivialCohomology.zero this
 
-class Rep.IsHomologyAcyclic.{u} (M : Rep R G) : Prop where
+class Rep.TrivialHomology.{u} (M : Rep R G) : Prop where
   zero (H : Subgroup G) (n : ℕ) : IsZero.{u,u+1} (groupHomology (M ↓ H) (n + 1))
 
-lemma Rep.isHomologyAcyclic_of_iso {M N : Rep R G} (f : M ≅ N) [N.IsHomologyAcyclic] :
-    M.IsHomologyAcyclic := by
+lemma Rep.trivialHomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialHomology] :
+    M.TrivialHomology := by
   sorry
 
-lemma groupCohomology.isZero_of_isAcyclic {M : Rep R G} [M.IsAcyclic] (n : ℕ) :
+lemma groupCohomology.isZero_of_trivialCohomology {M : Rep R G} [M.TrivialCohomology] (n : ℕ) :
     IsZero (groupCohomology M (n + 1)) :=
-  IsZero.of_iso Rep.IsAcyclic.zero (rest_top_iso _ _)
+  IsZero.of_iso Rep.TrivialCohomology.zero (rest_top_iso _ _)

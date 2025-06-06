@@ -239,7 +239,7 @@ variable [DecidableEq G] [Finite G]
 The connecting homomorphism `H⁰(G,down.obj M) ⟶ H¹(G, M)` is an epimorphism if `G` is finite.
 -/
 lemma down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) := by
-  have := ind₁'_isAcyclic M
+  have := ind₁'_trivialCohomology M
   sorry
 
 /--
@@ -247,7 +247,7 @@ The connecting homomorphism `H⁰(H,down.obj M ↓ H) ⟶ H¹(H, M ↓ H)` is an
 `H` is a subgroup of a finite group `G`.
 -/
 lemma down_δ_zero_res_epi (H : Subgroup G) : Epi (δ (down_shortExact_res M H) 0 1 rfl) := by
-  have := ind₁'_isAcyclic M
+  have := ind₁'_trivialCohomology M
   sorry
 
 /--
@@ -255,7 +255,7 @@ The connecting homomorphism `Hⁿ⁺¹(G,down.obj M) ⟶ Hⁿ⁺²(G, M)` is an 
 if `G` is finite.
 -/
 instance down_δ_isIso  (n : ℕ) : IsIso (δ (down_shortExact M) (n + 1) (n + 2) rfl) := by
-  have := ind₁'_isAcyclic M
+  have := ind₁'_trivialCohomology M
   sorry
 
 def down_δiso (n : ℕ) : groupCohomology M (n + 1) ≅ groupCohomology (down.obj M) (n + 2) :=
@@ -277,7 +277,7 @@ if `H` is a subgroup of a finite group `G`.
 -/
 instance down_δ_res_isIso (n : ℕ) (H : Subgroup G) :
     IsIso (δ (down_shortExact_res M H) (n + 1) (n + 2) rfl) := by
-  have := ind₁'_isAcyclic M
+  have := ind₁'_trivialCohomology M
   sorry
 
 def down_δiso_res (H : Subgroup G) (n : ℕ) :

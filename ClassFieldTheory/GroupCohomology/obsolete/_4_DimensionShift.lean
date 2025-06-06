@@ -214,7 +214,7 @@ lemma coind₁'_quotientToInvariants_isAcyclic (H : Subgroup G) [H.Normal] :
 
 
 lemma coind₁_homologyAcyclic [Finite G]  [Group G] (A : ModuleCat R) :
-    ((coind₁ G).obj A).IsHomologyAcyclic :=
+    ((coind₁ G).obj A).TrivialHomology :=
   sorry
 
 open TensorProduct Representation
@@ -251,10 +251,10 @@ def ind₁'_iso_ind₁ : ind₁'.obj M ≅ (ind₁ G).obj M.V where
   hom_inv_id := sorry
   inv_hom_id := sorry
 
-lemma ind₁_isHomologyAcyclic (A : ModuleCat R) : ((ind₁ G).obj A).IsHomologyAcyclic :=
+lemma ind₁_trivialHomology (A : ModuleCat R) : ((ind₁ G).obj A).TrivialHomology :=
   sorry --requires current PR
 
-lemma ind₁'_isHomologyAcyclic : (ind₁'.obj M).IsHomologyAcyclic := by
+lemma ind₁'_trivialHomology : (ind₁'.obj M).TrivialHomology := by
   sorry
 
 

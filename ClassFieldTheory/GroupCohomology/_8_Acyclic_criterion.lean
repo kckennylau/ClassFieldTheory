@@ -22,7 +22,7 @@ theorem groupCohomology.Acyclic_of_even_of_odd_of_solvable [Finite G] [IsSolvabl
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
     (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
-    M.IsAcyclic := by
+    M.TrivialCohomology := by
   /-
   This is proved by induction on `H`.
   If `H` is the trivial subgroup then the result is true.
@@ -45,18 +45,18 @@ theorem groupCohomology.Acyclic_of_even_of_odd [Finite G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
     (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
-    M.IsAcyclic := by
+    M.TrivialCohomology := by
   sorry
 
 
-instance Rep.dimensionShift.up_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
-    (up.obj M).IsAcyclic := sorry
+instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
+    (up.obj M).TrivialCohomology := sorry
 
-instance Rep.dimensionShift.down_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
-    (down.obj M).IsAcyclic := sorry
+instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
+    (down.obj M).TrivialCohomology := sorry
 
-lemma groupCohomology.TateCohomology_of_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] (n : ℤ) :
+lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] (n : ℤ) :
     IsZero ((TateCohomology n).obj M) := sorry
 
-instance Rep.isHomologyAcyclic_of_isAcyclic [Finite G] (M : Rep R G) [M.IsAcyclic] :
-    M.IsHomologyAcyclic := sorry
+instance Rep.trivialHomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
+    M.TrivialHomology := sorry
