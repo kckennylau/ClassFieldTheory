@@ -1,0 +1,283 @@
+\chapter{Global Class Field Theory}
+
+In this chapter we let $l/k$ be a finite Galois extension of
+algebraic number fields. We shall consider the idele class group $\Cl_l = \A_l^\times / l^\times$
+as a module for the Galois group $\Gal(l/k)$ and we shall describe the construction of
+fundamental classes in $H^2(l/k, \Cl_l)$.
+These classes give rise to a reciprocity isomorphism
+\[
+	\Gal(l/k)^{ab} \cong \Cl_k / N(\Cl_l).
+\]
+We would therefore like to prove for all intermediate fields $l / m / k$:
+\begin{itemize}
+	\item
+	$H^1(l/m, \Cl_l) = 0$,
+	\item
+	$H^2(l/m, \Cl_l)$ is cyclic of order $[l:m]$.
+\end{itemize}
+
+
+\section{Notation}
+
+Let $S$ be a finite set of places of $k$, containing all of the infinite primes and all
+of the primes which ramify in $l$.
+We shall use the notation
+\[
+	\A_{l,S} = \prod_{v \in S} \prod_{w | v} l_w \times \prod_{v \in S} \prod_{w | v} \cO_v.
+\]
+We also write $\cO_{l,S}$ for the $S$-integers in $l$:
+\[
+	\cO_{l,S} = \{x \in l, \forall v \not\in S, \forall w | v, |x|_v \le 1\}.
+\]
+We regard $\cO_{l,S}$ as a subring of $\A_{l,S}$ and
+$\cO_{l,S}^\times$ as a subgroup of $\A_{l,S}^\times$.
+The quotient $\A_{l,S}^\times / \cO_{l,S}^\times$ injects into $\Cl_l$,
+and we have
+\[
+	\Cl_l = \lim_\to \A_{l,S}^\times / \cO_{l,S}^\times.
+\]
+It follows that
+\[
+	H^\bullet(l/k, \Cl_l) = \lim_\to H^\bullet(l/k, \A_{l,S}^\times / \cO_{l,S}^\times).
+\]
+Thus in order to construct fundamental classes in $H^2(l/k, \Cl_l)$, it's sufficient to
+construct fundamental classes in $H^2(l/k, \A_{l,S}^\times / \cO_{l,S}^\times)$,
+which are compatible with the maps
+\[
+	H^2(l/k, \A_{l,S}^\times / \cO_{l,S}^\times)
+	\to
+	H^2(l/k, \A_{l,T}^\times / \cO_{l,S}^\times),
+	\qquad
+	(S \subseteq T).
+\]
+The big advantage of working with $\A_{l,S}^\times$ and $\cO_{l,S}$ instead of $\A_l^\times$ and
+$l^\times$ is that $\A_{l,S}^\times$ and $\cO_{l,S}$ have well-defined Herbrand quotients,
+whereas the cohomology groups of $\A_l^\times$ and $l^\times$ are infinite.
+
+
+
+\section{The Herbrand quotient of the $S$-ideles}
+
+Let $v$ be a place of $k$ and $\hat v$ a place of $l$ above $v$.
+We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
+Then there is are isomorphisms
+\[
+	\prod_{w | v} l_w^\times
+	\cong
+	\ind_{D_{\hat v}}^{\Gal(l/k)} l_{\hat v}^\times,
+	\qquad
+	\prod_{w | v} \cO_w^\times
+	\cong
+	\ind_{D_{\hat v}}^{\Gal(l/k)} \cO_{\hat v}^\times.
+\]
+
+\begin{lemma}
+	There are isomorphisms
+	\[
+		H^n(l/k, \A_{S,l} ^\times)
+		\cong
+		\prod_{v \in S} H^n(l_{\hat v} / k_v, l_{\hat v}^\times).
+	\]
+\end{lemma}
+
+\begin{lemma}
+	If $l/k$ is a cyclic extension then we have
+	\[
+		h(l/k, \A_{S,l} ^\times )
+		=
+		\prod_{v \in S} |D_{\hat v}|.
+	\]
+\end{lemma}
+
+\begin{proof}
+	This follows from the previous lemma, Shapiro's lemma and the
+	calculation of Herbrand quotients for local fields.
+\end{proof}
+
+
+\section{The Herbrand quotient of the $S$-units}
+
+Define the \emph{logarithmic space} $V_S$ to be the following finite dimensional vector space
+over the real numbers:
+\[
+	V_S = \prod_{v \in S} \prod_{w | v} \R.
+\]
+We consider $L_S$ as a representation of $\Gal(l/k)$, where the Galois action
+permutes the places $w$ lying above each $v \in S$.
+As a Galois representation we have
+\[
+	V_S \cong \prod_{v \in S} \ind_{D_{\hat v}}^{\Gal(l/k)} \R.
+\]
+Contained in $V_S$ we have a lattice $L_S$ consisting of vectors whose components are all in $\Z$.
+Here we are using the word ``lattice'' to mean the $\Z$-space of a basis for $V_S$.
+We have an isomorphism
+\[
+	L_S \cong \prod_{v \in S} \ind_{D_{\hat v}}^{\Gal(l/k)} \Z.
+\]
+
+\begin{lemma}
+	If $l/k$ is a cyclic extension then
+	$h(l/k,L_S) = \prod_{v \in S} |D_{\hat v}|$.
+\end{lemma}
+
+\begin{proof}
+	This follows from Shapiro's lemma together with
+	the calculation of the cohomology of a cyclic group with values in $\Z$.
+\end{proof}
+
+\begin{lemma}
+	Let $l/k$ be cyclic and let $M$ be any Galois-invariant lattice in $V_S$.
+	Then $h(l/k,M) = \prod_{v \in S} |D_{\hat v}|$
+\end{lemma}
+
+\begin{proof}
+	The representations $M \otimes \Q$ and $L_S \otimes \Q$ have the same character
+	(this is just the character of the representation $V_S$).
+	Therefore the representations $M \otimes \Q$ and $L_S \otimes \Q$ are isomorphic.
+	Hence $M$ is isomorphic to subrepresentation of finite index in $L_S$,
+	so thay have the same Herbrand quotient.
+\end{proof}
+
+
+The vector $(1,1,\ldots,1) \in V_S$ in fixed by all elements of $\Gal(l/k)$, so it spans
+a subrepresentation isomorphic to the trivial representation $\Z$.
+Recall the we have a logarithmic map
+\[
+	\log_S : \cO_S^\times \to V_S,
+\]
+where the $w$-component of $\log_S(x)$ is $\log |x|_w$.
+The kernel of $\log_S$ is the finite group of roots of unity in $k$.
+
+\begin{theorem} \label{thm:Dirichlet unit theorem}
+	$\log_S(\cO_S^\times)$ has zero intersection with $\Span (1,1,\ldots,1)$.
+	The direct sum of these subrepresentations is a lattice in $V_S$.
+\end{theorem}
+
+\begin{corollary}
+	Let $l/k$ be a cyclic extension. Then
+	\[
+		h(l/k,\cO_{l,S}^\times) = \frac{\prod_{v\in S} |D_{\hat v}|}{[l:k]}.
+	\]
+\end{corollary}
+
+\begin{proof}
+	Since $\log_S$ has finite kernel, the Herbrand quotient of $\cO_{l,S}^\times$ is
+	equal to that of $\log_S(\cO_S^\times)$.
+	By Dirichlet's unit theorem, $\log_S(\cO_S^\times) \oplus \Z$ is a lattice in
+	$V_S$.
+	We know the Herbrand quotient of $\log_S(\cO_S^\times) \oplus \Z$ from the calculation above,
+	and the Herbrand quotient of $\Z$ is $[l:k]$.
+\end{proof}
+
+\begin{corollary}
+	If $l/k$ is cyclic then $h(\A_{l,S}^\times / \cO_{l,S}^\times) = [l:k]$.
+\end{corollary}
+
+
+
+\section{The first inequality}
+
+\begin{theorem} \label{thm:first inequality}
+	For any finite Galois extension $l/k$ be have
+	\[
+		|H^0_{Tate}(l/k, \A_{l,S}^\times / \cO_{l,S}^\times) | \le [l : k].
+	\]
+\end{theorem}
+
+The easiest proof of this theorem is rather like that of Dirichlet's primes in arithmetic
+progressions result.
+We'll examine some of its consequences.
+
+\begin{corollary}
+	If $l/k$ is cyclic then $|H^2(l/k, \Cl_{l,S})| = [l:k]$ and $H^1(l/k, \Cl_{l,S}) = 0$.
+\end{corollary}
+
+\begin{proof}
+	This follows immediately from (a) the first inequality, (b) the periodicity of
+	the cohomology for a cyclic group, and (c) the calculation of the Herbrand quotient
+	of $\Cl_{l,S}$.
+\end{proof}
+
+\begin{proof}
+	This follows immediately from (a) the first inequality, (b) the periodicity of
+	the cohomology for a cyclic group, and (c) the calculation of the Herbrand quotient
+	of $\Cl_{l,S}$.
+\end{proof}
+
+\begin{corollary}
+	If $l/k$ is cyclic then $|H^2(l/k, \Cl_{l})| \le [l:k]$ and $H^1(l/k, \Cl_{l}) = 0$.
+\end{corollary}
+
+\begin{proof}
+	This follows from the previous result, since $\Cl_l$ is the direct limit of
+	the representations $\Cl_{l,S}$
+\end{proof}
+
+
+\begin{lemma}
+	For any intermediate extension $l/m/k$, there is an isomorphism
+	\[
+		\Cl_{l}^{\Gal(l/m)} \cong \Cl_{m}.
+	\]
+\end{lemma}
+
+\begin{proof}
+	We have a short exact sequence
+	\[
+		0 \to \cO_{l}^\times \to \A_{l}^\times \to \Cl_{l} \to 0.
+	\]
+	Taking $\Gal(l/m)$-invariants we get a long exact sequence
+	\[
+		0 \to m^\times \to \A_{m}^\times \to \Cl_{l}^{\Gal(l/m)} \to
+		H^1(l/m,l^\times).
+	\]
+	The result now follows from Hilbert's theorem 90.
+\end{proof}
+
+\begin{theorem}
+	If $l/k$ is any finite Galois extension then $H^1(l/k, \Cl_{l}) = 0$
+	and $|H^2(l/k, \Cl_{l})| \le [l:k]$.
+\end{theorem}
+
+
+\begin{proof}
+	For each prime number $p$ dividing $[l:k]$ we let $k_p$ be the fixed
+	field of a Sylow $p$-subgroup $S_p$ of $\Gal(l/k)$.
+	By \ref{cor:cohomology sub Sylow}, it's suffient to prove
+	\[
+		H^1(l/k_p, \Cl_{l}) = 0, \qquad
+		|H^2(l/k_p, \Cl_{l})| \le [l:k_p].
+	\]
+	Since $S_p$ is solvable, this reduces us to the case that $\Gal(l/k)$ is solvable.
+	We'll prove the result by induction on $k$ starting with $k=l$ and working downwards
+	in cyclic quotients.
+
+	Clearly the result holds for $k=l$.
+	Assume the result for a subfield $m$ of $l$ and let $m/k$ by cyclic.
+	We have an inflationrestriction sequence:
+	\[
+		0 \to H^1(m/k, \Cl_{l}^{\Gal(l/m)}) \to H^1(l/k, \Cl_{l}) \to 0.
+	\]
+	By the lemma, we have an isomorphism
+	\[
+		H^1(m/k, \Cl_{m}) \cong H^1(l/k, \Cl_{l}) .
+	\]
+	The first term is zero since $m/k$ is cyclic.
+	Therefore $H^1(l/k,\Cl_l)=0$.
+
+	This implies that we have an inflation-restriction sequence
+	\[
+		0 \to H^2(m/k, \Cl_m) \to H^2(l/k, \Cl_l) \to H^2(l/m,\Cl_l).
+	\]
+	By the inductive hypothesis we have $|H^2(l/m,\Cl_l)| \le [l:m]$
+	and since $l/m$ is cyclic we have $|H^2(m/k, \Cl_m)| \le [m : k]$.
+	It follows that $|H^2(l/k,\Cl_l)| \le [l : k]$.
+\end{proof}
+
+
+To complete the construction of fundamental classes and the reciprocity isomorphism,
+we need only show that there is an element in $H^2(l/k,\Cl_l)$ of order $[l:k]$.
+Such an element is constructed first for a cyclic cyclotomic extension $l'/k$ with the same degree
+as $l/k$.
+It's then shown that the inflation of such a class to $ll'/k$ must split on $ll'/l$,
+and must therefore be the inflation of an element of order $[l:k]$ in $H^2(l/k,\Cl_l)$.
