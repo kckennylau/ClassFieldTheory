@@ -16,8 +16,37 @@ We would therefore like to prove for all intermediate fields $l / m / k$:
 	$H^2(l/m, \Cl_l)$ is cyclic of order $[l:m]$.
 \end{itemize}
 
+We note the following consequence of Hilbert's theorem 90:
 
-\section{Notation}
+\begin{lemma} \label{lem:idele class invariants}
+	\uses{thm:hilbert 90}
+	Let $l/k$ be any Galois extension of number fields.
+	The map $\Cl_k \to \Cl_l ^ {\Gal(l/k)}$ is an isomorphism.
+\end{lemma}
+
+\begin{proof}
+	We have a short exact sequence
+	\[
+		0 \to l^\times \to \A_l^\times \to \Cl_l \to 0.
+	\]
+	Taking $\Gal(l/k)$-invariants gives a long exact sequence beginning with
+	\[
+		0 \to k^\times \to \A_k^\times \to \Cl_l^{\Gal(l/k)} \to H^1(l/k, l^\times).
+	\]
+	The last term is zero by \ref{thm:hilbert 90}. This implies the result.
+\end{proof}
+
+By the lemma, the inflation map for a tower of Galois extensions $l/m/k$ takes the form
+\[
+	H^n(m/k, \Cl_m) \to H^n(l/k, \Cl_l).
+\]
+
+
+
+
+
+
+\section{Choice of $S$}
 
 Let $S$ be a finite set of places of $k$, containing all of the infinite primes and all
 of the primes which ramify in $l$.
@@ -27,28 +56,24 @@ We shall use the notation
 \]
 We also write $\cO_{l,S}$ for the $S$-integers in $l$:
 \[
-	\cO_{l,S} = \{x \in l, \forall v \not\in S, \forall w | v, |x|_v \le 1\}.
+	\cO_{l,S} = \{x \in l, \forall v \not\in S, \forall w | v, |x|_v \le 1\} = k \cap \A_{l,S}.
 \]
 We regard $\cO_{l,S}$ as a subring of $\A_{l,S}$ and
 $\cO_{l,S}^\times$ as a subgroup of $\A_{l,S}^\times$.
-The quotient $\A_{l,S}^\times / \cO_{l,S}^\times$ injects into $\Cl_l$,
-and we have
+
+By adding more primes to $S$ if necessary, we may assume that $\cO_{k,S}$ and $\cO_{l,S}$ are both
+principal ideal domains (that can be achieved by adding to $S$ the primes $P$ whose ideal classes
+generate the class groups of $k$ and $S$).
+This implies
 \[
-	\Cl_l = \lim_\to \A_{l,S}^\times / \cO_{l,S}^\times.
-\]
-It follows that
-\[
-	H^\bullet(l/k, \Cl_l) = \lim_\to H^\bullet(l/k, \A_{l,S}^\times / \cO_{l,S}^\times).
-\]
-Thus in order to construct fundamental classes in $H^2(l/k, \Cl_l)$, it's sufficient to
-construct fundamental classes in $H^2(l/k, \A_{l,S}^\times / \cO_{l,S}^\times)$,
-which are compatible with the maps
-\[
-	H^2(l/k, \A_{l,S}^\times / \cO_{l,S}^\times)
-	\to
-	H^2(l/k, \A_{l,T}^\times / \cO_{l,S}^\times),
+	\A_{l}^\times = \A_{l,S}^\times l^\times,
 	\qquad
-	(S \subseteq T).
+	\A_k^\times = \A_{k,S}^\times k^\times,
+\]
+and therefore
+\[
+	\Cl_{l} = \A_{l,S}^\times / \cO_{l,S}^\times, \qquad
+	\Cl_{k} = \A_{k,S}^\times / \cO_{l,S}^\times.
 \]
 The big advantage of working with $\A_{l,S}^\times$ and $\cO_{l,S}$ instead of $\A_l^\times$ and
 $l^\times$ is that $\A_{l,S}^\times$ and $\cO_{l,S}$ have well-defined Herbrand quotients,
@@ -56,11 +81,13 @@ whereas the cohomology groups of $\A_l^\times$ and $l^\times$ are infinite.
 
 
 
+
+
 \section{The Herbrand quotient of the $S$-ideles}
 
 Let $v$ be a place of $k$ and $\hat v$ a place of $l$ above $v$.
 We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
-Then there is are isomorphisms
+Then there are isomorphisms
 \[
 	\prod_{w | v} l_w^\times
 	\cong
@@ -93,6 +120,7 @@ Then there is are isomorphisms
 	This follows from the previous lemma, Shapiro's lemma and the
 	calculation of Herbrand quotients for local fields.
 \end{proof}
+
 
 
 \section{The Herbrand quotient of the $S$-units}
@@ -175,18 +203,155 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 
 
 
+
+\section{Dirichlet Density}
+
+\begin{definition} \label{def:Dirichlet density}
+	Let $M$ be a set of primes of $\cO_k$.
+	We'll say that $M$ has a \emph{Dirichlet density} $c \in \R$ if
+	\[
+		\sum_{P \in M} N(P)^{-s} \stackrel{s \to 1+}\sim c \log\frac{1}{s-1}
+	\]
+	where $s$ tends to $1$ through the real numbers $s>1$.
+	The Dirichlet density, if it exists, will be written $\dir(M)$.
+\end{definition}
+
+
+\begin{lemma}
+	Suppose $M_1$ and $M_2$ are disjoint sets of primes of $\cO_l$.
+	If two of the sets $M_1, M_2, M_1 \cup M_2$ have a Dirichlet density, then so does the third
+	and we have $\dir(M_1 \cup M_2) = \dir(M_1) + \dor(M_2)$.
+\end{lemma}
+
+\begin{proof}
+	This is trivial.
+\end{proof}
+
+\begin{lemma} \label{lem:Dirichlet density top}
+	The set of all primes of $\cO_k$ has Dirichlet density $1$.
+\end{lemma}
+
+\begin{proof}
+	Let $P$ be a prime. We have
+	\[
+		\left|N(P)^-s - \log\left( \frac{1}{1-N(P)^-s}\right)\right| \ll N(P)^{-2s}
+	\]
+	Since $\sum N(P)^{-2s}$ is bounded in the region $s > 1$ (this follows from the convergence of the
+	Dedekind zeta function), we have
+	\[
+		\sum_P N(P)^-s
+		\sim
+		\sum_P \log\left( \frac{1}{1-N(P)^-s} \right)
+		=
+		\log \zeta_l(s),
+	\]
+	where $\zeta_l$ is the Dedekind zeta function (\texttt{NumberField.dedekindZeta}).
+	By the analytic class number formula (\texttt{NumberField.tendsto_sub_one_mul_dedekindZeta_nhdsGT})
+	there is a positive real number $r$ such that
+	\[
+		\zeta_l(s) = \frac{r}{s-1} + O(1) \qquad (s > 1).
+	\]
+	This implies
+	\[
+		\log(\zeta_l(s)) \sim \log\left( \frac{1}{s-1}\right).
+	\]
+\end{proof}
+
+
+
+\begin{lemma} \label{lem:Dirichlet density degree one}
+	The set of primes of $\cO_l$ of degree one has Dirichlet density $1$.
+\end{lemma}
+
+\begin{proof}
+	Let $M$ be the set of primes of degree larger than one. It's sufficient to
+	prove that $M$ has Dirichlet density $0$.
+	We have
+	\[
+		\sum_{P \in M} N(P)^-s
+		= \sum_{n \in \N} A(n) n^-s,
+	\]
+	Where $A$ is the number of primes of degree $>1$ with norm $n$.
+	Note that $A(n) \le [l:\Q]$. Also $A(n)=0$ unless $n=m^r$ for positive integer $m$ and
+	$1 \le r \le [l:Q]$.
+	This implies
+	\[
+		\sum_{P \in M} N(P)^-s
+		\le [l:\Q] \sum_{r=2}^{[l:\Q]} \sum_{m =1} ^\infty m^{-rs}
+		\le [l:\Q] (\zeta_\Q(2) + \cdots + \zeta_\Q([l:\Q]) ).
+	\]
+	Since the sum above is bounded, the set $M$ has Dirichlet density $0$.
+\end{proof}
+
+
+\begin{lemma} \label{lem:Dirichlet density split}
+	Let $l/k$ be a finite Galois extension of number fields.
+	Then the set of degree $1$ primes of $k$ which split completely in $l$
+	has density $\frac{1}{[l:k]}$.
+\end{lemma}
+
+\begin{proof}
+	Let $M_k$ be the set of degree $1$ primes of $k$ and $M_l$ the set of degree $1$ primes of $l$.
+	Every prime $Q$ in $M_l$ lies above some prime $P \in M_k$.
+	If there is a prime $Q$ above $P$, then there are precisely $[l:k]$ of them; this happens when $P$
+	splits completely in $l$.
+
+	Let $M$ be the set of $P \in M_k$ which split completely in $l$.
+	Then we have
+	\[
+		\sum_{P \in M} N(P)^{-s}
+		=
+		\frac{1}{[l:k]} \sum_{Q \in M_l} N(Q)^{-s}
+		\sim \frac{1}{[l:k]} \log\left( \frac{1}{s-1}\right).
+	\]
+	Here we have used \ref{lem:Dirichlet density degree one}.
+\end{proof}
+
+
+
+
+
 \section{The first inequality}
 
 \begin{theorem} \label{thm:first inequality}
+	\uses{lem:Dirichlet density split}
 	For any finite Galois extension $l/k$ be have
 	\[
-		|H^0_{Tate}(l/k, \A_{l,S}^\times / \cO_{l,S}^\times) | \le [l : k].
+		|H^0_{Tate}(l/k, \Cl_{l}) | \le [l : k].
 	\]
 \end{theorem}
 
-The easiest proof of this theorem is rather like that of Dirichlet's primes in arithmetic
-progressions result.
-We'll examine some of its consequences.
+\begin{proof}
+	The easiest proof of this theorem is rather like that of Dirichlet's primes in arithmetic
+	progressions result.
+	We'll sketch the argument.
+
+	One can easily show that $H^0_{Tate}(l/k, \Cl_{l})$ is finite.
+	We have a function
+	\[
+		\textrm{primes in $\cO_{S,k}$} \to H^0_{Tate}(l/k, \Cl_{l}),
+	\]
+	which takes a prime $P$ to the coset of an idele, whose $P$ component is
+	a uniformizer in $k_P$, and whose other components are $1$.
+	This coset does not depend on the choice of uniformizer because $P$ is unramified in $l$
+	(by choice of $S$), and therefore every element of $\cO_P^\times$ is a local norm in the extension.
+
+	By the method of Dirichlet's primes in arithmetic progressions theorem, we may show that
+	the images in $H^0_{Tate}(l/k, \Cl_{l})$ of the primes of $\cO_{k,S}$ are equidistributed, meaning
+	that the set of primes in the preimage of an element of $H^0_{Tate}(l/k, \Cl_{l})$ has
+	Dirichlet density $\frac{1}{|H^0_{Tate}(l/k, \Cl_{l})|}$.
+
+	Let $P$ be a degree one prime which splits completely in $l$.
+	Then the norm map $(l \otimes k_P)^\times \to k_P$ is surjective,
+	and therefore the image of $P$ in $H^0_{Tate}(l/k, \Cl_{l})$ is $0$.
+	We have shown in \ref{lem:Dirichlet density split} that the set of such primes has
+	Dirichlet density $\frac{1}{[l:k]}$. It follows that
+	\[
+		\frac{1}{[l:k]} \le \frac{1}{|H^0_{Tate}(l/k, \Cl_{l})|}.
+	\]
+	This proves the result.
+\end{proof}
+
 
 \begin{corollary}
 	If $l/k$ is cyclic then $|H^2(l/k, \Cl_{l,S})| = [l:k]$ and $H^1(l/k, \Cl_{l,S}) = 0$.
