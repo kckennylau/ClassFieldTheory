@@ -224,13 +224,13 @@ As a consequence of this, we have the following (also a current PR):
 	It follows that $H_0(G,M) \cong M_G$.
 \end{example}
 
-We also note the following, which is a current PR:
+% We also note the following, which is a current PR:
 
-\begin{lemma}	\label{lem:homology 1 Z}
-	\lean{groupHomology.one_trivial_int_iso}
-	\leanok
-	There is a canonical isomorphism $H_{1}(G,\Z) \cong G^{ab}$.
-\end{lemma}
+% \begin{lemma}	\label{lem:homology 1 Z}
+% 	\lean{groupHomology.one_trivial_int_iso}
+% 	\leanok
+% 	There is a canonical isomorphism $H_{1}(G,\Z) \cong G^{ab}$.
+% \end{lemma}
 
 
 
@@ -552,9 +552,9 @@ In this section we shall construct certain representations with trivial homology
 \begin{lemma}	\label{lem:induced trivial Tate}
 	\lean{Rep.ind₁_trivialCohomology,
 		Rep.coind₁_trivialHomology
-		Rep.ind₁_trivialTateCohomology,
-		lem:Tate cohomology is cohomology or homology}
-	\uses{def:ind₁ to coind₁,
+		Rep.ind₁_trivialTateCohomology}
+	\uses{lem:Tate cohomology is cohomology or homology,
+		def:ind₁ to coind₁,
 		lem:coind₁ trivial cohomology,
 		lem:ind₁ trivial homology}
 	If the group $G$ is finite then $\ind_1(G,A)$ and $\coind_1(G,A)$ have trivial
@@ -904,6 +904,48 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	These are the connecting homomorphisms from the
 	short exact sequences linking $\up(M)$ and $\down(M)$ to $M$.
 	They are isomorphisms because $\coind_1'(M)$ and $\ind_1'(M)$ have trivial Tate cohomology.
+\end{proof}
+
+
+
+As a simple example we consider the case of the trivial representation $R$.
+The induced representation is then the group ring $R[G]$, which is referred to
+Mathlib as \verb|Rep.leftRegular R G|; this is the set of finite formal sums
+of the form $\sum \single(g_i,x_i)$ with $g_i \in G$ and $x_i \in \R$.
+The map $R[G] \to R$ takes such an element to $\sum x_i$. This map is commonly called the
+augmentation, and its kernel $\down(R)$ the augmentation module. We sall write $\aug(R,G)$.
+for this kernel. The kernel $\aug(R,G)$ is spanned by the elements $[g]-[1]$ for $g \in G$.
+Note that $I_G \aug(R,G)$ is spanned by elements of the form $[gh]-[h] -[g] + [1]$.
+
+\begin{lemma}
+	Let $G$ be a finite group. Then there is an isomorphism $G^{ab} \cong H^{-1}_{Tate}(G,\aug(\Z,G))$
+	which takes an element
+	$g \in G$ to the coset of $[g]-[1]$ in $\ker(N_G : \aug(\Z,G) \to \aug(\Z,G))/ I_G \aug(\Z,G)$.
+\end{lemma}
+
+\begin{proof}
+	We'll first show that this map (which we'll call $\phi$ for the moment) is a group homomorphism.
+	We have
+	\[
+		\phi(gh) - \phi(g) - \phi(h)
+		=
+		[gh]-[1] -([g]-[1]) - ([h]-[1])
+		\equiv 0 \bmod  I_G \aug(\Z,G).
+	\]
+	Let's define a homomorphism $\psi : \aug(G,\Z) \to G^{ab}$ taking $[g]-[1]$ to $g$.
+	It's trivial to check that $I_G\aug(\Z,G)$ is in the kernel of $\psi$, so $\psi$ descends to
+	a map $H_{-1}_{Tate}(G,\aug(\Z,G)) \to G^{ab}$.
+	The two maps are easily seen to be inverses.
+\end{proof}
+
+
+\begin{lemma}
+	Let $G$ be a finite group. Then there is an isomorphism $G^{ab}$ \cong $H^{-2}_{Tate}(G,\Z)$.
+\end{lemma}
+
+\begin{proof}
+	(There is a current PR proving this for group homology without the assumption that $G$ is finite.)
+	This follows from the previous lemma because $\aug(\Z,G) \cong \down(\Z)$.
 \end{proof}
 
 
@@ -1279,7 +1321,7 @@ Recall that a representation $M$ of a group $G$ has trivial cohomology if for al
 $G$ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 
 \begin{theorem} \label{thm:triviality criterion solvable}
-	\lean{groupCohomology.Acyclic_of_even_of_odd_of_solvable}
+	\lean{groupCohomology.trivialCohomology_of_even_of_odd_of_solvable}
 	Let $M$ be a representation of a finite solvable group $G$.
 	Suppose we have positive natural numbers $e$ and $o$ with $e$ even and $o$ odd,
 	such that for all subgroups $H$ of $G$ we have
@@ -1304,9 +1346,10 @@ $G$ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 
 \begin{theorem} \label{thm:triviality criterion}
 	\uses{thm:triviality criterion solvable}
-	\lean{groupCohomology.Acyclic_of_even_of_odd}
+	\lean{groupCohomology.trivialCohomology_of_even_of_odd}
 	Let $M$ be a representation of a finite group $G$ (no longer assumed to be solvable).
-	Suppose we have positive natural numbers $e$ and $o$ with $e$ even and $o$ odd, such that for all subgroups $H$ of $G$ we have
+	Suppose we have positive natural numbers $e$ and $o$ with $e$ even and $o$ odd, such that for all
+	subgroups $H$ of $G$ we have
 	\[
 		H^e(H,M) =0, \qquad H^o(H,M) = 0.
 	\]
@@ -1540,3 +1583,36 @@ There is evidently a short exact sequence of representations of $G$.
 		G^{ab} \cong H^{-2}(G,\Z) \cong M^G / N_G M.
 	\]
 \end{definition}
+
+We shall finish off this chapter by giving a formula for the reciprocity isomorphism in terms of
+$\sigma'$.
+We have a diagram with exact rows.
+Note that $C^0(G,M)$ and $C^{-1}(G,M)$ are both $M$ and the vertical maps are Tate coboundary maps,
+which is $N_G$.
+\[
+	\begin{matrix}
+		0 \to & C^{-1}(G,M) & \to & C^{-1}(G,\Split(\sigma)) & \to & C^{-1}(G,\aug(\R,G)) & \to 0 \\
+		&\downarrow &&\downarrow &&\downarrow \\
+		0 \to & C^{0}(G,M) & \to & C^{0}(G,\Split(\sigma)) & \to & C^{0}(G,\aug(\R,G)) & \to 0
+	\end{matrix}
+\]
+Choose an element $g \in G$. Recall that this element corresponds to the element
+$[g]-[1] \in C^{-1}(G,\aug(\Z,G))$.
+An obvious pre-image off this element in $C^{-1}(G,\Split(\sigma))$ is
+the element $(0,[g]-[1])$.
+The image of $(0,[g]-[1])$ in $C^{0}(G,\Split(\sigma))$ is
+\[
+	N_G(0,[g]-[1])
+	=
+	(\sum_{x \in G} (\sigma'(x,g) - \sigma'(x,1)), 0).
+\]
+By the cocycle relation we have $\sigma'(x,1) = \sigma'(1,1)$ for all $x\in G$.
+Hence the reciprocity map takes $g \in G$ to the element
+\[
+	\sum_{x \in G} \sigma'(x,g) - |G| \sigma'(1,1)
+	\in M^G / N_G M.
+\]
+Since every element of $H^\bullet_{Tate} (G,-)$ is killed by $|G|$, this formula simplifies to
+\[
+	g \mapsto \sum_{x \in G} \sigma'(x,g).
+\]

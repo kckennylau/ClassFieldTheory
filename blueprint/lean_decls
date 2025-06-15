@@ -56,7 +56,6 @@ Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite
 Rep.ind₁_iso_coind₁
 Rep.ind₁_trivialCohomology
 Rep.coind₁_trivialHomology Rep.ind₁_trivialTateCohomology
-lem:Tate cohomology is cohomology or homology
 Representation.coind₁'
 Rep.coind₁'
 Rep.coind₁'_obj_iso_coind₁
@@ -117,8 +116,8 @@ Representation.map₁_ker
 Representation.map₂_range
 Rep.up_iso_down
 Rep.periodicCohomology
-groupCohomology.Acyclic_of_even_of_odd_of_solvable
-groupCohomology.Acyclic_of_even_of_odd
+groupCohomology.trivialCohomology_of_even_of_odd_of_solvable
+groupCohomology.trivialCohomology_of_even_of_odd
 Rep.dimensionShift.up_trivialCohomology
 Rep.dimensionShift.down_trivialCohomology
 groupCohomology.TateCohomology_of_trivialCohomology
