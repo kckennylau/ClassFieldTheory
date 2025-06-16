@@ -20,8 +20,8 @@ If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H
 -/
 theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
-    (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
-    (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
+    (h_even : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
+    (h_odd : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
     M.TrivialCohomology := by
   /-
   This is proved by induction on `H`.
@@ -43,8 +43,8 @@ theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] 
 
 theorem groupCohomology.trivialCohomology_of_even_of_odd [Finite G]
     (M : Rep R G) (n m : ℕ)
-    (h_even : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
-    (h_odd : ∀ H : Subgroup G, IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
+    (h_even : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
+    (h_odd : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
     M.TrivialCohomology := by
   sorry
 
@@ -55,7 +55,7 @@ instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.Tri
 instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     (down.obj M).TrivialCohomology := sorry
 
-lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] (M : Rep R G)
+lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] [DecidableEq G] (M : Rep R G)
     [M.TrivialCohomology] (n : ℤ) : IsZero ((TateCohomology n).obj M) := sorry
 
 instance Rep.trivialHomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :

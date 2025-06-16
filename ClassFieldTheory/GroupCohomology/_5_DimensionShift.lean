@@ -136,6 +136,7 @@ abbrev up_π : coind₁' ⟶ up (R := R) (G := G) where
   app _             := (upSes.obj _).g
   naturality _ _ _  := (upSes.map _).comm₂₃
 
+variable [DecidableEq G]
 /--
 The connecting homomorphism from `H⁰(G,up M)` to `H¹(G,M)` is
 an epimorphism (i.e. surjective).
@@ -297,7 +298,7 @@ open Rep
 /--
 All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.
 -/
-lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) (n : ℕ) :
+lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) [DecidableEq H] (n : ℕ) :
     IsZero ((TateCohomology n).obj ((Rep.coind₁ G).obj A ↓ H)) :=
   /-
   For `n > 0` this is proved elsewhere for `groupCohomology`.
@@ -309,37 +310,37 @@ lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) (n : ℕ) :
 /--
 All of the Tate cohomology groups of `coind₁'.obj M ↓ H` are zero.
 -/
-lemma TateCohomology_coind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+lemma TateCohomology_coind₁' (M : Rep R G) (H : Subgroup G) [DecidableEq H] (n : ℕ) :
     IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ H)) :=
   /-
   It is shown earier that `coind₁'.obj M ≅ (coind₁ G).obj M.V`, so we can use the previous result.
   -/
   sorry
 
-lemma TateCohomology_ind₁' (M : Rep R G) (H : Subgroup G) (n : ℕ) :
+lemma TateCohomology_ind₁' (M : Rep R G) (H : Subgroup G) [DecidableEq H]  (n : ℕ) :
     IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ H)) :=
   /-
   It is shown earier that `ind₁'.obj M ≅ coind₁'.obj M`, so we can use the previous result.
   -/
   sorry
 
-instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (up_shortExact M) n) :=
+instance (M : Rep R G) [DecidableEq G] (n : ℤ) : IsIso (TateCohomology.δ (up_shortExact M) n) :=
   /-
   This follows from `TateCohomology_coind₁'`.
   -/
   sorry
 
-instance (M : Rep R G) (n : ℤ) : IsIso (TateCohomology.δ (down_shortExact M) n) := by
+instance (M : Rep R G) [DecidableEq G] (n : ℤ) : IsIso (TateCohomology.δ (down_shortExact M) n) := by
   /-
   This follows from `TateCohomology_coind₁'`.
   -/
   sorry
 
-def upδiso_Tate (n : ℤ) (M : Rep R G) :
+def upδiso_Tate (n : ℤ) [DecidableEq G] (M : Rep R G) :
     (TateCohomology n).obj (up.obj M) ≅ (TateCohomology (n + 1)).obj M :=
   asIso (TateCohomology.δ (up_shortExact M) n)
 
-def downδiso_Tate (n : ℤ) (M : Rep R G) :
+def downδiso_Tate (n : ℤ) [DecidableEq G] (M : Rep R G) :
     (TateCohomology n).obj M ≅ (TateCohomology (n + 1)).obj (down.obj M) :=
   asIso (TateCohomology.δ (down_shortExact M) n)
 

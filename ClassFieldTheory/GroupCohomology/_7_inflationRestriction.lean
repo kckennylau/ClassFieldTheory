@@ -14,7 +14,7 @@ open
   Limits
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G] (S : Subgroup G) [S.Normal]
+variable {G : Type} [Group G] [DecidableEq G] (S : Subgroup G) [S.Normal] [DecidableEq (G ⧸ S)]
 
 namespace groupCohomology
 

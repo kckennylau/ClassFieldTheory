@@ -144,7 +144,7 @@ instance _root_.Rep.leftRegular.trivialCohomology [Finite G] [DecidableEq G]:
 /--
 The connecting homomorphism from `Hⁿ⁺¹(G,R)` to `Hⁿ⁺²(G,aug R G)` is an isomorphism.
 -/
-lemma cohomology_aug_succ_iso [Finite G] (n : ℕ) :
+lemma cohomology_aug_succ_iso [Finite G] [DecidableEq G] (n : ℕ) :
     IsIso (δ (isShortExactSequence R G) (n + 1) (n + 2) rfl) :=
   /-
   This connecting homomorphism is sandwiched between two modules H^{n+1}(G,R[G]) and H^{n+2}(G,R[G]),
@@ -165,7 +165,7 @@ lemma H2_aug_isZero [Finite G] [NoZeroSMulDivisors ℕ R] : IsZero (H2 (aug R G)
 If `H` is a subgroup of a finite group `G` then the connecting homomorphism
 from `Hⁿ⁺¹(H,R)` to `Hⁿ⁺²(H,aug R G)` is an isomorphism.
 -/
-lemma cohomology_aug_succ_iso' [Finite G] (H : Subgroup G) (n : ℕ):
+lemma cohomology_aug_succ_iso' [Finite G] (H : Subgroup G) [DecidableEq H] (n : ℕ):
     IsIso (δ (isShortExactSequence' R G H) (n + 1) (n + 2) rfl) :=
   /-
   The proof is similar to that of `cohomology_aug_succ_iso` but uses
