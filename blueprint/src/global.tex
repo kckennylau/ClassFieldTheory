@@ -85,143 +85,6 @@ $l^\times$ is that $\A_{l,S}^\times$ and $\cO_{l,S}$ have well-defined Herbrand 
 whereas the cohomology groups of $\A_l^\times$ and $l^\times$ are infinite.
 
 
-\section{Some $L$-functions}
-
-\begin{lemma}
-	$H^0_{Tate}(l/k,\Cl_l)$ is finite.
-\end{lemma}
-
-\begin{proof}
-	We have
-	\begin{align*}
-		\Cl_{l} / N(\Cl_l)
-		& \cong \A_{k,S}^\times / \cO_{k,S}^\times N(\A_{l,S}^\times) \\
-		& \cong \left(\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)\right) / \cO_{k,S}^\times,
-	\end{align*}
-	where $\hat v$ is a place of $l$ lying above $v$.
-	The result follows because each of the groups $k_v^\times / N(l_w)$ is finite
-	(in fact by the local reciprocity isomorphism this is isomorphic to the abelianization of the
-	decomposition group of $\hat v$).
-\end{proof}
-
-Given any maximal ideal $P$ of $\cO_S$, we let $\pi_P$ be an idele whose
-$P$-component is a uniformizer in $k_P$, and whose other components are all $1$.
-The coset of $\pi_P$ in $H^0(l/k,\Cl_l)$ does not depend on the choice of uniformizer since
-all the local units at $P$ are local norms from $l_{Q}$ for any $Q|P$
-(because $P$ is unramified in $l$).
-Equivalently, if we choose a generator $P=(\pi)$ then the coset of $\pi_P$ is the inverse of
-the image of $\pi$ in $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
-This clearly extends to a map
-\[
-	\io : \textrm{non-zero fractional ideals of $\cO_S$}
-	\to
-	H^0_{Tate}(l/k,\Cl_l),
-\]
-whose kernel is the sub group of ideals with a generator in
-$\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
-
-\begin{definition}
-	For any character $\chi : H^0_{Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
-	\[
-		L(s,\chi)
-		=
-		\sum_{I} \chi(I) \cdot N(I)^{-s}
-		=
-		\prod_{P} \frac{1}{1-\chi(P) \cdot N(P)^{-s}}.
-	\]
-	Here $s$ is a complex number with real part greater than $1$; bith the product and the series
-	converge absolutely in that region.
-	In the sum, $I$ ranges over the non-zero ideals of $\cO_S$, and in the product $P$
-	ranges over the maximal ideals of $\cO_S$.
-
-	If $\chi$ is the trivial character, then $L(s,\chi)$ is
-	(up to finitely many Euler factors for primes in $S$)
-	equal to the Dedekind zera function of $k$.
-\end{definition}
-
-
-It's known that $L(s,\chi)$ has a meromorphic continuation to $\C$
-(see for example Tate's thesis, which is chapter XV of \cite{cassells frohlich}).
-We won't need such a strong result here; we can make do with the following:
-
-\begin{lemma}
-	There is a meromorphic continuation of $L(s,\chi)$
-	to a neighbourhood of the interval $[\frac{1}{[l:k]},1]$.
-	the region $\Re s > 1-\frac{1}{[k:\Q]}$.
-	If $\chi=1$ then there is a simple pole at $s=1$ and no other poles in this region.
-	If $\chi \ne 1$ then there are no poles.
-\end{lemma}
-
-
-We also need the following purely analytic theorem of Landau:
-
-\begin{theorem}
-	Suppose we have a Dirichlet series $D(s) = \sum_{n=0}^\infty a_n \cdot n^{-s}$ with
-	nonnegative real coefficients $a_n$.
-	Suppose $D(s)$ has absolute convergence abscissa $\sigma$, i.e. it converges absolutely for $\Re s > \sigma$
-	and not for $\Re s < \sigma$.
-	Then there is no analytic continuation of $D(s)$ to any neighbourhood of $\sigma$.
-\end{theorem}
-
-\begin{proof}
-	By rescaling the coefficients $a_n$ if necessary, we may assume that $\sigma=0$.
-	Let's suppose that there does exist an nalytic continuation to some neighbourhood of $0$.
-	This implies that the power series expansion of $D(s)$ about $s=1$ converges on a disk or radius
-	greater than $1$. Let's assume that this power series converges absolutely one the closed
-	disk of radius $1+\epsilon$.
-	This power series expansion is:
-	\[
-		D(1+r)
-		= \sum_{m=0}^\infty \frac{D^{(m)}(1)}{m!} r^m
-		= \sum_{m=0}^\infty \left(\frac{\sum_{n=1}^\infty a_n (-m \log n )^m n^{-1}}{m!} r^m\right)
-	\]
-	Note that if $r < 0$ then every term in the double sum above is positive, so the order of
-	summation may be swapped.
-	Substituting $r = -1-\epsilon$ we get
-	\[
-		D(-\epsilon)
-		=\sum_{n=1}^\infty a_n n^{-1}
-		\left(\sum_{m=0}^\infty  \frac{(-m \log n )^m }{m!} (-1-\epsilon)^m\right).
-	\]
-	The inner series in the above expression is the power series expension of $n^{-\epsilon}$,
-	which converges on the whole complex plane.
-	We therefore have
-	\[
-		D(-\epsilon)
-		=\sum_{n=1}^\infty a_n n^{-\epsilon}
-	\]
-	In particular the series on the right hand side converges,
-	and the convergence is absolute because all the terms are non-negative real numbers.
-	This implies absolute convergence of $D(s)$ in the half-place $\Re s > -\epsilon$, contradicting
-	our assumption.
-\end{proof}
-
-
-\begin{theorem}
-	For each non-trivial character $\chi$ we have $L(s,\chi) \ne 0$.
-\end{theorem}
-
-\begin{proof}
-	Consider the following Dirichlet series:
-	\[
-		D(s) = \prod_\chi L(s,\chi).
-	\]
-	By examining the Euler factors for each prime, we can check that all the coefficients
-	of $D(s)$ are nonnegative.
-	Furthermore if $I$ is an ideal of $\cO_S$, then $D(s)$ has a term $N(I)^{-[l:k] s}$.
-	This implies for real $s$ in the region of convergence
-	\[
-		D(s) \ge L(\chi_1,[l:k]s).
-	\]
-	If we assume that $L(1,\chi)=0$ for some $\chi$ then $D(s)$ is analytic
-	in a neighbourhood of $[\frac{1}{[l:k]},1]$.
-	Hence bu Landau's theorem, the Dirichlet seties for $D(s)$ converges absolutely on that region.
-	It follows that $L(\chi_1, [l:k]s)$ is converges absolutely on that region.
-	This contradicts the fact that $L(\chi_1, ds)$ has a pole at $\frac{1}{[l:k]}$
-\end{proof}
-
-
-
 
 
 
@@ -499,6 +362,199 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 	\]
 	Here we have used \ref{lem:Dirichlet density degree one}.
 \end{proof}
+
+
+
+
+
+\section{Some $L$-functions}
+
+\begin{lemma}
+	$H^0_{Tate}(l/k,\Cl_l)$ is finite.
+\end{lemma}
+
+\begin{proof}
+	We have
+	\begin{align*}
+		\Cl_{l} / N(\Cl_l)
+		& \cong \A_{k,S}^\times / \cO_{k,S}^\times N(\A_{l,S}^\times) \\
+		& \cong \left(\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)\right) / \cO_{k,S}^\times,
+	\end{align*}
+	where $\hat v$ is a place of $l$ lying above $v$.
+	The result follows because each of the groups $k_v^\times / N(l_w)$ is finite
+	(in fact by the local reciprocity isomorphism this is isomorphic to the abelianization of the
+	decomposition group of $\hat v$).
+\end{proof}
+
+Given any maximal ideal $P$ of $\cO_S$, we let $\pi_P$ be an idele whose
+$P$-component is a uniformizer in $k_P$, and whose other components are all $1$.
+The coset of $\pi_P$ in $H^0(l/k,\Cl_l)$ does not depend on the choice of uniformizer since
+all the local units at $P$ are local norms from $l_{Q}$ for any $Q|P$
+(because $P$ is unramified in $l$).
+Equivalently, if we choose a generator $P=(\pi)$ then the coset of $\pi_P$ is the inverse of
+the image of $\pi$ in $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
+This clearly extends to a map
+\[
+	\iota : \textrm{non-zero fractional ideals of $\cO_S$}
+	\to
+	H^0_{Tate}(l/k,\Cl_l),
+\]
+whose kernel is the sub group of ideals with a generator in
+$\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
+
+\begin{definition}
+	For any character $\chi : H^0_{Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
+	\[
+		L(s,\chi)
+		=
+		\sum_{I} \chi(I) \cdot N(I)^{-s}
+		=
+		\prod_{P} \frac{1}{1-\chi(P) \cdot N(P)^{-s}}.
+	\]
+	Here $s$ is a complex number with real part greater than $1$; bith the product and the series
+	converge absolutely in that region.
+	In the sum, $I$ ranges over the non-zero ideals of $\cO_S$, and in the product $P$
+	ranges over the maximal ideals of $\cO_S$.
+
+	If $\chi$ is the trivial character, then $L(s,\chi)$ is
+	(up to finitely many Euler factors for primes in $S$)
+	equal to the Dedekind zera function of $k$.
+\end{definition}
+
+
+It's known that $L(s,\chi)$ has a meromorphic continuation to $\C$
+(see for example Tate's thesis, which is chapter XV of \cite{cassells frohlich}).
+We won't need such a strong result here; we can make do with the following:
+
+\begin{lemma}[Weak lemma]
+	If $\chi$ is a non-trivial character then $L(s,\chi)$ is
+	bounded on the interval $(1,2)$.
+\end{lemma}
+
+
+
+\begin{lemma}
+	Let $M$ be a set of primes of $\cO_S$ whose image in $H^0_{Tate}(l/k,\Cl_l)$ is zero.
+	There exists a real number $c$ depending only on $k$ and $l$,
+	such that for all $s > 0$ we have:
+	\[
+		\sum_{p \in M} N(P)^{-s}
+		\le \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log\left(\frac{1}{s-1}\right) + c.
+	\]
+\end{lemma}
+
+
+\begin{proof}
+	Let $s > 1$. All the series in the following calculation converge absolutely in this region.
+	The implied constants in the $O(1)$ terms do not depend on $s$.
+	\begin{align*}
+		\sum_{P \in M} |N(P)|^{-s}
+		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \sum_P \sum_\chi \chi(P) N(P)^{-s}\\
+		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		\sum_P \sum_\chi -\log(1-\chi(P) N(P)^{-s}) + O(1)\\
+		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		\sum_P \sum_\chi -\log |1-\chi(P) N(P)^{-s}| + O(1)\\
+		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		\sum_\chi \sum_P -\log |1-\chi(P) N(P)^{-s}| + O(1)\\
+		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log \left(\prod_\chi |L(s,\chi)| \right) + O(1)\\
+		&\le \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log \left(\frac{1}{s-1}\right) + O(1).
+	\end{align*}
+	Interchanging the order of summation is justified because the series converge absolutely.
+	We need to be slightly careful about which branch of the logarithm we are using here.
+	In the expression $\log(1-\chi(P) N(P)^{-s})$ we shall mean the branch which is continuous
+	on the ball of radius $1$, centred about $1$.
+	The imaginary parts of $\log(1-\chi(P) N(P)^{-s})$ and $\log(1-\bar \chi(P) N(P)^{-s})$
+	cancel out; this justifies replacing $\log(1-\chi(P) N(P)^{-s})$ by $\log |1-\chi(P) N(P)^{-s}|$.
+\end{proof}
+
+\begin{remark}
+	In fact the density of the set $M$ in this lemma is precisely $\frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}$.
+	This can be proved by showing that each $L(s,\chi)$ has a continuation to a neighbourhood
+	of $s=1$, and is non-zero at $s=1$.
+	However, proving this is more difficult than the weak lemma above, and we only need the inequality
+	of the lemma.
+\end{remark}
+
+
+
+
+
+
+% \begin{lemma}
+% 	There is a meromorphic continuation of $L(s,\chi)$
+% 	to a neighbourhood of the interval $[\frac{1}{[l:k]},1]$.
+% 	the region $\Re s > 1-\frac{1}{[k:\Q]}$.
+% 	If $\chi=1$ then there is a simple pole at $s=1$ and no other poles in this region.
+% 	If $\chi \ne 1$ then there are no poles.
+% \end{lemma}
+
+
+% We also need the following purely analytic theorem of Landau:
+
+% \begin{theorem}
+% 	Suppose we have a Dirichlet series $D(s) = \sum_{n=0}^\infty a_n \cdot n^{-s}$ with
+% 	nonnegative real coefficients $a_n$.
+% 	Suppose $D(s)$ has absolute convergence abscissa $\sigma$, i.e. it converges absolutely for $\Re s > \sigma$
+% 	and not for $\Re s < \sigma$.
+% 	Then there is no analytic continuation of $D(s)$ to any neighbourhood of $\sigma$.
+% \end{theorem}
+
+% \begin{proof}
+% 	By rescaling the coefficients $a_n$ if necessary, we may assume that $\sigma=0$.
+% 	Let's suppose that there does exist an nalytic continuation to some neighbourhood of $0$.
+% 	This implies that the power series expansion of $D(s)$ about $s=1$ converges on a disk or radius
+% 	greater than $1$. Let's assume that this power series converges absolutely one the closed
+% 	disk of radius $1+\epsilon$.
+% 	This power series expansion is:
+% 	\[
+% 		D(1+r)
+% 		= \sum_{m=0}^\infty \frac{D^{(m)}(1)}{m!} r^m
+% 		= \sum_{m=0}^\infty \left(\frac{\sum_{n=1}^\infty a_n (-m \log n )^m n^{-1}}{m!} r^m\right)
+% 	\]
+% 	Note that if $r < 0$ then every term in the double sum above is positive, so the order of
+% 	summation may be swapped.
+% 	Substituting $r = -1-\epsilon$ we get
+% 	\[
+% 		D(-\epsilon)
+% 		=\sum_{n=1}^\infty a_n n^{-1}
+% 		\left(\sum_{m=0}^\infty  \frac{(-m \log n )^m }{m!} (-1-\epsilon)^m\right).
+% 	\]
+% 	The inner series in the above expression is the power series expension of $n^{-\epsilon}$,
+% 	which converges on the whole complex plane.
+% 	We therefore have
+% 	\[
+% 		D(-\epsilon)
+% 		=\sum_{n=1}^\infty a_n n^{-\epsilon}
+% 	\]
+% 	In particular the series on the right hand side converges,
+% 	and the convergence is absolute because all the terms are non-negative real numbers.
+% 	This implies absolute convergence of $D(s)$ in the half-place $\Re s > -\epsilon$, contradicting
+% 	our assumption.
+% \end{proof}
+
+
+% \begin{theorem}
+% 	For each non-trivial character $\chi$ we have $L(s,\chi) \ne 0$.
+% \end{theorem}
+
+% \begin{proof}
+% 	Consider the following Dirichlet series:
+% 	\[
+% 		D(s) = \prod_\chi L(s,\chi).
+% 	\]
+% 	By examining the Euler factors for each prime, we can check that all the coefficients
+% 	of $D(s)$ are nonnegative.
+% 	Furthermore if $I$ is an ideal of $\cO_S$, then $D(s)$ has a term $N(I)^{-[l:k] s}$.
+% 	This implies for real $s$ in the region of convergence
+% 	\[
+% 		D(s) \ge L(\chi_1,[l:k]s).
+% 	\]
+% 	If we assume that $L(1,\chi)=0$ for some $\chi$ then $D(s)$ is analytic
+% 	in a neighbourhood of $[\frac{1}{[l:k]},1]$.
+% 	Hence bu Landau's theorem, the Dirichlet seties for $D(s)$ converges absolutely on that region.
+% 	It follows that $L(\chi_1, [l:k]s)$ is converges absolutely on that region.
+% 	This contradicts the fact that $L(\chi_1, ds)$ has a pole at $\frac{1}{[l:k]}$
+% \end{proof}
 
 
 

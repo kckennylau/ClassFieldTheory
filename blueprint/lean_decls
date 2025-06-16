@@ -16,7 +16,6 @@ groupHomology.inhomogeneousChains
 groupHomology
 groupHomology.chainsMap
 groupHomology.Map
-groupHomology.one_trivial_int_iso
 Representation.norm
 groupCohomology.TateNorm
 Representation.norm_comm
