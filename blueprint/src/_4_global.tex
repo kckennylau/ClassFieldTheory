@@ -6,7 +6,7 @@ as a module for the Galois group $\Gal(l/k)$ and we shall describe the construct
 fundamental classes in $H^2(l/k, \Cl_l)$.
 These classes give rise to a reciprocity isomorphism
 \[
-	\Gal(l/k)^{ab} \cong \Cl_k / N(\Cl_l).
+	\Gal(l/k)^{\ab} \cong \Cl_k / N(\Cl_l).
 \]
 We would therefore like to prove for all intermediate fields $l / m / k$:
 \begin{itemize}
@@ -36,7 +36,7 @@ We note the following consequence of Hilbert's theorem 90:
 	The last term is zero by \ref{thm:hilbert 90}. This implies the result.
 \end{proof}
 
-By the lemma, we may regard $H^0_{Tate}(l/k,\Cl_l)$ as the quotient
+By the lemma, we may regard $H^0_{\Tate}(l/k,\Cl_l)$ as the quotient
 $\Cl_k / N_{l/k} \Cl_l$.
 Furthmore, the inflation map for a tower of Galois extensions $l/m/k$ takes the form
 \[
@@ -370,7 +370,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \section{Some $L$-functions}
 
 \begin{lemma}
-	$H^0_{Tate}(l/k,\Cl_l)$ is finite.
+	$H^0_{\Tate}(l/k,\Cl_l)$ is finite.
 \end{lemma}
 
 \begin{proof}
@@ -397,13 +397,13 @@ This clearly extends to a map
 \[
 	\iota : \textrm{non-zero fractional ideals of $\cO_S$}
 	\to
-	H^0_{Tate}(l/k,\Cl_l),
+	H^0_{\Tate}(l/k,\Cl_l),
 \]
 whose kernel is the sub group of ideals with a generator in
 $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
 
 \begin{definition}
-	For any character $\chi : H^0_{Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
+	For any character $\chi : H^0_{\Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
 	\[
 		L(s,\chi)
 		=
@@ -434,12 +434,12 @@ We won't need such a strong result here; we can make do with the following:
 
 
 \begin{lemma}
-	Let $M$ be a set of primes of $\cO_S$ whose image in $H^0_{Tate}(l/k,\Cl_l)$ is zero.
+	Let $M$ be a set of primes of $\cO_S$ whose image in $H^0_{\Tate}(l/k,\Cl_l)$ is zero.
 	There exists a real number $c$ depending only on $k$ and $l$,
 	such that for all $s > 0$ we have:
 	\[
 		\sum_{p \in M} N(P)^{-s}
-		\le \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log\left(\frac{1}{s-1}\right) + c.
+		\le \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log\left(\frac{1}{s-1}\right) + c.
 	\]
 \end{lemma}
 
@@ -449,15 +449,15 @@ We won't need such a strong result here; we can make do with the following:
 	The implied constants in the $O(1)$ terms do not depend on $s$.
 	\begin{align*}
 		\sum_{P \in M} |N(P)|^{-s}
-		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \sum_P \sum_\chi \chi(P) N(P)^{-s}\\
-		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		&= \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \sum_P \sum_\chi \chi(P) N(P)^{-s}\\
+		&= \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}
 		\sum_P \sum_\chi -\log(1-\chi(P) N(P)^{-s}) + O(1)\\
-		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		&= \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}
 		\sum_P \sum_\chi -\log |1-\chi(P) N(P)^{-s}| + O(1)\\
-		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}
+		&= \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}
 		\sum_\chi \sum_P -\log |1-\chi(P) N(P)^{-s}| + O(1)\\
-		&= \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log \left(\prod_\chi |L(s,\chi)| \right) + O(1)\\
-		&\le \frac{1}{|H^0_{Tate}(l/k,\Cl_l)|} \log \left(\frac{1}{s-1}\right) + O(1).
+		&= \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log \left(\prod_\chi |L(s,\chi)| \right) + O(1)\\
+		&\le \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log \left(\frac{1}{s-1}\right) + O(1).
 	\end{align*}
 	Interchanging the order of summation is justified because the series converge absolutely.
 	We need to be slightly careful about which branch of the logarithm we are using here.
@@ -468,7 +468,7 @@ We won't need such a strong result here; we can make do with the following:
 \end{proof}
 
 \begin{remark}
-	In fact the density of the set $M$ in this lemma is precisely $\frac{1}{|H^0_{Tate}(l/k,\Cl_l)|}$.
+	In fact the density of the set $M$ in this lemma is precisely $\frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}$.
 	This can be proved by showing that each $L(s,\chi)$ has a continuation to a neighbourhood
 	of $s=1$, and is non-zero at $s=1$.
 	However, proving this is more difficult than the weak lemma above, and we only need the inequality
@@ -566,7 +566,7 @@ We won't need such a strong result here; we can make do with the following:
 	\uses{lem:Dirichlet density split}
 	For any finite Galois extension $l/k$ be have
 	\[
-		|H^0_{Tate}(l/k, \Cl_{l}) | \le [l : k].
+		|H^0_{\Tate}(l/k, \Cl_{l}) | \le [l : k].
 	\]
 \end{theorem}
 
@@ -575,10 +575,10 @@ We won't need such a strong result here; we can make do with the following:
 	progressions result.
 	We'll sketch the argument.
 
-	One can easily show that $H^0_{Tate}(l/k, \Cl_{l})$ is finite.
+	One can easily show that $H^0_{\Tate}(l/k, \Cl_{l})$ is finite.
 	We have a function
 	\[
-		\textrm{primes in $\cO_{S,k}$} \to H^0_{Tate}(l/k, \Cl_{l}),
+		\textrm{primes in $\cO_{S,k}$} \to H^0_{\Tate}(l/k, \Cl_{l}),
 	\]
 	which takes a prime $P$ to the coset of an idele, whose $P$ component is
 	a uniformizer in $k_P$, and whose other components are $1$.
@@ -586,19 +586,19 @@ We won't need such a strong result here; we can make do with the following:
 	(by choice of $S$), and therefore every element of $\cO_P^\times$ is a local norm in the extension.
 
 	By the method of Dirichlet's primes in arithmetic progressions theorem, we may show that
-	the images in $H^0_{Tate}(l/k, \Cl_{l})$ of the primes of $\cO_{k,S}$ are equidistributed,
-	meaning that the set of primes in the preimage of an element of $H^0_{Tate}(l/k, \Cl_{l})$ has
-	Dirichlet density $\frac{1}{|H^0_{Tate}(l/k, \Cl_{l})|}$. The proof of this equidistribution
+	the images in $H^0_{\Tate}(l/k, \Cl_{l})$ of the primes of $\cO_{k,S}$ are equidistributed,
+	meaning that the set of primes in the preimage of an element of $H^0_{\Tate}(l/k, \Cl_{l})$ has
+	Dirichlet density $\frac{1}{|H^0_{\Tate}(l/k, \Cl_{l})|}$. The proof of this equidistribution
 	result can be reduced to proving $L(1,\chi) \ne 0$ for each non-trivial character
-	$\chi$ of $H^0_{Tate}(l/k,\Cl_l)$ (see for example chapter VIII of \cite{cassells frohlich}).
+	$\chi$ of $H^0_{\Tate}(l/k,\Cl_l)$ (see for example chapter VIII of \cite{cassells frohlich}).
 
 	Let $P$ be a degree one prime which splits completely in $l$.
 	Then the norm map $(l \otimes k_P)^\times \to k_P$ is surjective,
-	and therefore the image of $P$ in $H^0_{Tate}(l/k, \Cl_{l})$ is $0$.
+	and therefore the image of $P$ in $H^0_{\Tate}(l/k, \Cl_{l})$ is $0$.
 	We have shown in \ref{lem:Dirichlet density split} that the set of such primes has
 	Dirichlet density $\frac{1}{[l:k]}$. It follows that
 	\[
-		\frac{1}{[l:k]} \le \frac{1}{|H^0_{Tate}(l/k, \Cl_{l})|}.
+		\frac{1}{[l:k]} \le \frac{1}{|H^0_{\Tate}(l/k, \Cl_{l})|}.
 	\]
 	This proves the result.
 \end{proof}
