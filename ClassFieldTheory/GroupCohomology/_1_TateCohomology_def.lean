@@ -6,7 +6,6 @@ open
   groupCohomology
   groupHomology
   Rep
-  -- dimensionShift
   LinearMap
 
 variable {R : Type} [CommRing R]
@@ -29,16 +28,17 @@ end Representation
 
 namespace groupCohomology
 
+def _root_.groupHomology.zeroChainsIso (M : Rep R G) : (inhomogeneousChains M).X 0 ≅ M.V :=
+  LinearEquiv.toModuleIso (Finsupp.LinearEquiv.finsuppUnique R (↑M.V) (Fin 0 → G))
+
+def _root_.Rep.norm (M : Rep R G) : M.V ⟶ M.V := ModuleCat.ofHom M.ρ.norm
+
 /--
 This is the map from the coinvariants of `M : Rep R G` to the invariants, induced by the map
 `m ↦ ∑ g : G, M.ρ g m`.
 -/
-def TateNorm (M : Rep R G) : (inhomogeneousChains M).X 0 ⟶
-    (inhomogeneousCochains M).X 0 := by
-  /-
-  The linear map part will be `M.ρ.norm` after groupHomology is merged.
-  -/
-  sorry
+def TateNorm (M : Rep R G) : (inhomogeneousChains M).X 0 ⟶ (inhomogeneousCochains M).X 0 :=
+  (zeroChainsIso M).hom ≫ M.norm ≫ (zeroCochainsIso M).inv
 
 lemma TateNorm_comp_d (M : Rep R G) : TateNorm M ≫ (inhomogeneousCochains M).d 0 1 = 0 :=
   sorry
