@@ -1638,7 +1638,7 @@ There is evidently a short exact sequence of representations of $G$.
 In this section we'll show that if $M$ is a finite class formation then
 there is an isomorphism (called the \emph{reciprocity isomorphism})
 \[
-	G^{\ab} \cong H^0_{Tate}(G,M).
+	G^{\ab} \cong H^0_{\Tate}(G,M).
 \]
 The reciprocity isomorphism depends on the choice of a fundamental class.
 
@@ -1715,7 +1715,7 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 	In particular in the case $n = -1$, $R = \Z$ we have the reciprocity isomorphism
 	\[
 		\begin{matrix}
-			G^{\ab} & \cong & H^{-1}_{Tate}(G,\aug(\Z,G)) &\cong&  H^0_{\Tate}(G,M), \\
+			G^{\ab} & \cong & H^{-1}_{\Tate}(G,\aug(\Z,G)) &\cong&  H^0_{\Tate}(G,M), \\
 			g & \mapsto & [g] - [1] & \mapsto & \delta ([g] - [1])
 		\end{matrix}.
 	\]
@@ -1724,44 +1724,47 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 
 We shall finish off this chapter by giving a formula for the reciprocity isomorphism in terms of
 a cocycle $\sigma'$ representing the fundamental class $\sigma$.
-We have a diagram with exact rows.
-Note that $C^0(G,M)$ and $C^{-1}(G,M)$ are both $M$ and the vertical maps are Tate coboundary maps,
-which is $N_G$.
-\[
-	\begin{matrix}
-		0 \to & C^{-1}(G,M) & \to & C^{-1}(G,\Split(\sigma)) & \to & C^{-1}(G,\aug(\R,G)) & \to 0 \\
-		&\downarrow &&\downarrow &&\downarrow \\
-		0 \to & C^{0}(G,M) & \to & C^{0}(G,\Split(\sigma)) & \to & C^{0}(G,\aug(\R,G)) & \to 0
-	\end{matrix}
-\]
-Choose an element $g \in G$. Recall that this element corresponds to the element
-$[g]-[1] \in C^{-1}(G,\aug(\Z,G))$.
-An obvious pre-image off this element in $C^{-1}(G,\Split(\sigma))$ is
-the element $(0,[g]-[1])$.
-The image of $(0,[g]-[1])$ in $C^{0}(G,\Split(\sigma))$ is
-\[
-	N_G(0,[g]-[1])
-	=
-	(\sum_{x \in G} (\sigma'(x,g) - \sigma'(x,1)), 0).
-\]
-By the cocycle relation we have $\sigma'(x,1) = \sigma'(1,1)$ for all $x\in G$.
-Hence the reciprocity map takes $g \in G$ to the element
-\[
-	\sum_{x \in G} \sigma'(x,g) - |G| \sigma'(1,1)
-	\in M^G / N_G M.
-\]
-Since every element of $H^\bullet_{\Tate} (G,-)$ is killed by $|G|$, this formula simplifies to
-\[
-	\reciprocity (g) = \sum_{x \in G} \sigma'(x,g).
-\]
 
-\begin{lemma}
-	The reciprocity isomorphism depends only on the fundamenal class $\sigma$,
-	not on the choice of cocycle.
+\begin{lemma} \label{lem:reciprocity formula}
+	The reciprocity isomorphism for a fundamental class $\sigma \in H^2(G,M)$ is given by
+	\[
+		\reciprocity(g) \equiv  \sum_{x \in G} \sigma'(g,g) \bmod N_G M.
+	\]
+	This depends only on the cohomology class $\sigma$ rather than the cocycle $\sigma'$.
 \end{lemma}
 
 \begin{proof}
-	If we modify $\sigma'$ by a coboundary:
+	We have a diagram with exact rows.
+	Note that $C^0(G,M)$ and $C^{-1}(G,M)$ are both $M$ and the vertical maps are Tate coboundary maps,
+	which is $N_G$.
+	\[
+		\begin{matrix}
+			0 \to & C^{-1}(G,M) & \to & C^{-1}(G,\Split(\sigma)) & \to & C^{-1}(G,\aug(\R,G)) & \to 0 \\
+			&\downarrow &&\downarrow &&\downarrow \\
+			0 \to & C^{0}(G,M) & \to & C^{0}(G,\Split(\sigma)) & \to & C^{0}(G,\aug(\R,G)) & \to 0
+		\end{matrix}
+	\]
+	Choose an element $g \in G$. Recall that this element corresponds to the element
+	$[g]-[1] \in C^{-1}(G,\aug(\Z,G))$.
+	An obvious pre-image off this element in $C^{-1}(G,\Split(\sigma))$ is
+	the element $(0,[g]-[1])$.
+	The image of $(0,[g]-[1])$ in $C^{0}(G,\Split(\sigma))$ is
+	\[
+		N_G(0,[g]-[1])
+		=
+		(\sum_{x \in G} (\sigma'(x,g) - \sigma'(x,1)), 0).
+	\]
+	By the cocycle relation we have $\sigma'(x,1) = \sigma'(1,1)$ for all $x\in G$.
+	Hence the reciprocity map takes $g \in G$ to the element
+	\[
+		\sum_{x \in G} \sigma'(x,g) - |G| \sigma'(1,1)
+		\in M^G / N_G M.
+	\]
+	Since every element of $H^\bullet_{\Tate} (G,-)$ is killed by $|G|$, this formula simplifies to
+	\[
+		\reciprocity (g) = \sum_{x \in G} \sigma'(x,g).
+	\]
+	If we modify $\sigma'$ by a coboundary $d\tau$:
 	\[
 		\sigma''(x,y) = \sigma(x,y) + x \tau(y) - \tau(xy) + \tau(x),
 	\]
@@ -1769,5 +1772,5 @@ Since every element of $H^\bullet_{\Tate} (G,-)$ is killed by $|G|$, this formul
 	\[
 		\sum_{x \in G} (x \tau(g) - \tau(xg) + \tau(x)).
 	\]
-	This sum simplifies to $N_G(\tau(g))$, which is zero in $H^0_{Tate}(G,M)$.
+	This sum simplifies to $N_G(\tau(g))$, which is zero in $H^0_{\Tate}(G,M)$.
 \end{proof}
