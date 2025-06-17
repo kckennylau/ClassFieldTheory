@@ -54,7 +54,8 @@ Rep.ind₁_toCoind₁
 Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite
 Rep.ind₁_iso_coind₁
 Rep.ind₁_trivialCohomology
-Rep.coind₁_trivialHomology Rep.ind₁_trivialTateCohomology
+Rep.coind₁_trivialHomology
+Rep.ind₁_trivialTateCohomology
 Representation.coind₁'
 Rep.coind₁'
 Rep.coind₁'_obj_iso_coind₁
@@ -80,7 +81,6 @@ Representation.ind₁'_lequiv
 Representation.ind₁'_lequiv_comm
 Rep.ind₁'_obj_iso
 Rep.ind₁'_iso_forget₂_ggg_ind₁
-
 Rep.ind₁'_trivialHomology
 Rep.ind₁'_iso_coind₁'
 Rep.ind₁'_trivialCohomology

@@ -265,7 +265,6 @@ As a consequence of this, we have the following (also a current PR):
 	In the case $n=0$ this is interpreted as meaning $C_0(G,M) = M$.
 	The homology groups of $C_n(G,M)$ are called the \emph{homology groups of $M$}
 	and are written $H_n(G,M)$.
-	These are not yet in Mathlib but are defined in a current PR.
 \end{definition}
 
 \begin{example}
@@ -283,14 +282,6 @@ As a consequence of this, we have the following (also a current PR):
 	this is the largest	quotient module on which $G$ acts trivially.
 	It follows that $H_0(G,M) \cong M_G$.
 \end{example}
-
-% We also note the following, which is a current PR:
-
-% \begin{lemma}	\label{lem:homology 1 Z}
-% 	\lean{groupHomology.one_trivial_int_iso}
-% 	\leanok
-% 	There is a canonical isomorphism $H_{1}(G,\Z) \cong G^{\ab}$.
-% \end{lemma}
 
 
 
@@ -357,7 +348,6 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	\]
 \end{proof}
 
-
 \begin{lemma} \label{lem:norm naturality}
 	For every map $f : M \to N$ we have a commuting square, where the
 	vertical maps are $N_G$:
@@ -378,8 +368,6 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 		=N_G(f(m)).
 	\]
 \end{proof}
-
-
 
 \begin{definition} \label{def:Tate cohomology}
 	\lean{groupCohomology.TateComplex,
@@ -606,7 +594,6 @@ In this section we shall construct certain representations with trivial homology
 	that this map is compatible with the actions of $G$.
 \end{proof}
 
-
 \begin{lemma}	\label{lem:ind₁ trivial homology}
 	\lean{Rep.ind₁_trivialHomology}
 	\uses{def:induced,
@@ -616,8 +603,7 @@ In this section we shall construct certain representations with trivial homology
 \end{lemma}
 
 \begin{proof}
-	There is an elementary proof, but this cannot be formalized until
-	the PR on group homology is merged.
+	There is an elementary proof similar to that of \ref{lem:coind₁ trivial cohomology}.
 \end{proof}
 
 \begin{definition} \label{def:ind₁ to coind₁}
@@ -642,7 +628,7 @@ In this section we shall construct certain representations with trivial homology
 
 \begin{lemma}	\label{lem:induced trivial Tate}
 	\lean{Rep.ind₁_trivialCohomology,
-		Rep.coind₁_trivialHomology
+		Rep.coind₁_trivialHomology,
 		Rep.ind₁_trivialTateCohomology}
 	\uses{lem:Tate cohomology is cohomology or homology,
 		def:ind₁ to coind₁,
@@ -851,7 +837,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 		Representation.ind₁'_lequiv,
 		Representation.ind₁'_lequiv_comm,
 		Rep.ind₁'_obj_iso,
-		Rep.ind₁'_iso_forget₂_ggg_ind₁,
+		Rep.ind₁'_iso_forget₂_ggg_ind₁
 	}
 	\uses{def:ind₁',
 		def:induced}
@@ -970,7 +956,6 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	together with the isomorphisms \ref{cor:ind₁' iso coind₁'} and \ref{lem:ind₁' iso ind₁}.
 \end{proof}
 
-
 \begin{corollary}	\label{cor:Tate up down isos}
 	\lean{groupCohomology.instIsIsoModuleCatδ,
 		groupCohomology.instIsIsoModuleCatδ_1,
@@ -997,7 +982,6 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	short exact sequences linking $\up(M)$ and $\down(M)$ to $M$.
 	They are isomorphisms because $\coind_1'(M)$ and $\ind_1'(M)$ have trivial Tate cohomology.
 \end{proof}
-
 
 
 As a simple example we consider the case of the trivial representation $R$.
@@ -1123,7 +1107,6 @@ The map $N_G : \aug(R,G) \to \aug(R,G)$ in this case is zero, so we have
 	The first row is exact by the inductive hypothesis.
 	Therefore the second row is also exact.
 \end{proof}
-
 
 
 
@@ -1396,7 +1379,6 @@ very precisely here:
 	\end{align*}
 \end{proof}
 
-
 \begin{lemma} \label{lem:herbrand ses}
 	Suppose we have a short exact sequence of representations of a finite cyclic group $G$:
 	\[
@@ -1424,9 +1406,6 @@ very precisely here:
 	The result follows because the alternating product of the
 	finite group orders in the hexagon is $1$.
 \end{proof}
-
-
-
 
 
 
@@ -1590,11 +1569,8 @@ relation for all $x,y,z\in G$
 	$\Split(\sigma)$ for this representation).
 \end{definition}
 
-
-
 There is evidently a short exact sequence of representations of $G$.
-\begin{equation}
-	\label{eq:split ses}
+\begin{equation}\label{eq:split ses}
 	0 \to M \to \Split(\sigma) \to \aug(R,G) \to 0.
 \end{equation}
 
@@ -1666,14 +1642,12 @@ there is an isomorphism (called the \emph{reciprocity isomorphism})
 \]
 The reciprocity isomorphism depends on the choice of a fundamental class.
 
-
 \begin{example}
 	If $G$ is a finite cyclic group then the trivial representation $\Z$
 	is a finite class formation.
 	This follows from \ref{lem:H2 cyclic Z}.
 	The cocycle $\sigma_1$ defined in \ref{lem:H2 cyclic Z} is a fundamental class.
 \end{example}
-
 
 \begin{lemma} \label{lem:restriction fundamental class generates}
 	\uses{def:fundamental class}
@@ -1705,8 +1679,6 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 	This implies $\cor(b) = \cor (\rest( c))$, and since $\cor$ is injective we have
 	$b = \rest(c)$.
 \end{proof}
-
-
 
 \begin{theorem} \label{thm:splitting module trivial}
 	\uses{lem:restriction fundamental class generates,
