@@ -1361,6 +1361,15 @@ very precisely here:
 	If either of the two cohomology groups are infinite then $h(G,M)$ defaults to $0$.
 \end{definition}
 
+
+
+\begin{example} \label{lem:herbrand Z}
+	If $G$ is a cyclic group and $\Z$ has the trivial action of $G$ then $h(G,\Z) = |G|$.
+	This follow immediately \ref{lem:H2 cyclic Z}
+\end{example}
+
+
+
 \begin{lemma} \label{lem:herbrand finite}
 	\uses{lem:Tate cohomology is cohomology or homology}
 	If $M$ is finite then $h(G,M)=1$.
@@ -1774,3 +1783,16 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 	\]
 	This sum simplifies to $N_G(\tau(g))$, which is zero in $H^0_{\Tate}(G,M)$.
 \end{proof}
+
+
+\begin{example}
+	The simplest example of a class formation and a fundamental class is in the case
+	that $G$ is a cyclic group of order $n$ and $M$ is the trivial representation $\Z$.
+	It follows immediately that the element $\sigma_1 \in H^2(G,\Z)$ defined in
+	\ref{lem:H2 cyclic Z} is a fundamental class.
+	In this case the reciprocity isomorphism takes the form
+	\[
+		G^{\ab} \cong H^0_{\Tate} (G,\Z) \cong \Z/n\Z.
+	\]
+	(The isomorphism depends on $\sigma_1$, which depends on a choice of generator $g \in G$).
+\end{example}
