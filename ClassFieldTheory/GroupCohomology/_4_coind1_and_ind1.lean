@@ -675,8 +675,8 @@ def ind₁'_iso_forget₂_ggg_ind₁ : ind₁' ≅ forget₂ (Rep R G) (ModuleCa
   inv_hom_id := sorry
 
 universe u
-instance ind₁'_trivialHomology : TrivialHomology.{u} (ind₁'.obj M) :=
-  let _ := (ind₁_trivialHomology.{u} G M.V)
+instance ind₁'_trivialHomology : TrivialHomology (ind₁'.obj M) :=
+  let _ := (ind₁_trivialHomology G M.V)
   trivialHomology_of_iso (ind₁'_obj_iso M)
 
 section FiniteGroup
@@ -752,11 +752,11 @@ instance ind₁_trivialCohomology [Finite G] : TrivialCohomology ((ind₁ G).obj
 instance ind₁'_trivialCohomology [Finite G] : TrivialCohomology (ind₁'.obj M) :=
   trivialCohomology_of_iso (ind₁'_obj_iso M)
 
-instance coind₁_trivialHomology [Finite G] : TrivialHomology.{u} ((coind₁ G).obj A) :=
-  trivialHomology_of_iso.{u} (ind₁_obj_iso_coind₁_obj A).symm
+instance coind₁_trivialHomology [Finite G] : TrivialHomology ((coind₁ G).obj A) :=
+  trivialHomology_of_iso (ind₁_obj_iso_coind₁_obj A).symm
 
-instance coind₁'_trivialHomology [Finite G] : TrivialHomology.{u} (coind₁'.obj M) :=
-  trivialHomology_of_iso.{u} (coind₁'_obj_iso_coind₁ M)
+instance coind₁'_trivialHomology [Finite G] : TrivialHomology (coind₁'.obj M) :=
+  trivialHomology_of_iso (coind₁'_obj_iso_coind₁ M)
 
 instance ind₁_trivialTateCohomology [Finite G] : TrivialTateCohomology ((ind₁ G).obj A) := sorry
 

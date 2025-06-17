@@ -122,6 +122,8 @@ end Rep
 
 namespace groupCohomology
 
+variable [DecidableEq G]
+
 /--
 The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a natural transformation:
 -/

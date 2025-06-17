@@ -10,7 +10,7 @@ open
   LinearMap
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G] [Finite G]
+variable {G : Type} [Group G] [Finite G] [DecidableEq G]
 
 noncomputable section
 
@@ -121,13 +121,12 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
                 ComplexShape.up_Rel, neg_add_cancel_comm, add_right_inj] at hij hjk
               rw [←neg_add, neg_eq_iff_eq_neg, neg_neg] at hij hjk
               norm_cast at hij hjk
-              rw [←hij, add_comm 1 i]
+              subst hjk
+              simp at hij
+              subst hij
+              rw [add_comm 1 i]
               dsimp
-              convert (inhomogeneousChains M).d_comp_d' _ _ i rfl rfl
-              have : i = k := by linarith
-              rw [this]
-
-
+              exact (inhomogeneousChains M).d_comp_d' _ _ i rfl rfl
 
 lemma TateComplex_d_neg_one (M : Rep R G) : (TateComplex M).d (-1) 0 = TateNorm M := rfl
 

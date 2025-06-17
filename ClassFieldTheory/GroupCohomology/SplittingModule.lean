@@ -306,10 +306,10 @@ The splitting module is has trivial cohomology.
 lemma trivialCohomology [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
     (split σ).TrivialCohomology := by
   apply trivialCohomology_of_even_of_odd (split σ) 0 0
-  · intro H
+  · intro H _
     apply IsZero.of_iso (TateTheorem_lemma_4 σ H)
     apply isoH2
-  · intro H
+  · intro H _
     apply IsZero.of_iso (TateTheorem_lemma_3 σ H)
     apply isoH1
 

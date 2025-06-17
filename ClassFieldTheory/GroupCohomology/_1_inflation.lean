@@ -9,9 +9,9 @@ open CategoryTheory
   groupCohomology
   HomologicalComplex
 
-variable {R G : Type} [CommRing R] [Group G]
+variable {R G : Type} [CommRing R] [Group G] [DecidableEq G]
 
-variable (H : Subgroup G) [H.Normal]
+variable (H : Subgroup G) [H.Normal] [DecidableEq (G ⧸ H)]
 
 noncomputable def Rep.quotientToInvariantsFunctor (H : Subgroup G) [H.Normal] :
     Rep R G ⥤ Rep R (G ⧸ H) where
