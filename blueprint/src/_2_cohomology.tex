@@ -73,19 +73,10 @@ If the subgroup $S$ is normal then $M^S$ is a representation of the quotient gro
 		Rep.res}
 	The map $M \mapsto M \downarrow S$ defines a functor $\Res : \Rep(R,G) \to \Rep(R,S)$.
 	If $S$ is a normal subgroup of $G$ then then map $M \mapsto M^S$ defines
-	a functor $\Inf : \Rep(R,G) \to \Rep(R, G/S)$.
+	a functor $\Invar : \Rep(R,G) \to \Rep(R, G/S)$.
 	These functors are called \emph{restriction} and \emph{inflation} respectively.
 \end{definition}
 
-\begin{lemma} \label{lem:restriction exact}
-	\lean{Rep.res_respectsShortExact}
-	\uses{def:inflation restriction functors}
-	\leanok
-	Let $S$ be a subgroup of $G$.
-	A sequence $0 \to A \to B \to C \to 0$ is exact in $\Rep(R,G)$ if and only if
-	the sequence $0 \to A \downarrow S \to B \downarrow S \to C \downarrow S$ is exact
-	in $\Rep(R,S)$.
-\end{lemma}
 
 Given a representation $M$ of $G$, there is a cochain complex of $R$-modules
 \[
@@ -109,25 +100,25 @@ The cohomology groups of $C^\bullet(G,M)$ are called the cohomology groups of th
 $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 \texttt{groupCohomology M n}, or \texttt{(groupCohomology.functor n).obj M}.
 
-\begin{example}
+\begin{example} \label{eg:H0}
 	For example $H^0(G,M)$ is just the kernel of the map $d^0 : M \to (G \to M)$.
 	Since $(d^0m)(g) = g \bullet m - m$, an element $m$ is in this kernel if $m$ is in $M^G$,
 	so we have $H^0(G,M) \cong M^G$.
 \end{example}
 
-\begin{example}
+\begin{example} \label{eg:H1 trivial iso Hom}
 	Suppose $M$ is a trivial representation of $G$. Then the map $d^0$ is zero,
 	so $H^1(G,M)$ is the kernel of the map $(d^1f)(x,y) = f(x) + f(y) - f(xy)$.
 	A function $f: G \to M$ is in this kernel if it is a group homomorphism, so we have
 	$H^1(G,M) \cong \Hom(G,M)$.
 \end{example}
 
-\begin{example}
+\begin{example} \label{eg:H2 unit}
 	If $G$ is the trivial group then for all $n>0$, $H^n(G,M)\cong 0$.
 	In this case each of the modules $C^n(G,M)$ may be identified with $M$,
 	and the coboundary maps reduce to alternating sums of the form
-	$d^n(m) = \sum_{i=0}^n (-1)^i m$.
-	Hence $d^n$ is the identity map for even $n$, and is the zero map for odd $m$.
+	$d^n(m) = \sum_{i=0}^{n+1} (-1)^i m$.
+	Hence $d^n$ is the identity map for odd $n$, and is the zero map for even $m$.
 \end{example}
 
 \begin{remark}
@@ -142,6 +133,31 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	discussed here in the generality of $\Rep(R,G)$ rather than $\Rep(\Z,G)$.
 \end{remark}
 
+\begin{remark}
+	At this point it's worth stressing one particular aspect of this theory.
+	Many of the proofs involve showing that certain diagrams commute. When writing proofs on paper,
+	some mathematicians don't give too much thought to the reasons why a particular diagram commutes
+	but when formalizing theorems we need to be more careful than this.
+	For that reason it is important to define all of our objects in as functorial a way as possible.
+	In the example from the previous remark,
+	saying that there is an isomorphism $H^n(G,F_1(M)) \cong F_2(H^n(G,M))$
+	is not as good as saying that there is an isomorphism of functors
+	$H^n \circ F_1 \cong F_2 \circ H^n$.
+	The isomorphism of functors implies that for every map $f : A \to B$ in $\Rep(R,G)$
+	we have a commuting square in $\Mod(\Z)$.
+	\[
+		\begin{matrix}
+			H^n(G,F_1(A)) & \stackrel{H^1(G,F_1(f))}\to & H^n(G,F_1(B))\\
+			\downarrow &&\downarrow \\
+			F_2(H^n(G,M)) & \stackrel{F_2(H^1(G,f))}\to & F_2 H^n(G,B)
+		\end{matrix} .
+	\]
+	This commuting square might be crucial in some other proof.
+	This is also the reason why we work with the categories \texttt{Rep R G} and \texttt{ModuleCat R},
+	rather than with \texttt{Representation R G M} and \texttt{Module R M} which could be more
+	familiar.
+\end{remark}
+
 \begin{definition} \label{def:restriction map}
 	\lean{groupCohomology.rest}
 	\uses{def:inflation restriction functors}
@@ -154,7 +170,8 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	\[
 		\rest : H^n(G,M) \to H^n(S,M).
 	\]
-	This map is called the \emph{restriction map}.
+	This map is called the \emph{restriction map}, and is a morphism of functors
+	from $H^n(G,-)$ to $H^n(S, -) \circ \Res$.
 \end{definition}
 
 \begin{definition} \label{def:inflation map}
@@ -171,6 +188,8 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	\[
 		\infl : H^n(G/S,M^H) \to H^n(G,M).
 	\]
+	More precisely, the inflation map is a morphism of functors from
+	$H^n (S, -)\circ \Invar$ to $H^n(G,-)$.
 \end{definition}
 
 The following results are in a current PR.
@@ -210,14 +229,17 @@ As a consequence of this, we have the following (also a current PR):
 		groupCohomology.rest_δ_naturality,
 		groupCohomology.infl_δ_naturality}
 	\uses{
-		lem:restriction exact,
 		def:restriction map,
 		def:inflation map,
-		def:cohomology long exact sequence}
+		def:cohomology long exact sequence,
+		def:inflation restriction functors}
 	\leanok
 	Let $S$ be a subgroup of $G$ and suppose we have a short exact sequence
 	$0 \to A \to B \to C \to 0$ in $\Rep(R,G)$.
-	Then the following diagram commutes, where the rows are the long exact sequences
+	Then the sequence the sequence
+	$0 \to A \downarrow S \to B \downarrow S \to C \downarrow S \to 0$ is exact
+	in $\Rep(R,S)$.
+	The following diagram commutes, where the rows are the long exact sequences
 	for $0 \to A \to B \to C \to 0$ and for its restriction to $S$,
 	and the vertical maps are restriction.
 	\[
@@ -231,7 +253,7 @@ As a consequence of this, we have the following (also a current PR):
 	map $f : A \to B$ in $\Rep(R,G)$ a commuting square in which the vertical maps are inflation.
 	\[
   	\begin{array}{ccccccc}
-			H^n(G/S,A^S) & \stackrel{H^n(\Inf(f))}\to & H^n(G/S,B^S)\\
+			H^n(G/S,A^S) & \stackrel{H^n(\Invar(f))}\to & H^n(G/S,B^S)\\
 			\downarrow&&\downarrow \\
 			H^n(G,A) & \stackrel{H^n(f)}\to & H^n(G,B)
 		\end{array}.
@@ -746,7 +768,7 @@ In this section we shall construct certain representations with trivial homology
 \begin{proof}
 	We've seen in Lemma \ref{lem:coind₁' iso coind₁} that $\coind_1'(M)$
 	is isomorphic to $\coind_1(M)$.
-	Applying the functor $\Inf$, we obtain an isomorphism between $\coind_1'(M)^S$ and $\coind_1(M)^S$.
+	Applying the functor $\Invar$, we obtain an isomorphism between $\coind_1'(M)^S$ and $\coind_1(M)^S$.
 	The result then follows from Lemma \ref{lem:coind₁ trivial cohomology}.
 \end{proof}
 
