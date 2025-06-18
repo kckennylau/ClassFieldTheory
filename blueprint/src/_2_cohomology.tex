@@ -1113,12 +1113,11 @@ The map $N_G : \aug(R,G) \to \aug(R,G)$ in this case is zero, so we have
 
 \section{Corestriction}
 
-In this section we describe the corestriction map from $H^\bullet (S,-)$ to $H^\bullet(G,-)$,
+In this section we describe the ``corestriction map'' from $H^\bullet (S,-)$ to $H^\bullet(G,-)$,
 where $S$ is a subgroup of finite index in $G$.
-For simplicity we shall also assume that $G$ is a finite group.
 
 \begin{definition} \label{def:corestriction}
-	Let $\{r_i\}$ be a set of representatives for cosets $r_i S$.
+	Let $\{r_i\}$ be a set of representatives for the cosets $r_i S$.
 	For any representation $M$ of $G$ there is a linear map $N_{G/S} : M^S \to M^G$
 	defined by
 	\[
@@ -1126,7 +1125,7 @@ For simplicity we shall also assume that $G$ is a finite group.
 	\]
 	This map does not depend on the choince of coset representatives.
 	Also, the map $N_{G/S}$ is a morphism of functors, i.e. for every map $f : A \to B$ in
-	$\Rep(R,G)$ we have a commuting square:
+	$\Rep(R,G)$ we have a commuting square in $\Mod(R)$:
 	\[
 		\begin{matrix}
 			A^S & \to & B^S \\
@@ -1136,64 +1135,65 @@ For simplicity we shall also assume that $G$ is a finite group.
 	\]
 	where the horizontal maps are induced by $f$ and the vertical maps are $N_{G/S}$.
 
-	One can easily show that
-	\[
-		N_{G/S} \circ N_S = N_G.
-	\]
-	Hence $N_{G/S}$ descends to a linear map $M^S / N_S M \to M^G / N_G M$.
-	We shall interpret this map as a map of Tate cohomology groups and call it
-	\[
-		\cor^0 : H^0_{\Tate}(S,M) \to H^0_{\Tate} (G,M).
-	\]
-	This is also map of functors, i.e. for every map $f : M \to N$ in $\Rep(R,G)$
-	there is a commuting square
-	\[
-		\begin{matrix}
-			H^0_{\Tate}(S,M) & \stackrel{H^0_{\Tate}(\Res(f))}\to & H^0_{\Tate}(S,M) \\
-			\downarrow && \downarrow \\
-			H^0_{\Tate}(G,M) & \stackrel{H^0_{\Tate}(f)}\to & H^0_{\Tate}(G,M).
-		\end{matrix}
-	\]
-	We may define $\cor^n : H^n_{\Tate}(S,M) \to H^n_{\Tate}(G,M)$ by
-	identifying $H^n_{\Tate}(-,M)$ with $H^0_{\Tate}(-,\up^n M)$ or $H^0_{\Tate}(-,\down^{-n} M)$.
-	These map are also maps of functors.
+	The corestriction maps $\cor^n : H^n(S,M) \to H^n(G,M)$ are defined recursively as follows:
+	\begin{itemize}
+		\item
+		The map $\cor^0 : H^0(S,M) \to H^n(G,M)$ is defined to be $N_{G/S}$.
+		\item
+		Assume that we have defined $\cor^n$. For any $M$ we have a commutative diagram
+		in which the rows are exact and the vertical arrows are $\cor^n$:
+		\[
+			\begin{matrix}
+				H^n(S,\coind_1'(M)) & \to & H^n(S,\up(M)) & \to &H^{n+1}(S,M) & \to & 0 \\
+				\downarrow &&\downarrow \\
+				H^n(S,\coind_1'(M)) & \to & H^n(S,\up(M)) & \to &H^{n+1}(S,M) & \to & 0
+			\end{matrix}.
+		\]
+		It follows that there is a unique linear map $\cor^{n+1} : H^{n+1}(S,M) \to H^{n+1}(G,M)$
+		such that the following square commutes:
+		\[
+			\begin{matrix}
+				H^n(S,\up(M)) & \to & H^{n+1}(S,M) \\
+				\downarrow &&\downarrow \\
+				H^n(S,\up(M)) & \to &H^{n+1}(S,M)
+			\end{matrix}.
+		\]
+	\end{itemize}
+	The map $\cor^{n} : H^n(G , -) \to H^n(S,-)$ is a morphism of functors.
 \end{definition}
 
-By the lemma above, we have
-
 \begin{lemma} \label{lem:cor comp rest}
-	Let $n \ge 0$.
-	For all $\sigma \in H^n_{\Tate}(G,M)$ we have
+	For all $\sigma \in H^n(G,M)$ we have
 	\[
 		\cor(\rest(\sigma)) = [G:S] \cdot \sigma.
 	\]
-	(Note that a similar relation holds for $n < 0$,
-	although we have not defined $\rest$ in that case.)
 \end{lemma}
 
 \begin{proof}
-	We'll prove the result for $n \ge 0$ by induction on $n$.
+	We'll prove the result by induction on $n$.
 	In the case $n = 0$, this follows from the relation for all $m \in M^G$:
 	\[
 		N_{G/S} (m) = [G:S] \cdot m,
 	\]
 	The identity above holds because each term in the sum defining $N_{G/S}(m)$ is equal to $m$.
 
-	Let's assume that the lemma is true for some $n \ge 0$.
-	We then have a diagram in which the vertical maps are the dimension shifting isomorphisms:
+	Let's assume that the lemma is true for some $n$.
+	We then have a diagram in which the vertical maps are the dimension shifting maps,
+	which are all surjective:
 	\[
 		\begin{matrix}
-			H^{n+1}_{\Tate}(G, M) & \stackrel{\rest}\to &
-			H^{n+1}_{\Tate}(S,M) & \stackrel{\cor}\to & H^{n+1}_{\Tate}(G,M) \\
+			H^{n}(G,\up\ M) &  \stackrel{\rest}\to &
+			H^{n}(S,\up\ M) &  \stackrel{\cor}\to & H^{n}(G,\up\ M)\\
 			\downarrow &&\downarrow &&\downarrow \\
-			H^{n}_{\Tate}(G,\up\ M) &  \stackrel{\rest}\to &
-			H^{n}_{\Tate}(S,\up\ M) &  \stackrel{\cor}\to & H^{n}_{\Tate}(G,\up\ M)
+			H^{n+1}(G, M) & \stackrel{\rest}\to &
+			H^{n+1}(S,M) & \stackrel{\cor}\to & H^{n+1}(G,M)
 		\end{matrix}.
 	\]
-	By assumption, the composition of the maps on the bottom row is multiplication by $[G:S]$.
+	By the inductive hypothesis,
+	the composition of the maps on the top row is multiplication by $[G:S]$.
 	The square on the left commutes by \ref{lem:inflation restriction naturality},
 	and the square on the right commutes by definition of the corestriction map.
-	Therefore the composition on the top row is multiplication by $[G:S]$.
+	Therefore the composition on the bottom row is multiplication by $[G:S]$.
 \end{proof}
 
 
@@ -1206,10 +1206,11 @@ By the lemma above, we have
 \end{corollary}
 
 \begin{proof}
-	By dimension-shifting it's enough to prove the result for $n \ge 0$.
+	By dimension-shifting it's enough to prove the result for $n > 0$, in which case
+	Tate cohomology is the same as cohomology.
 	Take $S$ to be the trivial subgroup $1$ of $G$.
 	By \ref{lem:cor comp rest} it's sufficient to prove that $\cor(\rest(\sigma))= 0$.
-	This follows because $\rest(\sigma) \in H^n_{\Tate}(1,M) \cong 0$.
+	This follows because $\rest(\sigma) \in H^n(1,M) \cong 0$.
 \end{proof}
 
 \begin{corollary} \label{cor:cohomology sub Sylow}
@@ -1220,20 +1221,13 @@ By the lemma above, we have
 \end{corollary}
 
 \begin{proof}
-	By dimension-shifting, it's enough to prove this for $n \ge 0$.
+	By dimension-shifting it's enough to prove the result for $n > 0$, in which case
+	Tate cohomology is the same as cohomology.
 	It follows from \ref{lem:cor comp rest} that the
-	composition $\cor \circ \rest$ is injective on $H^n_{\Tate}(G,M)[p^\infty]$.
-	Therefore the restriction map is an injective map from $H^n_{\Tate}(G,M)[p^\infty]$
-	to $H^n_{\Tate}(S_p,M)$.
+	composition $\cor \circ \rest$ is injective on $H^n(G,M)[p^\infty]$.
+	Therefore the restriction map is an injective map from $H^n(G,M)[p^\infty]$
+	to $H^n(S_p,M)$.
 \end{proof}
-
-
-
-
-
-
-
-
 
 
 
@@ -1361,13 +1355,10 @@ very precisely here:
 	If either of the two cohomology groups are infinite then $h(G,M)$ defaults to $0$.
 \end{definition}
 
-
-
 \begin{example} \label{lem:herbrand Z}
 	If $G$ is a cyclic group and $\Z$ has the trivial action of $G$ then $h(G,\Z) = |G|$.
 	This follow immediately \ref{lem:H2 cyclic Z}
 \end{example}
-
 
 
 \begin{lemma} \label{lem:herbrand finite}
