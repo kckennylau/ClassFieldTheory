@@ -12,7 +12,7 @@ open
   BigOperators
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G]
+variable {G : Type} [Group G] [DecidableEq G]
 
 noncomputable section Split
 variable [Fintype G]
