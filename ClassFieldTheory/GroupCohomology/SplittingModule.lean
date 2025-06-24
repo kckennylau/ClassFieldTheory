@@ -211,7 +211,7 @@ instance : AddCommMonoid (H2 M) := AddCommGroup.toAddCommMonoid
 The restriction of `σ` to a subgroup `H`.
 -/
 abbrev _root_.groupCohomology.H2res (H : Subgroup G) : H2 (M ↓ H) :=
-  H2Map H.subtype (𝟙 (M ↓ H)) σ
+  map H.subtype (𝟙 (M ↓ H)) 2 σ
 
 notation σ "↡" H => H2res σ H
 
@@ -224,7 +224,7 @@ class FiniteClassFormation where
   hypothesis₂' (H : Subgroup G) :
     (Submodule.span R {σ ↡ H}).annihilator = Ideal.span {(Nat.card H : R)}
 
-def H2Map₂ {A B : Rep R G} (f : A ⟶ B) : H2 A ⟶ H2 B := H2Map (MonoidHom.id G) f
+def H2Map₂ {A B : Rep R G} (f : A ⟶ B) : H2 A ⟶ H2 B := map (MonoidHom.id G) f 2
 
 variable (H : Subgroup G)
 
@@ -310,10 +310,10 @@ lemma trivialCohomology [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] :
   apply trivialCohomology_of_even_of_odd (split σ) 0 0
   · intro H _
     apply IsZero.of_iso (TateTheorem_lemma_4 σ H)
-    apply isoH2
+    rfl
   · intro H _
     apply IsZero.of_iso (TateTheorem_lemma_3 σ H)
-    apply isoH1
+    rfl
 
 
 def TateCohomology_iso [FiniteClassFormation σ] [NoZeroSMulDivisors ℕ R] (n : ℤ) :
