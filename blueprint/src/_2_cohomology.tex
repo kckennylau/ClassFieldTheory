@@ -1885,3 +1885,65 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 % 	\]
 % 	(The isomorphism depends on $\sigma_1$, which depends on a choice of generator $g \in G$).
 % \end{example}
+
+
+\section{The invariant map}
+
+For simplicity we shall work over the ring $R=\Z$ from now on.
+
+Suppose $S$ is a subgroup of $G$ and $M$ is a finite class formation with
+fundamental class $\sigma_G$. It follows immediately that $M\downarrow S$ is also
+a finite class formation with fundamental class $\sigma_S := \sigma_G | S$.
+Similarly we have :
+
+\begin{lemma} \label{lem:quotient class formation}
+	Let $S$ be a normal subgroup of $G$ and let $M$ be a class formation for $G$.
+	Then $M^S$ is a finite class formation for $G/S$. Furthermore there is a unique
+	fundamental class $\sigma_{G/S} \in H^2(G/S, M^S)$ such that
+	$\inf (\sigma_{G/S}) = [G:S] \cdot \sigma_G$.
+\end{lemma}
+
+\begin{proof}
+	Consider the inflation restriction sequence:
+	\[
+		0 \to H^2(G/S,M^S) \to H^2(G,M) \to H^2(S,M)
+	\]
+	The result follows since the restriction map $H^2(G,M) \to H^2(S,M)$
+	is a surjective map from $\Z/|G|\cdot \Z$ to $\Z/|S|\cdot \Z$.
+\end{proof}
+
+In practice, the following is a more convenient definition of a finite class formation.
+
+\begin{definition}
+	For all subgroups $S \le T \le G$ with $S$ normal in $T$,
+	there is an element $\sigma_{T/S} \in H^2(T/S,M^S)$
+	with the following properties:
+	\begin{itemize}
+		\item
+		$\inf (\sigma_{T/S}) = [T:S] \cdot \sigma_T$,
+		\item
+		$\sigma_T = \rest \sigma_{G}$.
+	\end{itemize}
+\end{definition}
+
+Given a class formation with fundamental classes $\sigma_{T/S}$ we define an invariant map
+\[
+	\inv_{T/S} : H^2 (T/S, M^S) \to \Q / \Z,
+	\qquad
+	\sigma_{T/S} \mapsto \frac{1}{[T:S]}.
+\]
+
+
+\begin{lemma} \label{lem:inv inflation compatibility}
+	Let $S\le T$ be a normal subgroup. then we have
+	\[
+		\inv_{T/S}(\sigma) = \inv_{T/1} (\infl (\sigma)).
+	\]
+\end{lemma}
+
+\begin{lemma} \label{lem:inv restriction compatibility}
+	Let $S\le T \le U \le G$ be with $S$ normal in $U$. then we have
+	\[
+		\inv_{U/S} (\rest (\sigma))= [U : T] \cdot \inv_{T/S}(\sigma) .
+	\]
+\end{lemma}

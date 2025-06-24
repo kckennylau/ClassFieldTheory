@@ -1,7 +1,7 @@
 \chapter{Local Class Field Theory}
 
 In this chapter we shall consider finite Galois extensions of local fields $l/k$.
-We shall regard the multiplicative groups $l^\times$ as a representation of $\Gal(l/k)$, where
+We shall regard the multiplicative group $l^\times$ as a representation of $\Gal(l/k)$, where
 addition in the module is the operation which is usually written as multiplication.
 We shall always write $H^\bullet(l/k,-)$ as an abbreviation of $H^\bullet(\Gal(l/k),-)$.
 By the fundamental theorem of Galois theory we have
@@ -521,3 +521,145 @@ We have proved the following.
 		\Gal(l/k) \cong k^\times / N(l^\times).
 	\]
 \end{theorem}
+
+
+
+\section{Compatibility in towers}
+
+Let $l / m / k$ be a tower of finite Galois extensions of local fields.
+Then we have
+\[
+	N_{l/k} (l^\times) = N_{m/k}(N_{l/m}(l^\times)) \subseteq N_{m/k}(m^\times).
+\]
+Hence there is a projection map
+\[
+	k^\times / N(l^\times) \to k^\times / N(m^\times).
+\]
+Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
+\[
+	\Gal(l/k)^{\ab} \to \Gal(m/k)^{\ab}.
+\]
+
+\begin{lemma} \label{lem:local compatibility in towers}
+	The following square commutes:
+	\[
+		\begin{matrix}
+			\Gal(l/k)^\ab & \cong & k^\times / N(l^\times) \\
+			\downarrow && \downarrow \\
+			\Gal(l/k)^\ab & \cong & k^\times / N(l^\times)
+		\end{matrix}
+	\]
+\end{lemma}
+
+\begin{proof}
+\end{proof}
+
+
+\begin{theorem} \label{thm:local norm limitation}
+	Let $l/k$ be a finite Galois extension of local fields and let $l^{\ab}$ be the
+	maximal subfield of $l$ which is an abelian extsion of $k$, i.e. the fixed field of
+	the commutator subgroup of $\Gal(l/k)$.
+	Then $N_{l/k}(l^\times) = N_{l^\ab/k}(l^{\ab\times})$.
+\end{theorem}
+
+\begin{proof}
+	This follows from \label{lem:local compatibility in towers} because the projection
+	$\Gal(l/k)^{\ab} \to \Gal(l^{\ab}/k)^{\ab}$ is an isomorphism.
+\end{proof}
+
+
+
+\begin{theorem} \label{lem:local abelian classification}
+	Let $l_1$ and $l_2$ be two abelian extensions of $k$ contained in a field $m$.
+	Then $l_1 \subseteq l_2$ if and only if $N_{l_1/k}(l_1^\times) \supseteq N_{l_2/k}(l_2^\times)$
+	and $l_1 = l_2$ if and only if $N_{l_1/k}(l_1^\times) = N_{l_2/k}(l_2^\times)$.
+\end{theorem}
+
+
+\begin{example}
+	Let $l/k$ be an unramified extension of local field of degree $f$.
+	Then $N(l^\times) = \pi_k^f \times \cO_k^\times$.
+\end{example}
+
+\begin{proof}
+	We have calculated the reciprocity map in this case.
+\end{proof}
+
+\begin{lemma}
+	Let $m_1$ and $m_2$ be two intermediate fields between $k$ and $l$
+	such that $l = m_1 m_2$.
+	Then we have
+	\[
+		N_{l/k}(l^\times) = N_{m_1/k} (m_1^\times) \cap N_{m_2/k} (m_2^\times).
+	\]
+\end{lemma}
+
+
+\begin{example}
+	Let $l = \Q_p(\zeta)$ where $\zeta$ is a primitive $p^n$-th root of unity
+	for some $n > 0$.
+	Then $N(l^\times) = p^\Z \times (1+p^n \Z_p)$.
+\end{example}
+
+\begin{proof}
+	By Eisenstein's criterion, the cyclotimic polynomial
+	$\Phi_{p^n}(X) = \frac{X^{p^n}-1}{X^{p^{n-1}}-1}$ is irreducible over $\Q_p$.
+	Hence the degree of the extension is $\phi(p^n)=p^n - p^{n-1}$.
+	This coincides with the index:
+	\begin{align*}
+		[\Q_p^\times : p^\Z \times (1+p^n \Z_p)]
+		&= [\Z_p^\times : (1+p^n \Z_p)] \\
+		&= | (\Z / p^n \Z)^\times |.
+	\end{align*}
+	We have $p = N(1-\zeta)$.
+	It is therefore sufficient to show that every $x \in 1 + p^n \Z_p$
+	is the norm of an element of $\Z_p[\zeta]$. We split this into cases.
+	\begin{itemize}
+		\item
+		Suppose $p$ is an odd prime, so that $\exp(pz)$ converges for all $z\in \Z_p$.
+		If $a \in 1 +p^n\Z_p^\times$ then there is an expression of $a$ of the form
+		\[
+			a = \exp(p^n y), \qquad y \in \Z_p.
+		\]
+		It follows that
+		\[
+			a= \exp(p\frac{y}{p-1}) ^{[\Q(\zeta):\Q_p]}.
+		\]
+		In particular, $x\in N(\Q_p(\zeta)^\times)$.
+		\item
+		In the case $p^n = 2$ we have $l = \Q_p$, so every element of $\Q_p$ is a norm.
+		\item
+		In the case $p=2$, $n \ge 2$, there is an intermediate field $l / \Q_p(i) / \Q_p$,
+		and we have
+		\[
+			N_{\Q_p(i) / \Q_p} (x+i y) = x^2 + y^2.
+		\]
+		It's easy to show (for example using Hensel's lemma) that if $a \equiv 1 \bmod 4$
+		then $a$ is the norm of an element of $\Q_p(i)$.
+		If $a \in 1 + 2^n \Z_2$ then we have for some $b \in \Z_2$:
+		\[
+			a = \exp(2^n b) = \exp(4b)^{[l:\Q(i)]}.
+		\]
+		The the exponential above converges to an element of $1+4\Z_2$.
+		In particular there is an element $b \in \Q_2(i)$ such that
+		\[
+			a = N_{\Q_p(i)/\Q_p} (b) ^ [l:\Q_p(i)]
+			= N_{l/\Q_p} (b)
+		\]
+	\end{itemize}
+\end{proof}
+
+\begin{theorem} \label{thm:local Kronecker Weber}
+	Let $l/\Q_p$ be a finite abelian extension.
+	Then $l$ is (isomorphic to) a subfield of a cyclotomic extension.
+\end{theorem}
+
+
+\begin{proof}
+	The subgroup $N_{l/\Q_p}(l^\times)$ is open in $\Q_p^\times$, so it must contain
+	a subgroup of the form $1+p^n\Z_p$ for some $n$.
+	Let $f$ be the order of $p$ in $\Q_p^\times / N(l^\times)$.
+	\[
+		N(l^\times) \supset p^{f\Z} \times (1 + p^n\Z_p).
+	\]
+\end{proof}
