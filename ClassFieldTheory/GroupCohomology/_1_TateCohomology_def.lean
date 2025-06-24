@@ -141,7 +141,7 @@ def TateComplexFunctor : Rep R G ⥤ CochainComplex (ModuleCat R) ℤ where
   map φ := {
     f
     | Int.ofNat i => ((cochainsFunctor R G).map φ).f ↑i
-    | Int.negSucc i => (chainsMap (MonoidHom.id G) φ).f i -- don't yet have `chainsFunctor`.
+    | Int.negSucc i => (chainsMap (MonoidHom.id G) φ).f i
     comm' := sorry
   }
   map_id := sorry
@@ -172,14 +172,16 @@ noncomputable abbrev TateCohomology.δ {S : ShortComplex (Rep R G)} (hS : S.Shor
   (TateCohomology.cochainsFunctor_Exact hS).δ n (n + 1) rfl
 
 def TateCohomology.iso_groupCohomology (n : ℕ) (M : Rep R G) :
-    (TateCohomology (n + 1)).obj M ≅ groupCohomology M (n + 1) := by
+    TateCohomology (n + 1) ≅ groupCohomology.functor R G (n + 1) := by
   convert Iso.refl _
   sorry
 
 def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
-    (TateCohomology (-n - 2)).obj M ≅ groupHomology M (n + 1) := by
+    TateCohomology (-n - 2) ≅ groupHomology.functor R G (n + 1) := by
   convert Iso.refl _
   sorry
+
+
 
 def TateCohomology_zero_iso (M : Rep R G) : (TateCohomology 0).obj M ≅
     ModuleCat.of R (M.ρ.invariants ⧸ (range M.ρ.norm).submoduleOf M.ρ.invariants) :=

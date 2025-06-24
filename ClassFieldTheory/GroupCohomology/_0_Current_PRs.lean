@@ -10,9 +10,9 @@ noncomputable section Long_Exact_Sequences
 
 namespace groupCohomology
 /--
-# Leave this as a sorry, and then remove once Amelia's PR 21760 on long exact sequences is merged.
+# Leave this as a sorry, and then remove once Amelia's PR 25872 on long exact sequences is merged.
 
-(This has the same name and Type as in PR 21760.)
+(This has the same name and Type as in PR 25872.)
 
 The connecting homomorphism in the long exact sequence in group cohomology.
 -/
@@ -64,7 +64,7 @@ def groupHomology.chainsMap {H : Type} [Group H] [DecidableEq H]
     (φ : M ⟶ (Action.res (ModuleCat R) f).obj M') : inhomogeneousChains M ⟶ inhomogeneousChains M'
     := sorry
 
-def groupHomology.Map {H : Type} [Group H] [DecidableEq H] (f : G →* H) {M : Rep R G} {M' : Rep R H}
+def groupHomology.map {H : Type} [Group H] [DecidableEq H] (f : G →* H) {M : Rep R G} {M' : Rep R H}
     (φ : M ⟶ (Action.res (ModuleCat R) f).obj M') (n : ℕ) : groupHomology M n ⟶ groupHomology M' n
     := sorry
 

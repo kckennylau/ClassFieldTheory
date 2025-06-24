@@ -63,7 +63,7 @@ def representation : Representation R G (carrier σ) where
         rw [zero_add]
         have (x : G) : cocycle σ (1,x) = cocycle σ (1,1)
         · -- essentially the same statement is in Mathlib.
-          sorry
+          exact?--sorry
         simp only [this]
         rw [←Finset.sum_smul, aug.sum_coeff_ι, zero_smul]
     · ext v : 1
@@ -219,14 +219,16 @@ notation σ "↡" H => H2res σ H
 Given an element `σ : H²(G,M)`, the
 -/
 class FiniteClassFormation where
-  hypothesis₁ : Prop := ∀ H : Subgroup G, IsZero (H1 (M ↓ H))
-  hypothesis₂ (H : Subgroup G) := Submodule.span R {σ ↡ H} = ⊤
-  hypothesis₂' (H : Subgroup G) :=
+  hypothesis₁ :  ∀ H : Subgroup G, IsZero (H1 (M ↓ H))
+  hypothesis₂ (H : Subgroup G) : Submodule.span R {σ ↡ H} = ⊤
+  hypothesis₂' (H : Subgroup G) :
     (Submodule.span R {σ ↡ H}).annihilator = Ideal.span {(Nat.card H : R)}
 
 def H2Map₂ {A B : Rep R G} (f : A ⟶ B) : H2 A ⟶ H2 B := H2Map (MonoidHom.id G) f
 
 variable (H : Subgroup G)
+
+#check Preorder
 
 /--
 If `σ` generates `H²(G,M)` then the map `H²(G,M) ⟶ H²(G,split σ)` is zero.
@@ -242,7 +244,7 @@ lemma TateTheorem_lemma_1 [FiniteClassFormation σ] : H2Map₂ ((res H).map (ι 
 Every surjective linear map from `R ⧸ I` to `R ⧸ I` is also injective.
 -/
 lemma helper (I : Ideal R) (f : R ⧸ I →ₗ[R] R ⧸ I) (surj : Function.Surjective f) :
-    Function.Injective f :=
+    Function.Injective f :=by
   /-
   I didn't find this in Mathlib, but it's worth checking again.
 
@@ -251,7 +253,7 @@ lemma helper (I : Ideal R) (f : R ⧸ I →ₗ[R] R ⧸ I) (surj : Function.Surj
   Then for any `x` we have `f x = f (x * 1) = x * f 1 = x * c`.
   Since `f` is surjective, `c` is a unit, and multiplication by `c⁻¹` is a 2-sided inverse of `f`.
   -/
-  sorry
+  exact OrzechProperty.injective_of_surjective_endomorphism f surj
 
 
 /--
