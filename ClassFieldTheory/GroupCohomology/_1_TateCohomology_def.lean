@@ -177,7 +177,7 @@ def TateCohomology.iso_groupCohomology (n : ℕ) (M : Rep R G) :
   sorry
 
 def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
-    TateCohomology (-n - 2) ≅ groupHomology.functor R G (n + 1) := by
+    (TateCohomology (-n - 2)).obj M ≅ groupHomology M (n + 1) := by
   convert Iso.refl _
   sorry
 
