@@ -10,7 +10,7 @@ open
   BigOperators
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G]
+variable {G : Type} [Group G] [DecidableEq G]
 
 -- # TODO : move this to a more sensible file.
 /--

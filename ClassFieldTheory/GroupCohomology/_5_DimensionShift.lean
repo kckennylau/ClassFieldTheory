@@ -40,7 +40,7 @@ open
 
 noncomputable section
 
-variable {R G : Type} [CommRing R] [Group G] (M : Rep R G)
+variable {R G : Type} [CommRing R] [Group G] [DecidableEq G] (M : Rep R G)
 
 namespace Rep.dimensionShift
 

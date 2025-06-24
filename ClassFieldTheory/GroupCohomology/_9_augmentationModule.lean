@@ -37,7 +37,7 @@ open
   groupCohomology
   BigOperators
 
-variable (R G: Type) [CommRing R] [Group G]
+variable (R G: Type) [CommRing R] [Group G] [DecidableEq G]
 
 noncomputable section AugmentationModule
 

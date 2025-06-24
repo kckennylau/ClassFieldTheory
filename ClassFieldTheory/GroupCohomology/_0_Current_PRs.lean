@@ -59,15 +59,6 @@ end Long_Exact_Sequences
 
 noncomputable section Homology -- from #25880
 
-def groupHomology.chainsMap {H : Type} [Group H] [DecidableEq H]
-    (f : G →* H) {M : Rep R G} {M' : Rep R H}
-    (φ : M ⟶ (Action.res (ModuleCat R) f).obj M') : inhomogeneousChains M ⟶ inhomogeneousChains M'
-    := sorry
-
-def groupHomology.map {H : Type} [Group H] [DecidableEq H] (f : G →* H) {M : Rep R G} {M' : Rep R H}
-    (φ : M ⟶ (Action.res (ModuleCat R) f).obj M') (n : ℕ) : groupHomology M n ⟶ groupHomology M' n
-    := sorry
-
 def groupHomology.one_trivial_int_iso :
     groupHomology (trivial ℤ G ℤ) 1 ≅ ModuleCat.of ℤ (Additive (Abelianization G)) := sorry
 
