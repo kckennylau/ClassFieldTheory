@@ -1,6 +1,6 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._2_Acyclic_def
-
+-- # TODO change all this because Shapiro's Lemma is a current PR in cohomology and homology.
 /-!
 We define two functors:
 
@@ -44,6 +44,7 @@ Similarly we show that `coind₁'.obj M` is isomorphic to `(coind₁ G).obj M.V`
 acyclic.
 -/
 
+#check Rep.coindFunctor
 open
   Finsupp
   Representation
@@ -392,22 +393,13 @@ lemma coind₁_map_hom (A B : ModuleCat R) (φ : A ⟶ B) :
 @[simp] lemma coind₁_map_apply₂ (A B : ModuleCat R) (φ : A ⟶ B) (f : G → A):
     ((coind₁ G).map φ) f = φ ∘ f := rfl
 
--- # TODO : update Mathlib, remove fTrivial and replace it by trivialFunctor.
-/--
-The functor taking an `R`-module `A` to the trivial representation of `G` on `A`.
--/
-def fTrivial : ModuleCat R ⥤ Rep R G where
-  obj A := trivial R G A
-  map f := ⟨f, by tauto⟩
-
-@[simp] lemma fTrivial_obj_apply (A : ModuleCat R) : ((fTrivial G).obj A).V = A := rfl
-@[simp] lemma fTrivial_map_hom (A B : ModuleCat R) (f : A ⟶ B) : ((fTrivial G).map f).hom = f := rfl
+@[simp] lemma trivialFunctor_obj_apply (A : ModuleCat R) : ((trivialFunctor R G).obj A).V = A := rfl
 
 /--
 The coinduced representation of an `R`-module `A`, defined to be the
 space of function `G → A`, on which `G` acts by right-translation.
 -/
-def coind₁_iso_fTrivial_comp_coindFunctor : coind₁ G ≅ fTrivial Unit ⋙ coindFunctor R 1 := sorry
+def coind₁_iso_trivialFunctor_comp_coindFunctor : coind₁ G ≅ trivialFunctor R Unit ⋙ coindFunctor R 1 := sorry
 
 /--
 Coinduced representations are acyclic.
