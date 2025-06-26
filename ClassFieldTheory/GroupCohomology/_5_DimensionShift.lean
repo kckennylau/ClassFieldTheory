@@ -128,7 +128,8 @@ lemma up_shortExact : (upSes.obj M).ShortExact where
   mono_f := inferInstanceAs (Mono (coind₁'_ι.app M))
   epi_g := coequalizer.π_epi
 
-lemma up_shortExact_res (H : Subgroup G) : ((upSes.obj M).map (res H)).ShortExact := by
+lemma up_shortExact_res {H : Type} [Group H] (φ : H →* G) :
+    ((upSes.obj M).map (res φ)).ShortExact := by
   rw [res_respectsShortExact]
   exact up_shortExact M
 
@@ -174,7 +175,8 @@ def up_δiso_natTrans (n : ℕ) : up ⋙ functor R G (n + 1) ≅ functor R G (n 
 The connecting homomorphism from `H^{n+1}(G,dimensionShift M)` to `H^{n+2}(G,M)` is
 an epimorphism (i.e. surjective).
 -/
-lemma up_δ_zero_epi_res (H : Subgroup G) : Epi (δ (up_shortExact_res M H) 0 1 rfl) :=
+lemma up_δ_zero_epi_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) : Epi (δ (up_shortExact_res M φ) 0 1 rfl) :=
   /-
   The next term in the long exact sequence is zero.
   -/
@@ -184,16 +186,20 @@ lemma up_δ_zero_epi_res (H : Subgroup G) : Epi (δ (up_shortExact_res M H) 0 1 
 The connecting homomorphism from `H^{n+1}(G,up M)` to `H^{n+2}(G,M)` is an
 isomorphism.
 -/
-instance up_δ_isIso_res (H : Subgroup G) (n : ℕ) : IsIso (δ (up_shortExact_res M H) (n + 1) (n + 2) rfl)
+lemma up_δ_isIso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) : IsIso (δ (up_shortExact_res M φ) (n + 1) (n + 2) rfl)
   :=
   /-
   This map is sandwiched between two zeros by `groupCohomology.ofCoind₁`.
   -/
   sorry
 
-def up_δiso_res (H : Subgroup G) (n : ℕ) :
-    groupCohomology (up.obj M ↓ H) (n + 1) ≅ groupCohomology (M ↓ H) (n + 2) :=
-  asIso (δ (up_shortExact_res M H) (n + 1) (n + 2) rfl)
+def up_δiso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) :
+    groupCohomology (up.obj M ↓ φ) (n + 1) ≅ groupCohomology (M ↓ φ) (n + 2) := by
+  have := up_δ_isIso_res M inj n
+  apply asIso (δ (up_shortExact_res M φ) (n + 1) (n + 2) rfl)
+
 
 lemma ind₁'_obj_ρ : (ind₁'.obj M).ρ = M.ρ.ind₁' := rfl
 
@@ -229,12 +235,12 @@ lemma down_shortExact : (down_ses M).ShortExact where
   mono_f  := inferInstance
   epi_g   := inferInstance
 
-lemma down_shortExact_res (H : Subgroup G) :
-    ((down_ses M).map (res H)).ShortExact := by
+lemma down_shortExact_res {H : Type} [Group H] (φ : H →* G) :
+    ((down_ses M).map (res φ)).ShortExact := by
   rw [res_respectsShortExact]
   exact down_shortExact M
 
-variable [DecidableEq G] [Finite G]
+variable [Finite G]
 
 /--
 The connecting homomorphism `H⁰(G,down.obj M) ⟶ H¹(G, M)` is an epimorphism if `G` is finite.
@@ -247,7 +253,8 @@ lemma down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) := by
 The connecting homomorphism `H⁰(H,down.obj M ↓ H) ⟶ H¹(H, M ↓ H)` is an epimorphism if
 `H` is a subgroup of a finite group `G`.
 -/
-lemma down_δ_zero_res_epi (H : Subgroup G) : Epi (δ (down_shortExact_res M H) 0 1 rfl) := by
+lemma down_δ_zero_res_epi {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) : Epi (δ (down_shortExact_res M φ) 0 1 rfl) := by
   have := ind₁'_trivialCohomology M
   sorry
 
@@ -276,14 +283,16 @@ def down_δiso_natTrans (n : ℕ) : functor R G (n + 1) ≅ down ⋙ functor R G
 The connecting homomorphism `Hⁿ⁺¹(H,down.obj M ↓ H) ⟶ Hⁿ⁺²(H, M ↓ H)` is an isomorphism
 if `H` is a subgroup of a finite group `G`.
 -/
-instance down_δ_res_isIso (n : ℕ) (H : Subgroup G) :
-    IsIso (δ (down_shortExact_res M H) (n + 1) (n + 2) rfl) := by
+lemma down_δ_res_isIso (n : ℕ) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) : IsIso (δ (down_shortExact_res M φ) (n + 1) (n + 2) rfl) := by
   have := ind₁'_trivialCohomology M
   sorry
 
-def down_δiso_res (H : Subgroup G) (n : ℕ) :
-    groupCohomology (M ↓ H) (n + 1) ≅ groupCohomology (down.obj M ↓ H) (n + 2) :=
-  asIso (δ (down_shortExact_res M H) (n + 1) (n + 2) rfl)
+def down_δiso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) :
+    groupCohomology (M ↓ φ) (n + 1) ≅ groupCohomology (down.obj M ↓ φ) (n + 2) :=
+  have := down_δ_res_isIso M n inj
+  asIso (δ (down_shortExact_res M φ) (n + 1) (n + 2) rfl)
 
 end dimensionShift
 
@@ -298,8 +307,10 @@ open Rep
 /--
 All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.
 -/
-lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) [DecidableEq H] (n : ℕ) :
-    IsZero ((TateCohomology n).obj ((Rep.coind₁ G).obj A ↓ H)) :=
+lemma TateCohomology_coind₁ (A : ModuleCat R) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) :
+    let _ := Finite.of_injective (⇑φ) inj
+    IsZero ((TateCohomology n).obj ((Rep.coind₁ G).obj A ↓ φ)) :=
   /-
   For `n > 0` this is proved elsewhere for `groupCohomology`.
   For `n < -1` this is proved elsewhere for `groupHomology` (and relies on a current PR).
@@ -310,15 +321,19 @@ lemma TateCohomology_coind₁ (A : ModuleCat R) (H : Subgroup G) [DecidableEq H]
 /--
 All of the Tate cohomology groups of `coind₁'.obj M ↓ H` are zero.
 -/
-lemma TateCohomology_coind₁' (M : Rep R G) (H : Subgroup G) [DecidableEq H] (n : ℕ) :
-    IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ H)) :=
+lemma TateCohomology_coind₁' (M : Rep R G) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) :
+    let _ := Finite.of_injective (⇑φ) inj
+    IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ φ)) :=
   /-
   It is shown earier that `coind₁'.obj M ≅ (coind₁ G).obj M.V`, so we can use the previous result.
   -/
   sorry
 
-lemma TateCohomology_ind₁' (M : Rep R G) (H : Subgroup G) [DecidableEq H]  (n : ℕ) :
-    IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ H)) :=
+lemma TateCohomology_ind₁' (M : Rep R G) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+    (inj : Function.Injective φ) (n : ℕ) :
+    let _ := Finite.of_injective (⇑φ) inj
+    IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ φ)) :=
   /-
   It is shown earier that `ind₁'.obj M ≅ coind₁'.obj M`, so we can use the previous result.
   -/

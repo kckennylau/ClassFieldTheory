@@ -42,26 +42,39 @@ variable {R G : Type _} [CommRing R]  [Group G]
 A representation `M : Rep R G` has trivial cohomology if the cohomology groups `Hⁿ(H,M)`
 are zero for every subgroup `H` of `G` and every `n > 0`.
 -/
+-- class Rep.TrivialCohomology_old (M : Rep R G) : Prop where
+--   zero {H : Subgroup G} [DecidableEq H] {n : ℕ} : IsZero (groupCohomology (M ↓ H : Rep R H) (n + 1))
 class Rep.TrivialCohomology (M : Rep R G) : Prop where
-  zero {H : Subgroup G} [DecidableEq H] {n : ℕ} : IsZero (groupCohomology (M ↓ H : Rep R H) (n + 1))
+  zero {H : Type} [Group H] [DecidableEq H] {φ : H →* G} (inj : Function.Injective φ) {n : ℕ} :
+    IsZero (groupCohomology (M ↓ φ) (n + 1))
 
-lemma Rep.trivialCohomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialCohomology] : M.TrivialCohomology := by
+lemma Rep.trivialCohomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialCohomology] :
+    M.TrivialCohomology := by
   constructor
-  intro H _ n
-  have : (functor R H n.succ).obj (M ↓ H) ≅ (functor R H n.succ).obj (N ↓ H)
-  · exact (functor _ _ n.succ).mapIso ((res H).mapIso f)
-  apply IsZero.of_iso TrivialCohomology.zero this
+  intro H _ _ φ inj n
+  have : (functor R H n.succ).obj (M ↓ φ) ≅ (functor R H n.succ).obj (N ↓ φ)
+  · apply (functor _ _ n.succ).mapIso
+    exact (res φ).mapIso f
+  apply IsZero.of_iso _ this
+  apply TrivialCohomology.zero inj
 
 class Rep.TrivialHomology (M : Rep R G) : Prop where
-  zero (H : Subgroup G) [DecidableEq H] (n : ℕ) : IsZero (groupHomology (M ↓ H : Rep R H) (n + 1))
+  zero {H : Type} [Group H] [DecidableEq H] {φ : H →* G} (inj : Function.Injective φ) {n : ℕ} :
+    IsZero (groupHomology (M ↓ φ : Rep R H) (n + 1))
 
 lemma Rep.trivialHomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialHomology] :
     M.TrivialHomology := by
   sorry
 
 lemma groupCohomology.isZero_of_trivialCohomology [DecidableEq G] {M : Rep R G} [M.TrivialCohomology] (n : ℕ) :
-    IsZero (groupCohomology M (n + 1)) :=
-  IsZero.of_iso Rep.TrivialCohomology.zero (rest_top_iso _ _)
+    IsZero (groupCohomology M (n + 1)) := by
+  apply IsZero.of_iso
+  apply Rep.TrivialCohomology.zero (M := M) (φ := (MonoidHom.id G))
+  exact fun ⦃a₁ a₂⦄ a ↦ a
+  exact n
+  apply Iso.refl
 
 class Rep.TrivialTateCohomology [Finite G] (M : Rep R G) : Prop where
-  zero (H : Subgroup G) [DecidableEq H] (n : ℤ) : IsZero ((TateCohomology (n + 1)).obj (M ↓ H))
+  zero {H : Type} [Group H] [DecidableEq H] {φ : H →* G} (inj : Function.Injective φ) {n : ℤ} :
+    let _ := Finite.of_injective φ inj
+    IsZero ((TateCohomology n).obj (M ↓ φ : Rep R H))

@@ -55,7 +55,7 @@ If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R (G �
   `0 ⟶ Aᴴ ⟶ Bᴴ ⟶ Cᴴ ⟶ 0`.
 -/
 lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
-    (hS' : IsZero (H1 (S.X₁ ↓ H))) : (S.map (quotientToInvariantsFunctor H)).ShortExact :=
+    (hS' : IsZero (H1 (S.X₁ ↓ (H.subtype)))) : (S.map (quotientToInvariantsFunctor H)).ShortExact :=
   /-
   This is the opening section of the long exact sequence. The next term is `H¹(H,S.X₁)`, which
   is assumeed to be zero.

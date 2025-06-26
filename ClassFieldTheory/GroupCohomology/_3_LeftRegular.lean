@@ -255,8 +255,9 @@ by
 /--
 `leftRegular R G` is free as a module over the group algebra of a subgroup `H`.
 -/
-noncomputable def free' (H : Subgroup G) : Basis (G ⧸ H) (MonoidAlgebra R H) <|
-    (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G ↓ H) : Type) :=
+noncomputable def free' {H : Type} [Group H] {φ : H →* G} (inj : Function.Injective φ)
+    : Basis (G ⧸ φ.range) (MonoidAlgebra R H) <|
+    (equivalenceModuleMonoidAlgebra.functor.obj (leftRegular R G ↓ φ) : Type) :=
   /-
   There is a basis indexed by the coset type `G ⧸ H`, with basis
   vectors `of g⁻¹` for coset representatives.

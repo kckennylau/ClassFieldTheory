@@ -16,19 +16,20 @@ open
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G] [DecidableEq G] (S : Subgroup G) [S.Normal] [DecidableEq (G ⧸ S)]
 
+#check rest S.subtype
 namespace groupCohomology
 
 def inflationRestriction (n : ℕ) (M : Rep R G) : ShortComplex (ModuleCat R) where
   X₁ := groupCohomology (M ↑ S) (n + 1)
   X₂ := groupCohomology M (n + 1)
-  X₃ := groupCohomology (M ↓ S) (n + 1)
+  X₃ := groupCohomology (M ↓ S.subtype) (n + 1)
   f := (infl S (n + 1)).app M
-  g := (rest S (n + 1)).app M
+  g := (rest S.subtype (n + 1)).app M
   zero := sorry -- uses current PR for definitions.
 
 
 theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
-    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ S) (i + 1))) :
+    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ S.subtype) (i + 1))) :
     Mono (inflationRestriction S (n + 1) M).f :=
   /-
   The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is in Mathlib.
@@ -43,7 +44,7 @@ theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
   sorry
 
 theorem inflation_restriction_exact (n : ℕ) {M : Rep R G}
-    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ S) (i + 1))) :
+    (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ S.subtype) (i + 1))) :
     (inflationRestriction S (n + 1) M).Exact :=
   /-
   The proof is by induction on `n`. The `H¹` case (i.e. `n = 0`) is a current PR.

@@ -20,8 +20,10 @@ If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H
 -/
 theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
-    (h_even : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
-    (h_odd : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
+    (h_even : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
+      IsZero (groupCohomology (M ↓ φ) (2 * n + 2)))
+    (h_odd : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
+      IsZero (groupCohomology (M ↓ φ) (2 * m + 1))) :
     M.TrivialCohomology := by
   /-
   This is proved by induction on `H`.
@@ -43,8 +45,10 @@ theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] 
 
 theorem groupCohomology.trivialCohomology_of_even_of_odd [Finite G]
     (M : Rep R G) (n m : ℕ)
-    (h_even : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * n + 2)))
-    (h_odd : ∀ (H : Subgroup G) [DecidableEq H], IsZero (groupCohomology (M ↓ H) (2 * m + 1))) :
+    (h_even : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
+      IsZero (groupCohomology (M ↓ φ) (2 * n + 2)))
+    (h_odd : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
+      IsZero (groupCohomology (M ↓ φ) (2 * m + 1))) :
     M.TrivialCohomology := by
   sorry
 

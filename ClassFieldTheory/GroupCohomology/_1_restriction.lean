@@ -36,26 +36,27 @@ namespace Rep
 /--
 The restriction functor `Rep R G ⥤ Rep R H` for a subgroup `H` of `G`.
 -/
-abbrev res (H : Subgroup G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) H.subtype
+-- abbrev res (H : Subgroup G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) H.subtype
+abbrev res {H : Type} [Group H] (φ : H →* G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) φ
 
 set_option quotPrecheck false in
 /--
-If `M` is an object of `Rep R G` then `M ↓ H` is the restriction of the representation `M` to
-a subgroup `H`, as an object of `Rep R H`.
+If `M` is an object of `Rep R G` and `φ : H →* G` then `M ↓ φ` is the restriction of the
+representation `M` to `H`, as an object of `Rep R H`.
 
 This is notation for `(Rep.res H).obj M`, which is an abbreviation of
 `(Action.res (ModuleCat R) H.subtype).obj M`
 -/
-notation M "↓" H => (res H).obj M
+notation M "↓" φ => (res φ).obj M
 
 /-
 `simp` lemmas for `Action.res` also work for `Rep.res` because it is an abbreviation:
 -/
-example (M : Rep R G) (H : Subgroup G) (h : H) :
-  (M ↓ H).ρ h = M.ρ ↑h := by simp
+example (M : Rep R G) (H : Type) [Group H] (φ : H →* G) (h : H) :
+  (M ↓ φ).ρ h = M.ρ (φ h) := by simp
 
-example (M : Rep R G) (H : Subgroup G) :
-  (M ↓ H).V = M.V := by simp
+example (M : Rep R G) (H : Type) [Group H] (φ : H →* G)  :
+  (M ↓ φ).V = M.V := by simp
 
 instance (H : Type) [Group H] (f : H →* G) : PreservesLimits (Action.res (ModuleCat.{0} R) f) := by
   apply Action.preservesLimitsOfSize_of_preserves (Action.res (ModuleCat R) f)
@@ -72,11 +73,11 @@ instance (H : Type) [Group H] (f : H →* G) : ReflectsColimits (Action.res (Mod
   reflectsColimits_of_reflectsIsomorphisms
 
 /--
-The instances above show that the restriction functor `res H : Rep R G ⥤ Rep R H`
+The instances above show that the restriction functor `res φ : Rep R G ⥤ Rep R H`
 preserves and reflects exactness.
 -/
-example (H : Subgroup G) (S : ShortComplex (Rep R G)) :
-    (S.map (res H)).Exact ↔ S.Exact := by
+example (H : Type) [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
+    (S.map (Rep.res φ)).Exact ↔ S.Exact := by
   rw [ShortComplex.exact_map_iff_of_faithful]
 
 
@@ -90,25 +91,26 @@ lemma isZero_iff (M : Rep R G) : IsZero M ↔ IsZero (M.V) := by
 
 
 /--
-An object of `Rep R G` is zero iff its restriction to a subgroup is zero.
+An object of `Rep R G` is zero iff its restriction to `H` is zero.
 -/
-lemma isZero_res_iff (M : Rep R G) (H : Subgroup G) : IsZero (M ↓ H) ↔ IsZero M := by
+lemma isZero_res_iff (M : Rep R G) {H : Type} [Group H] [DecidableEq H] (φ : H →* G) :
+    IsZero (M ↓ φ) ↔ IsZero M := by
   simp [isZero_iff]
 
 /--
-The restriction functor `res H : Rep R G ⥤ Rep R H` is takes short exact sequences to short
+The restriction functor `res φ : Rep R G ⥤ Rep R H` takes short exact sequences to short
 exact sequences.
 -/
-lemma res_respectsShortExact (H : Subgroup G) (S : ShortComplex (Rep R G)) :
-    (S.map (res H)).ShortExact ↔ S.ShortExact :=
+lemma res_respectsShortExact {H : Type} [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
+    (S.map (Rep.res φ)).ShortExact ↔ S.ShortExact :=
   sorry
 
-lemma res_ofShortExact (H : Subgroup G) {S : ShortComplex (Rep R G)} (hS : S.ShortExact) :
-    (S.map (res H)).ShortExact := by
+lemma res_ofShortExact {H : Type} [Group H] (φ : H →* G) {S : ShortComplex (Rep R G)}
+    (hS : S.ShortExact) : (S.map (Rep.res φ)).ShortExact := by
   rwa [res_respectsShortExact]
 
-lemma res_of_projective {P : Rep R G} (hP : Projective P) (H : Subgroup G) :
-    Projective (P ↓ H) := by
+lemma res_of_projective (H : Type) [Group H] (φ : H →* G) (inj : Function.Injective φ) {P : Rep R G}
+    (hP : Projective P) (H : Subgroup G) : Projective (P ↓ φ) := by
   /-
   *Note : this is probably probably not needed.*
 
@@ -127,13 +129,14 @@ variable [DecidableEq G]
 /--
 The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a natural transformation:
 -/
-def rest (H : Subgroup G) (n : ℕ) : functor R G n ⟶ Rep.res H ⋙ functor R H n  where
-  app M               := map H.subtype (𝟙 (M ↓ H)) n
+def rest {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (n : ℕ) :
+    functor R G n ⟶ Rep.res φ ⋙ functor R H n  where
+  app M               := map φ (𝟙 (M ↓ φ)) n
   naturality M₁ M₂ f  := by
     sorry
 
-lemma rest_app (H : Subgroup G) (n : ℕ) (M : Rep R G) :
-    (rest H n).app M = map H.subtype (𝟙 (M ↓ H)) n := rfl
+lemma rest_app {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (n : ℕ) (M : Rep R G) :
+    (rest φ n).app M = map φ (𝟙 (M ↓ φ)) n := rfl
 
 
 /--
@@ -150,9 +153,9 @@ The vertical arrows are restriction and the horizontals are connecting homomorph
 For this, it would be sensible to define restriction as a natural transformation, so that it
 automatically commutes with the other maps. This requires us to first define cohomology as a functor.
 -/
-lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (H : Subgroup G) (i j : ℕ)
-    (hij : i + 1 = j) :
-    (δ hS i j hij) ≫ (rest H j).app S.X₁ = (rest H i).app S.X₃ ≫ δ (res_ofShortExact H hS) i j hij
+lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+    {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (i j : ℕ) (hij : i + 1 = j) :
+    (δ hS i j hij) ≫ (rest φ j).app S.X₁ = (rest φ i).app S.X₃ ≫ δ (res_ofShortExact φ hS) i j hij
     := by
   /-
   This will essentially be `HomologicalComplex.HomologySequence.δ_naturality`, but it relies on
@@ -161,16 +164,16 @@ lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (H : S
   sorry
 
 
-/--
-The restriction map in cohomology from `Hⁿ(G,M)` to `Hⁿ(⊤,M ↓ G)` is an isomorphism.
-This is useful when we have a hypothesis concerning `Hⁿ(H,M ↓ H)` for all subgroups `H` of `G`,
-for example `Rep.TrivialCohomology`.
--/
-def rest_top_iso (M : Rep R G) (n : ℕ) : groupCohomology M n ≅ groupCohomology (M ↓ ⊤) n where
-  hom := (rest ⊤ n).app M
-  inv := sorry
-  hom_inv_id := sorry
-  inv_hom_id := sorry
+-- /--
+-- The restriction map in cohomology from `Hⁿ(G,M)` to `Hⁿ(⊤,M ↓ G)` is an isomorphism.
+-- This is useful when we have a hypothesis concerning `Hⁿ(H,M ↓ H)` for all subgroups `H` of `G`,
+-- for example `Rep.TrivialCohomology`.
+-- -/
+-- def rest_top_iso (M : Rep R G) (n : ℕ) : groupCohomology M n ≅ groupCohomology (M ↓ ⊤) n where
+--   hom := (rest ⊤ n).app M
+--   inv := sorry
+--   hom_inv_id := sorry
+--   inv_hom_id := sorry
 
 end groupCohomology
 
