@@ -1,5 +1,5 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
 -- # TODO change all this because Shapiro's Lemma is a current PR in cohomology and homology.
 /-!
 We define two functors:

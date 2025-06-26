@@ -1,6 +1,6 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._2_Acyclic_def
-import ClassFieldTheory.GroupCohomology._8_Acyclic_criterion
+import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
+import ClassFieldTheory.GroupCohomology._8_TrivialityCriterion
 import ClassFieldTheory.GroupCohomology._9_augmentationModule
 
 open

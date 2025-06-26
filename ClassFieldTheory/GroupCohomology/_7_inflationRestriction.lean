@@ -1,7 +1,7 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._1_inflation
-import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
 import ClassFieldTheory.GroupCohomology._5_DimensionShift
 
 noncomputable section

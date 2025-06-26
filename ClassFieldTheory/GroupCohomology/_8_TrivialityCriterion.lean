@@ -1,6 +1,6 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
-import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
 import ClassFieldTheory.GroupCohomology._5_DimensionShift
 import ClassFieldTheory.GroupCohomology._7_inflationRestriction
 import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2

@@ -1,5 +1,5 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._2_Acyclic_def
+import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
 import ClassFieldTheory.GroupCohomology._1_restriction
 import ClassFieldTheory.GroupCohomology._3_LeftRegular
 import ClassFieldTheory.GroupCohomology._5_DimensionShift
