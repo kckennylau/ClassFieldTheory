@@ -208,7 +208,7 @@ instance : AddCommMonoid (H2 M) := AddCommGroup.toAddCommMonoid
 /--
 The restriction of `σ` to a subgroup `H`.
 -/
-abbrev _root_.groupCohomology.H2res {H : Type} [Group H] (φ : H →* G) (H : Subgroup G) :
+abbrev _root_.groupCohomology.H2res {H : Type} [Group H] (φ : H →* G) :
     H2 (M ↓ φ) :=
   map φ (𝟙 (M ↓ φ)) 2 σ
 
@@ -322,4 +322,3 @@ def reciprocity_iso (N : Rep ℤ G) (τ : H2 N) [FiniteClassFormation τ] :
 end Rep.split
 
 end Split
-

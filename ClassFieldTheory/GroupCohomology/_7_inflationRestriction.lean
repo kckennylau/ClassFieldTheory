@@ -15,8 +15,7 @@ open
 
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G] [DecidableEq G]
-variable {H : Type} [Group H] [DecidableEq H] {φ : G →* H} (surj : Function.Surjective φ)
---(S : Subgroup G) [S.Normal] [DecidableEq (G ⧸ S)]
+variable {Q : Type} [Group Q] [DecidableEq Q] {φ : G →* Q} (surj : Function.Surjective φ)
 
 namespace groupCohomology
 

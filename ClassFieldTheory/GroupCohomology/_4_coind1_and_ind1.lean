@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.GroupCohomology._1_inflation
 import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
 -- # TODO change all this because Shapiro's Lemma is a current PR in cohomology and homology.
 /-!
@@ -44,7 +45,6 @@ Similarly we show that `coind₁'.obj M` is isomorphic to `(coind₁ G).obj M.V`
 acyclic.
 -/
 
-#check Rep.coindFunctor
 open
   Finsupp
   Representation
@@ -406,8 +406,12 @@ Coinduced representations are acyclic.
 -/
 instance coind₁_trivialCohomology (A : ModuleCat R) : ((coind₁ G).obj A).TrivialCohomology :=
   /-
-  There are many ways to prove this. The following method uses none of the
-  technology of homological algebra, so it should be fairly easy to formalize.
+  For any subgroup `S` of `G`, the restriction to `S` of `(coind₁ G).obj A` is isomorphic to
+  a direct sum of representations of the form `(coind₁ S).obj A`, one copy for each ocset of `S`.
+  It remains to show that `Hⁿ(S,(coind₁ S).obj A) ≅ 0`. By Shapiro's lemma (a current PR), we have
+  `Hⁿ(S,(coind₁ S).obj A) ≅ Hⁿ(Unit,A) ≅ 0`.
+
+  Alternatively (and without using Shapiro's lemma) here is an elementary proof:
 
   Fix a subgroup `H` of `G` and let `{gᵢ}` be a set of coset representatives for `H \ G`.
   Recall that a homogeneous `n + 1`-cochain on `H` with values in `G → A`
@@ -441,9 +445,11 @@ instance coind₁_trivialCohomology (A : ModuleCat R) : ((coind₁ G).obj A).Tri
   -/
   sorry
 
+variable {G}
 
-def coind₁_quotientToInvariants_iso (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
-    ((coind₁ G).obj A).quotientToInvariants H ≅ (coind₁ (G ⧸ H)).obj A :=
+def coind₁_quotientToInvariants_iso {Q : Type} [Group Q] {φ : G →* Q}
+    (surj : Function.Surjective φ) :
+    coind₁ G ⋙ quotientToInvariantsFunctor surj ≅ coind₁ (R := R) Q :=
   /-
   As an `R`-module, `(coind₁ G).obj A` is the function space `G → A`, the action of `G` is by
   right translation on `G`.
@@ -453,13 +459,13 @@ def coind₁_quotientToInvariants_iso (A : ModuleCat R) (H : Subgroup G) [H.Norm
   sorry
 
 /--
-The `H`-invariants of `(coind₁ G).obj A` form an acyclic representation of `G ⧸ H`.
+The `H`-invariants of `(coind₁ G).obj A` form an representation of `G ⧸ H` with trivial cohomology.
 -/
-instance coind₁_quotientToInvariants_trivialCohomology (A : ModuleCat R) (H : Subgroup G) [H.Normal] :
-    (((coind₁ G).obj A).quotientToInvariants H).TrivialCohomology :=
-  Rep.trivialCohomology_of_iso (Rep.coind₁_quotientToInvariants_iso _ _ _)
+lemma coind₁_quotientToInvariants_trivialCohomology (A : ModuleCat R) {Q : Type} [Group Q]
+    {φ : G →* Q} (surj : Function.Surjective φ) :
+    ((coind₁ G ⋙ quotientToInvariantsFunctor surj).obj A).TrivialCohomology :=
+  Rep.trivialCohomology_of_iso ((Rep.coind₁_quotientToInvariants_iso surj).app A)
 
-variable {G}
 
 /--
 The functor which takes a representation `ρ` of `G` on `V` to the
@@ -522,12 +528,13 @@ The inclusion of a representation `M` of `G` in the coinduced representation `co
 instance coind₁'_trivialCohomology : (coind₁'.obj M).TrivialCohomology :=
   trivialCohomology_of_iso (coind₁'_obj_iso_coind₁ M)
 
-instance coind₁'_quotientToInvariants_trivialCohomology (H : Subgroup G) [H.Normal] :
-    ((coind₁'.obj M).quotientToInvariants H).TrivialCohomology := by
-  have : (coind₁'.obj M).quotientToInvariants H ≅ ((coind₁ G).obj M.V).quotientToInvariants H
-  · sorry
-  apply trivialCohomology_of_iso this
-
+lemma coind₁'_quotientToInvariants_trivialCohomology {Q : Type} [Group Q] {φ : G →* Q}
+    (surj : Function.Surjective φ) :
+    ((coind₁' ⋙ quotientToInvariantsFunctor surj).obj M).TrivialCohomology := by
+  have iso := (quotientToInvariantsFunctor surj).mapIso (coind₁'_obj_iso_coind₁ M)
+  have _ : ((quotientToInvariantsFunctor surj).obj ((coind₁ G).obj M.V)).TrivialCohomology
+  · exact coind₁_quotientToInvariants_trivialCohomology M.V surj
+  apply trivialCohomology_of_iso iso
 
 variable (G)
 
@@ -558,7 +565,7 @@ instance (A : ModuleCat R) : FunLike ((ind₁ G).obj A) G A :=
   inferInstanceAs (FunLike (G →₀ A) _ _)
 
 instance ind₁_trivialHomology (A : ModuleCat R) : TrivialHomology ((ind₁ G).obj A) :=
-  sorry -- relies on current PR (defn of group homology).
+  sorry -- relies on current PR (Shapiro's lemma).
 
 @[ext] lemma ind₁_obj.ext {A : ModuleCat R} (f₁ f₂ : (ind₁ G).obj A) (h : ⇑f₁ = ⇑f₂) :
     f₁ = f₂ := by

@@ -63,3 +63,6 @@ def groupHomology.one_trivial_int_iso :
     groupHomology (trivial ℤ G ℤ) 1 ≅ ModuleCat.of ℤ (Additive (Abelianization G)) := sorry
 
 end Homology
+
+
+-- # TODO : add statements of Shapiro's lemma for homology and cohomology

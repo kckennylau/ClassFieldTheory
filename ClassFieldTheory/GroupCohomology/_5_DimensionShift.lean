@@ -40,29 +40,14 @@ open
 
 noncomputable section
 
-variable {R G : Type} [CommRing R] [Group G] [DecidableEq G] (M : Rep R G)
+variable {R G : Type} [CommRing R] [Group G] (M : Rep R G)
 
 namespace Rep.dimensionShift
 
-
--- /--
--- The inclusion of `M` in its coinduced representation. If we think of the
--- coinduced representation as the function space `G → M`, then this inclusion is
--- the map `m ↦ (fun x ↦ M.ρ x m)`.
--- -/
--- @[simps] def coind₁'_ι.app : M ⟶ coind₁'.obj M where
---   hom := ofHom (Representation.coind₁_ι M.ρ)
---   comm g := by
---     ext : 1
---     apply Representation.coind₁_ι_comm
-
--- def coind₁' : Rep R G ⥤ Rep R G := forget₂ _ _ ⋙ coind₁ G
-
 @[simp] lemma forget₂_map_apply {N : Rep R G} (f : M ⟶ N) :
-    (forget₂ (Rep R G) (ModuleCat R)).map f = f.hom :=
-  rfl
+    (forget₂ (Rep R G) (ModuleCat R)).map f = f.hom := rfl
 
-lemma coind₁'_ι.app_apply {M : Rep R G} (m : M) (x : G) : (coind₁'_ι.app M m) x = M.ρ x m := sorry
+lemma coind₁'_ι.app_apply {M : Rep R G} (m : M) (x : G) : (coind₁'_ι.app M m) x = m := rfl
 
 /--
 The map from `M` to its coinduced representation is a monomorphism.
@@ -128,7 +113,7 @@ lemma up_shortExact : (upSes.obj M).ShortExact where
   mono_f := inferInstanceAs (Mono (coind₁'_ι.app M))
   epi_g := coequalizer.π_epi
 
-lemma up_shortExact_res {H : Type} [Group H] (φ : H →* G) :
+lemma up_shortExact_res {H : Type} [Group H] [DecidableEq G] (φ : H →* G) :
     ((upSes.obj M).map (res φ)).ShortExact := by
   rw [res_respectsShortExact]
   exact up_shortExact M
