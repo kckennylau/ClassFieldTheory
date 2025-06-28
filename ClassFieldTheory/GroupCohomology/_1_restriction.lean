@@ -12,31 +12,13 @@ open
 variable {R : Type} [CommRing R]
 variable {G : Type} [Group G] [DecidableEq G]
 
--- # TODO : move this to a more sensible file.
-/--
-If `M` is a trivial representation of a finite group `G` and `M` is torsion-free
-then `H¹(G,M) = 0`.
--/
-lemma groupCohomology.H1_isZero_of_trivial (M : Rep R G) [NoZeroSMulDivisors ℕ M] [IsTrivial M]
-    [Finite G] : IsZero (H1 M) :=
-  /-
-  Since `M` is trivial, we can identify `H¹(G,M)` with `Hom(G,M)`, which is zero if
-  `M` is finite and `M` is torsion-free.
-
-  This uses `groupCohomology.H1LequivOfIsTrivial`.
-  -/
-  sorry
-
-
 noncomputable section
 
 namespace Rep
 
-
 /--
 The restriction functor `Rep R G ⥤ Rep R H` for a subgroup `H` of `G`.
 -/
--- abbrev res (H : Subgroup G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) H.subtype
 abbrev res {H : Type} [Group H] (φ : H →* G) : Rep R G ⥤ Rep R H := Action.res (ModuleCat R) φ
 
 set_option quotPrecheck false in
@@ -58,10 +40,6 @@ example (M : Rep R G) (H : Type) [Group H] (φ : H →* G) (h : H) :
 example (M : Rep R G) (H : Type) [Group H] (φ : H →* G)  :
   (M ↓ φ).V = M.V := by simp
 
-instance (H : Type) [Group H] (f : H →* G) : PreservesLimits (Action.res (ModuleCat.{0} R) f) := by
-  apply Action.preservesLimitsOfSize_of_preserves (Action.res (ModuleCat R) f)
-  exact Action.preservesLimits_forget (ModuleCat R) G
-
 instance (H : Type) [Group H] (f : H →* G) : ReflectsLimits (Action.res (ModuleCat.{0} R) f) :=
   reflectsLimits_of_reflectsIsomorphisms
 
@@ -77,7 +55,7 @@ The instances above show that the restriction functor `res φ : Rep R G ⥤ Rep 
 preserves and reflects exactness.
 -/
 example (H : Type) [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
-    (S.map (Rep.res φ)).Exact ↔ S.Exact := by
+    (S.map (res φ)).Exact ↔ S.Exact := by
   rw [ShortComplex.exact_map_iff_of_faithful]
 
 
@@ -95,14 +73,15 @@ An object of `Rep R G` is zero iff its restriction to `H` is zero.
 -/
 lemma isZero_res_iff (M : Rep R G) {H : Type} [Group H] [DecidableEq H] (φ : H →* G) :
     IsZero (M ↓ φ) ↔ IsZero M := by
-  simp [isZero_iff]
+  rw [isZero_iff, isZero_iff, Action.res_obj_V]
 
 /--
 The restriction functor `res φ : Rep R G ⥤ Rep R H` takes short exact sequences to short
 exact sequences.
 -/
 lemma res_respectsShortExact {H : Type} [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
-    (S.map (Rep.res φ)).ShortExact ↔ S.ShortExact :=
+    (S.map (Rep.res φ)).ShortExact ↔ S.ShortExact := by
+  -- easy (see the example above)
   sorry
 
 lemma res_ofShortExact {H : Type} [Group H] (φ : H →* G) {S : ShortComplex (Rep R G)}
@@ -124,19 +103,35 @@ end Rep
 
 namespace groupCohomology
 
-variable [DecidableEq G]
+variable
+  {S : Type} [Group S] [DecidableEq S] (φ : S →* G)
+  {S' : Type} [Group S'] [DecidableEq S'] (ψ : S' →* S)
 
 /--
-The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a natural transformation:
+The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a forphism of functors:
 -/
-def rest {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (n : ℕ) :
-    functor R G n ⟶ Rep.res φ ⋙ functor R H n  where
+def rest (n : ℕ) : functor R G n ⟶ Rep.res φ ⋙ functor R S n  where
   app M               := map φ (𝟙 (M ↓ φ)) n
   naturality M₁ M₂ f  := by
-    sorry
+    simp only [functor_obj, Functor.comp_obj, functor_map, Functor.comp_map]
+    rw [←map_comp, ←map_comp]
+    congr 1
 
-lemma rest_app {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (n : ℕ) (M : Rep R G) :
+lemma rest_app (n : ℕ) (M : Rep R G) :
     (rest φ n).app M = map φ (𝟙 (M ↓ φ)) n := rfl
+
+lemma rest_id (n : ℕ) : rest (MonoidHom.id G) (R := R) n = 𝟙 (functor R G n) := by
+  ext M : 2
+  rw [rest_app]
+  apply map_id
+
+lemma rest_comp (n : ℕ) : rest (φ.comp ψ) n = rest φ (R := R) n ≫ (𝟙 (res φ) ◫ rest ψ n) := by
+  ext M : 2
+  rw [rest_app]
+  simp only [functor_obj, Functor.comp_obj, NatTrans.id_hcomp, NatTrans.comp_app, whiskerLeft_app,
+    rest_app]
+  rw [←map_comp]
+  rfl
 
 
 /--
@@ -163,17 +158,6 @@ lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
   -/
   sorry
 
-
--- /--
--- The restriction map in cohomology from `Hⁿ(G,M)` to `Hⁿ(⊤,M ↓ G)` is an isomorphism.
--- This is useful when we have a hypothesis concerning `Hⁿ(H,M ↓ H)` for all subgroups `H` of `G`,
--- for example `Rep.TrivialCohomology`.
--- -/
--- def rest_top_iso (M : Rep R G) (n : ℕ) : groupCohomology M n ≅ groupCohomology (M ↓ ⊤) n where
---   hom := (rest ⊤ n).app M
---   inv := sorry
---   hom_inv_id := sorry
---   inv_hom_id := sorry
 
 end groupCohomology
 

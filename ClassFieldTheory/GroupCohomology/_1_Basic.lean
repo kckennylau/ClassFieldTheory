@@ -3,14 +3,16 @@ import ClassFieldTheory.GroupCohomology._0_Current_PRs
 
 variable {R G : Type} [Group G] [CommRing R]
 
+open Rep
+  CategoryTheory
+  Limits
+  groupCohomology
+-- open scoped CategoryTheory
+
+
 section Rep
+-- # General lemmas for the category `Rep R G`.
 
-open Rep CategoryTheory.ConcreteCategory
-open scoped CategoryTheory
-
-/-
-# General lemmas for the category `Rep R G`.
--/
 
 
 
@@ -240,3 +242,17 @@ To check whether the underlying sequence is exact in `ModuleCat R`, we can use t
 
 
 end Rep
+
+/--
+If `M` is a trivial representation of a finite group `G` and `M` is torsion-free
+then `H¹(G,M) = 0`.
+-/
+lemma groupCohomology.H1_isZero_of_trivial [DecidableEq G] (M : Rep R G) [NoZeroSMulDivisors ℕ M] [M.IsTrivial]
+    [Finite G] : CategoryTheory.Limits.IsZero (H1 M) :=
+  /-
+  Since `M` is trivial, we can identify `H¹(G,M)` with `Hom(G,M)`, which is zero if
+  `M` is finite and `M` is torsion-free.
+
+  This uses `groupCohomology.H1LequivOfIsTrivial`.
+  -/
+  sorry
