@@ -16,7 +16,8 @@ variable {H : Type} [Group H] {φ : G →* H} (surj : Function.Surjective φ) [D
 noncomputable def Rep.quotientToInvariantsFunctor :
     Rep R G ⥤ Rep R H where
   obj M := M.quotientToInvariants φ.ker ↓ (QuotientGroup.quotientKerEquivOfSurjective φ surj).symm
-  map f := sorry
+  map f := by
+    sorry
 
 instance : (quotientToInvariantsFunctor (R := R) surj).PreservesZeroMorphisms := sorry
 

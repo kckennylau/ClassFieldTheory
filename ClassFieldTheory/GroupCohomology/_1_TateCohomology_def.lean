@@ -181,8 +181,6 @@ def TateCohomology.iso_groupHomology (n : ℕ) (M : Rep R G) :
   convert Iso.refl _
   sorry
 
-
-
 def TateCohomology_zero_iso (M : Rep R G) : (TateCohomology 0).obj M ≅
     ModuleCat.of R (M.ρ.invariants ⧸ (range M.ρ.norm).submoduleOf M.ρ.invariants) :=
   sorry
