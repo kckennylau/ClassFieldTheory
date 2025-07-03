@@ -1,6 +1,5 @@
 Rep.quotientToInvariantsFunctor
 Rep.res
-Rep.res_respectsShortExact
 groupCohomology.rest
 groupCohomology.cochain_infl
 groupCohomology.infl
@@ -82,9 +81,6 @@ Representation.ind₁'_lequiv_comm
 Rep.ind₁'_obj_iso
 Rep.ind₁'_iso_forget₂_ggg_ind₁
 Rep.ind₁'_trivialHomology
-Rep.ind₁'_iso_coind₁'
-Rep.ind₁'_trivialCohomology
-Rep.coind₁'_trivialHomology
 Representation.ind₁'_π
 Representation.ind₁'_π_comm
 Rep.ind₁'_π
@@ -93,13 +89,6 @@ Rep.dimensionShift.down
 Rep.dimensionShift.down_ses
 Rep.dimensionShift.down_shortExact
 Rep.dimensionShift.down_shortExact_res
-Rep.dimensionShift.down_δ_zero_epi
-Rep.dimensionShift.down_δ_zero_res_epi
-Rep.dimensionShift.down_δ_isIso
-Rep.dimensionShift.down_δiso
-Rep.dimensionShift.down_δiso_natTrans
-Rep.dimensionShift.down_δ_res_isIso
-Rep.dimensionShift.down_δiso_res
 groupCohomology.TateCohomology_coind₁
 groupCohomology.TateCohomology_coind₁'
 groupCohomology.TateCohomology_ind₁'

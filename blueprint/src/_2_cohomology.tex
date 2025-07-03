@@ -12,16 +12,16 @@ prove the following theorem of Tate:
 		\item
 		$H^1(S,M) \cong 0$,
 		\item
-		$H^2(S,M) \cong \Z / |G| \cdot \Z$.
+		$H^2(S,M) \cong \Z / |S| \cdot \Z$.
 	\end{itemize}
 	Then there is an isomorphism
 	\[
-		G^{\ab} \cong M^G / N_G M.
+		 M^G / N_G M \cong G^{\ab}.
 	\]
-	If $\sigma$ is a 2-cocycle representing a generator of $H^2(G,M)$ then the isomorphism
-	is given by
+	If $\sigma$ is a 2-cocycle representing a generator of $H^2(G,M)$ then the inverse of the
+	isomorphism is given by
 	\[
-		\reciprocity(g) = \sum_{x \in G} \sigma(x,g)
+		\reciprocity^{-1}(g) = \sum_{x \in G} \sigma(x,g).
 	\]
 \end{theorem}
 
@@ -30,17 +30,17 @@ cases.
 \begin{itemize}
 	\item
 	If $l/k$ is a finite Galois extension of local fields and $G = \Gal(l/k)$ then we
-	may regard the group $l^\times$ as a respresentation of $G$. This representation
+	may regard the group $l^\times$ as a representation of $G$. This representation
 	satisfies the hypotheses above so we we have an isomorphism:
 	\[
-		\reciprocity : \Gal(l/k)^{\ab} \cong k^\times / N(l^\times).
+		\reciprocity :  k^\times / N(l^\times) \cong \Gal(l/k)^{\ab}.
 	\]
 	\item
 	If $l/k$ is a finite Galois extension of number fields and $G = \Gal(l/k)$ then we
-	may regard the idele class group $\Cl_l = \A^\times / l^\times$ as a respresentation of $G$.
+	may regard the idele class group $\Cl_l = \A^\times / l^\times$ as a representation of $G$.
 	This representation satisfies the hypotheses above so we we have an isomorphism:
 	\[
-		\reciprocity : \Gal(l/k)^{\ab} \cong \Cl_k / N(Cl_l).
+		\reciprocity : \Cl_k / N(Cl_l) \cong \Gal(l/k)^{\ab} .
 	\]
 \end{itemize}
 
@@ -101,7 +101,7 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 \texttt{groupCohomology M n}, or \texttt{(groupCohomology.functor n).obj M}.
 
 \begin{example} \label{eg:H0}
-	For example $H^0(G,M)$ is just the kernel of the map $d^0 : M \to (G \to M)$.
+	For example $H^0(G,M)$ is the kernel of the map $d^0 : M \to (G \to M)$.
 	Since $(d^0m)(g) = g \bullet m - m$, an element $m$ is in this kernel if $m$ is in $M^G$,
 	so we have $H^0(G,M) \cong M^G$.
 \end{example}
@@ -113,7 +113,7 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	$H^1(G,M) \cong \Hom(G,M)$.
 \end{example}
 
-\begin{example} \label{eg:H2 unit}
+\begin{example} \label{eg:Hn unit}
 	If $G$ is the trivial group then for all $n>0$, $H^n(G,M)\cong 0$.
 	In this case each of the modules $C^n(G,M)$ may be identified with $M$,
 	and the coboundary maps reduce to alternating sums of the form
@@ -123,8 +123,8 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 
 \begin{remark}
 	The functions $d^i : (G^i \to M) \to (G^{i+1} \to M)$ do not depend on the
-	ring $R$. Consequently, the additive groups $H^n(G,M)$ do not depend on
-	the $R$. More precisely there are forgetful functors $F_1 : \Rep(R,G) \to \Rep(\Z,G)$
+	ring $R$. Consequently, the additive groups $H^n(G,M)$ do not depend on $R$.
+	More precisely there are forgetful functors $F_1 : \Rep(R,G) \to \Rep(\Z,G)$
 	and $F_2 : \Mod(R) \to \Mod(\Z)$, and there are isomorphisms of functors
 	\[
 		H^n \circ F_1 \cong F_2 \circ H^n.
@@ -144,7 +144,8 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	is not as good as saying that there is an isomorphism of functors
 	$H^n \circ F_1 \cong F_2 \circ H^n$.
 	The isomorphism of functors implies that for every map $f : A \to B$ in $\Rep(R,G)$
-	we have a commuting square in $\Mod(\Z)$.
+	we have a commuting square in $\Mod(\Z)$, in which the vertical arrows are the isomorphisms
+	of the objects
 	\[
 		\begin{matrix}
 			H^n(G,F_1(A)) & \stackrel{H^1(G,F_1(f))}\to & H^n(G,F_1(B))\\
@@ -189,17 +190,17 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 		\infl : H^n(G/S,M^H) \to H^n(G,M).
 	\]
 	More precisely, the inflation map is a morphism of functors from
-	$H^n (S, -)\circ \Invar$ to $H^n(G,-)$.
+	$H^n (G/S, -)\circ \Invar$ to $H^n(G,-)$.
 \end{definition}
 
 The following results are in a current PR.
 
 \begin{lemma} \label{lem:cochainsFunctor exact}
   The functor taking $M$ to $C^\bullet (G,M)$ is exact.
-  I.e. if $0 \to A \to B \to C \to 0$ be a short exact sequence of $G$-modules.
+  I.e. if $0 \to A \to B \to C \to 0$ is a short exact sequence in $\Rep(R,G)$.
   Then the corresponding sequence of cochain complexes is exact:
   \[
-    0 \to C^n(G,A) \to C^n(G,B) \to C^n(G,C) \to 0.
+    0 \to C^\bullet(G,A) \to C^\bullet(G,B) \to C^\bullet(G,C) \to 0.
   \]
 \end{lemma}
 
@@ -330,6 +331,7 @@ As a consequence of this, we have the following (also a current PR):
 
 
 
+
 \section{Tate Cohomology}
 
 Throughout this section, the group $G$ is assumed to be finite.
@@ -350,7 +352,7 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	be identified with $M$.
 
 	(We'll see in the next two lemmas that $N_G$ commutes with the action of $G$,
-	so is a morphism in $Rep(R,G)$. However, we shall only regard it as a morphism in $\Mod(R)$.
+	so is a morphism in $\Rep(R,G)$. However, we shall only regard it as a morphism in $\Mod(R)$.
 	The reason is that the chain and cochain modules $C^0(G,M)$ and
 	$C_0(G,M)$ are regarded as $R$-modules rather than representations of $G$.)
 \end{definition}
@@ -375,7 +377,7 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	The map $d^0 : M \to (G \to M)$ is given by
 	$(d^0 m)(g) = m - g\bullet m$.
 	Using this formula, we obtain (by Lemma \ref{lem:norm comm})
-	$d^0 (N_G m) (g) = N_G m - g \bullet N_G m = 0$.
+	$d^0 (N_G m) (g) = g \bullet N_G m - N_G m = 0$.
 \end{proof}
 
 \begin{lemma}	\label{lem:d comp norm}
@@ -401,11 +403,11 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 \begin{lemma} \label{lem:norm naturality}
 	For every map $f : A \to B$ in $\Rep(R,G)$ we have a commuting square:
 	\[
-		\begin{matrix}
-			A & \stackrel{f}\to & B \\
+		\begin{array}{rcl}
+			A & \stackrel{f}\to & B \\[2mm]
 			N_G\downarrow && \downarrow N_G \\
 			A & \stackrel{f}\to & B
-		\end{matrix} .
+		\end{array} .
 	\]
 	Equivalently, $N_G$ is an endomorphism of the forgetful functor $\Rep(R,G) \to \Mod(R)$.
 \end{lemma}
@@ -521,14 +523,13 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	The exactness statements are in Mathlib in the namespace
 	\texttt{HomologicalComplex.HomologySequence}.
 	The connecting maps $\delta : H^n_{\Tate}(G,C) \to H^n_{\Tate}(G,A)$
-	coincide with those for cohomology for $n \ge 1$ and with those for homology of $n \le -3$.
+	coincide with those for cohomology for $n \ge 1$ and with those for homology for $n \le -3$.
 \end{definition}
 
 
 
+\section{Coinduction and induction}
 
-
-\section{Coinduced and induced representations}
 
 \begin{definition} \label{def:trivial cohomology}
 	\lean{Rep.TrivialCohomology,
@@ -553,6 +554,53 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 
 In this section we shall construct certain representations with trivial homology and cohomology.
 
+
+Let $\phi : S \to G$ be a group homomorphism and let $M$ be a representation of $S$.
+We define a representation $\coind_\phi(M)$ of $G$ as follows.
+As an $R$-module we have
+\[
+	\coind_\phi(M) ; \{ f : G \to M| \forall s \in S, x \in G, f(\phi(s)x) = s \bullet f(x)\}.
+\]
+This can be thought of as the $(G \to M)^S$, where the action of $S$ is
+$(s\bullet f)(x)=s \bullet f(\phi(s^{-1})\bullet x)$.
+The action of an element $g \in G$ on $f \in \coind_\phi(M)$ is defined by
+\[
+	(g \bullet f)(x) = f(xg).
+\]
+The map $M \mapsto \coind_\phi(M)$ is a functor from $\Rep(R,S)$ to $\Rep(R,G)$, and is implemented
+in Mathlib as \texttt{Rep.coindFunctor}.
+
+There is also a functor $\ind_\phi : \Rep(R,S) \to \Rep(R,G)$ which is defined as a quotient of
+$G \to_0 M$ rather than a subspace of $G \to M$:
+\[
+	\ind_\phi(M) = (G \to_0 M) / \langle s \bullet f - f\rangle,
+	\qquad
+	(s \bullet f) (x) = s \bullet f (x \phi(s)).
+\]
+The action of an element $g \in G$ on $G \to_0 M$ is defined by $(g \bullet f)(x) = f(g^{-1} x)$;
+this action descends to $\ind_\phi(M)$.
+The functor $\ind_\phi : \Rep(R,S) \to \Rep(R,G)$ is implemented in Mathlib as
+\texttt{Rep.ind}.
+
+The functors $\ind_\phi$ and $\coind_\phi$ are particularly important in the case that
+$S$ is a subgroup of $G$, and $\phi : S \to G$ is the inclusion map. This is because of the
+following result, which is a current PR (\# 25937, \# 25996):
+
+
+\begin{lemma} [Shapiro's Lemma] \label{lem:Shapiro}
+	Let $S$ be a subgroup of $G$. Then there are isomorphisms for all $n \ge 0$:
+	\[
+		H^n(G,\coind_S(M)) \cong H^n(S,M), \qquad
+		H_n(G,\ind_S(M)) \cong H_n(S,M), \qquad
+	\]
+	More precisely these are isomorphisms of functors.
+\end{lemma}
+
+
+We shall be interested in the special case in which the group $S$ is the
+trivial group $1$. In this case the $S$-representation $M$ may be regarded as simply an $R$-module.
+This case is described again below.
+
 \begin{definition}\label{def:induced}
 	\lean{
 		Representation.coind₁,
@@ -576,7 +624,7 @@ In this section we shall construct certain representations with trivial homology
 		on the space of all finitely supported functions $f : G \to_0 A$.
 		The action of an element $g \in G$ on $f$ is defined by
 		\[
-			(g \bullet f) (x) = f(g^{-1}x), \qquad i.e.
+			(g \bullet f) (x) = f(g^{-1}x), \qquad i.e.\;
 			g \bullet \single(x,m) = \single(gx,m).
 		\]
 		This representation is called the induced representation and is denoted $\ind_1(G,A)$.
@@ -1139,7 +1187,7 @@ The map $N_G : \aug(R,G) \to \aug(R,G)$ in this case is zero, so we have
 
 \begin{proof}
 	This is already in Mathlib for $n=1$.
-	Assume the result is true for $n$; we will prove it for $n+1$
+	Assume the result is true for some $n\ge 1$; we will prove it for $n+1$
 	by dimension-shifting.
 
 	Let $M$ be a representation such that $H^i(S,M)=0$ for all $0 < i < n+1$.
@@ -1185,7 +1233,7 @@ The map $N_G : \aug(R,G) \to \aug(R,G)$ in this case is zero, so we have
 Let $S$ be a subgroup of $G$. We have already discussed the restriction map
 $H^\bullet(G,M) \to H^\bullet(S,M)$.
 In the case that $S$ has finite index in $G$ there is also a ``corestriction map'' which
-goes in th other direction, i.e. $\cor : H^\bullet (S,-)$ to $H^\bullet(G,-)$.
+goes in the other direction, i.e. $\cor : H^\bullet (S,-)$ to $H^\bullet(G,-)$.
 We define this now, and point out some easy consequences of the definition.
 
 \begin{definition} \label{def:corestriction}
@@ -1337,10 +1385,10 @@ We shall write $\gen$ for a fixed generator of $G$.
 		Then we have
 		\begin{align*}
 			h
-			& = \sum_{0}^{n-1} \single(gen^i, h(\gen^i))\\
-			& = \sum_{0}^{n-1} (\single(gen^i, h(\gen^i)) - \single(1, h(\gen^i))).
+			& = \sum_{i=0}^{n-1} \single(\gen^i, h(\gen^i))\\
+			& = \sum_{i=0}^{n-1} (\single(\gen^i, h(\gen^i)) - \single(1, h(\gen^i))).
 		\end{align*}
-		Furthermore each of the terms $\single(gen^i, m) - \single(1, m)$ is in the
+		Furthermore each of the terms $\single(\gen^i, m) - \single(1, m)$ is in the
 		image of $\map_2$:
 		\begin{align*}
 			\map_2 (\single(1,m) + \cdots + \single(\gen^{i-1},m))
@@ -1441,9 +1489,10 @@ very precisely here:
 	If either of the two cohomology groups are infinite then $h(G,M)$ defaults to $0$.
 \end{definition}
 
-\begin{example} \label{lem:herbrand Z}
+\begin{example} \label{eg:herbrand Z}
+	\uses{lem:H2 cyclic Z}
 	If $G$ is a cyclic group and $\Z$ has the trivial action of $G$ then $h(G,\Z) = |G|$.
-	This follow immediately \ref{lem:H2 cyclic Z}
+	This follow immediately from \ref{lem:H2 cyclic Z}.
 \end{example}
 
 
@@ -1470,7 +1519,7 @@ very precisely here:
 	\[
 		0 \to A \to B \to C \to 0.
 	\]
-	If two of the representations $A$, $B$, $C$ has non-zero Herbrand quotient then so
+	If two of the representations $A$, $B$, $C$ have non-zero Herbrand quotient then so
 	does the third, and $h(G,B) = h(G,A) \cdot h(G,C)$.
 \end{lemma}
 
@@ -1497,8 +1546,8 @@ very precisely here:
 
 \section{The Triviality Criterion}
 
-Recall that a representation $M$ of a group $G$ has trivial cohomology if for all subgroups $H$ of
-$G$ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
+Recall that a representation $M$ of a group $G$ has trivial cohomology if for all subgroups $S$ of
+$G$ and all $n > 0$, the cohomology groups $H^{n}(S,M)$ are zero.
 
 \begin{theorem} \label{thm:triviality criterion solvable}
 	\lean{groupCohomology.trivialCohomology_of_even_of_odd_of_solvable}
@@ -1550,6 +1599,7 @@ $G$ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 \begin{corollary}	\label{cor:up and down trivial cohomology}
 	\lean{Rep.dimensionShift.up_trivialCohomology,
 		Rep.dimensionShift.down_trivialCohomology}
+	\uses{thm:triviality criterion}
 	If $M$ is a representation of a finite group $G$ and $M$ has trivial cohomology
 	then $\up(M)$ and $\down(M)$ have trivial cohomology.
 \end{corollary}
@@ -1566,7 +1616,7 @@ $G$ and all $n \in \N$, the cohomology groups $H^{n+1}(H,M)$ are zero.
 	\[
 		H^2(S,\down(M)) \cong H^1(S,M) \cong 0,
 		\qquad
-		H^3(S,\up(M)) \cong H^2(S,M) \cong 0,
+		H^3(S,\down(M)) \cong H^2(S,M) \cong 0,
 	\]
 	so $\down(M)$ has trivial cohomology.
 \end{proof}
@@ -1669,7 +1719,7 @@ There is evidently a short exact sequence of representations of $G$.
 	We can check that the cocycle $\sigma'$ is the coboundary of
 	the $1$-cochain $\tau : G \to \Split(\sigma)$ defined by
 	\[
-		\tau (x) = (x \bullet σ'(1,1), [x]-[1])
+		\tau (x) = (x \bullet σ'(1,1), [x]-[1]).
 	\]
 	(Here we are using the notation $[x]$
 	to mean the function with value $1$ at $x$ and $0$ elsewhere).
@@ -1700,17 +1750,13 @@ There is evidently a short exact sequence of representations of $G$.
 
 \begin{definition} \label{def:fundamental class}
 	In this section $G$ is a finite group; $M$ is a representation of $G$ over a commutative ring $R$.
-	We shall call $M$ a \emph{finite class formation} if:
+	We shall call $(R,G,M)M$ is a \emph{finite class formation} if:
 	\begin{itemize}
 		\item
 		The ring $R$ has no additive torsion. This implies
 		\[
 			H^2(G,\aug(R,G)) \cong H^1(G,R) \cong \Hom(G,R) = 0.
 		\]
-	\end{itemize}
-	Assume also that the representation $M$ satisfies the following conditions for all
- 	subgroups $S$ of $G$:
-	\begin{itemize}
 		\item
 		For all subgroups $S \le G$ we have $H^1(S,M) \cong 0$.
 		\item
@@ -1735,12 +1781,14 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 \end{example}
 
 \begin{lemma} \label{lem:linear injective of surjective}
+	\mathlibok
 	Let $I$ be an ideal of a commutative ring $R$ and let $f:R/I \to R/I$
 	be a surjective $R$-linear map.
 	Then $f$ is injective.
 \end{lemma}
 
 \begin{proof}
+	(This lemmma is already in Mathlib.)
 	Without loss of generality $I=0$, since such a map is also $R/I$-linear.
 	Let $c\in R$ be a preimage of $1$ and let $d = f(1)$.
 	We have $cd = cf(1) = f(c) = 1$.
@@ -1781,14 +1829,17 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 
 \begin{theorem} \label{thm:splitting module trivial}
 	\uses{lem:restriction fundamental class generates,
-		lem:splits in splitting module}
+		lem:splits in splitting module,
+		thm:triviality criterion,
+		lem:linear injective of surjective,
+		def:cohomology long exact sequence}
 	Let $\sigma \in H^2(G,M)$ be a fundamental class.
 	Then $\Split(\sigma)$ has trivial cohomology.
 \end{theorem}
 
 \begin{proof}
 	By \ref{thm:triviality criterion}, it's enough to prove for every subgroup $S$ of $G$ that
-	$H^1(S,\Split(\sigma)) \cong 0$ and $H^2(H,\Split(\sigma)) \cong 0$.
+	$H^1(S,\Split(\sigma)) \cong 0$ and $H^2(S,\Split(\sigma)) \cong 0$.
 	We have a long exact sequence with the following terms:
 	\[
 		0 \to H^1(S,\Split(\sigma)) \to H^1(S,\aug(R,G)) \to H^2(S,M) \to H^2(S,\Split(\sigma))
@@ -1885,6 +1936,195 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 % 	\]
 % 	(The isomorphism depends on $\sigma_1$, which depends on a choice of generator $g \in G$).
 % \end{example}
+
+
+
+\section{Compatibility in towers}
+
+\begin{lemma} \label{lem:subgroup compatibility}
+	Let $(R,G,M)$ be a finite class formation with a fundamental class $\sigma_G$
+	and let $S$ be a subgroup of $G$.
+	Then $(R, S, M \downarrow S)$ is a finite class formation. The restriction $\sigma_S$ of $\sigma_G$
+	to $S$ is a fundamental class in $H^2(S,M)$.
+	Furthermore there is a commuting square
+	\[
+		\begin{matrix}
+			S^{\ab} & \cong & M^S / N_SM \\
+			\downarrow && \downarrow \\
+			G^{\ab} & \cong &M^G / N_GM
+		\end{matrix}
+	\]
+	The horizontal maps are the reciprocity isomorphisms defined by the fundamental classes
+	$\sigma_G$ and $\sigma_S$; the left hand vertical map is $sS' \mapsto sG'$ and the right hand map
+	is induced by $N_{G/S} :M^S \to M^G$.
+\end{lemma}
+
+
+\begin{proof}
+	The fact that $(R, S, M \downarrow S)$ is a finite class formation is a tautology.
+	The fact that $\sigma_S$
+	is a fundamental class follows from \ref{lem:fundamental class generates}.
+	It remains to prove that the diagram commutes.
+	We'll write $\theta_G$ and $\theta_S$ for the horizontal maps in the diagram.
+	For an element $s \in S$ we have
+	\[
+		\theta_G(sG') = \sum_{x \in G} \sigma_G(x,s).
+	\]
+	Let $R$ be a set of representatives for the cosets $rS$ of $S$ in $G$.
+	Then we have
+	\[
+		\theta_G(sG') = \sum_{r \in R} \sum_{x \in S} \sigma_G(rx,s).
+	\]
+	Using the cocyclce relation we have
+	\[
+		\theta_G(sG') = \sum_{r \in R} \sum_{x \in S}
+		\left(\sigma_G(r,xs) + r \bullet \sigma_G(x,s) - \sigma_G(r,x)\right).
+	\]
+	The first and last terms cancel after reindexing, and we are left with
+	\[
+		\theta_G(sG') = \sum_{r \in R} r \bullet \left(\sum_{x \in S}  \sigma_S(x,s)\right).
+	\]
+	The right hand side is $N_{G/S} \theta_S(s)$.
+\end{proof}
+
+
+\begin{definition}
+	For a finite subgroup $S$ of $G$, we shall call $N_{G/S}M^S$ the \emph{norm submodule}
+	corresponding to $S$. This is a submodule of $M^G$ containing $N_G M$.
+\end{definition}
+
+
+
+\begin{corollary}
+	\uses{lem:subgroup compatibility}
+	Let $(R,G,M)$ be a finite class formation and let $S$ be a subgroup of $G$.
+	Then the image of $S$ under the reciprocity map $G^{\ab} \to M^G / N_GM$ is
+	$N_{G/S}(M^S) / N_GM$.
+\end{corollary}
+
+\begin{proof}
+	This follows from the commutative diagram im \ref{lem:subgroup compatibility}.
+\end{proof}
+
+\begin{corollary} \label{cor:subgroup le iff norm module le}
+	Let $(R,G,M)$ be a finite class formation
+	and let $S_1$ and $S_2$ be two subgroups of $G$.
+	Then $S_1 G' \subseteq S_2 G'$ if and only if
+	$N_{G/S_1}(M^{S_1}) \subseteq N_{G/S_2}(M^{S_2})$.
+\end{corollary}
+
+\begin{corollary} \label{cor:norm limitiation}
+	Let $S$ be a subgroup of $G$. Then
+	\[
+		N_{G/S} (M^S) = N_{G/SG'} (M^{SG'}).
+	\]
+\end{corollary}
+
+\begin{corollary} \label{cor:abelian subgroup le iff norm module le}
+	Let $G$ be abelian and let $S_1$ and $S_2$ be subgroups of $G$.
+	Then $S_1 \subseteq S_2$ if and only if $N_{G/S_1}(M^{S_1}) \subseteq N_{G/S_2}(M^{S_2})$
+\end{corollary}
+
+
+
+
+
+
+% Let $\chi : G \to \Q/\Z$ be a character and $m \in M^G$.
+% Then there is a 2-cocycle $m \cdot \delta \chi \in H^2(G,M)$ defined by
+% \[
+% 	m\cdot \delta \chi (x,y)
+% 	=(\hat\chi(xy) - \hat\chi(x))-\hat\chi(y)) \cdot m,
+% \]
+% where $\hat\chi : G \to \Q$ is a function lifting $\chi$.
+% The cohomology class of $m\cdot \delta \chi$ depends only on the coset of $m$ in
+% $M^G / N_G(M)$.
+% There is an element $r \in \Z/n$ such that
+% \[
+% 	m\cdot \delta \chi = r \cdot \sigma_G.
+% \]
+% for an element $g \in G^{\ab}$ we let $\theta^{-1}(g)$ be the
+% corresponding element of $H^0_{\Tate}(G,M)$.
+% \[
+% 	H^{-1}_{\Tate}(G,\aug(R,G))  \to H^0_{\Tate}(G,M)
+% \]
+
+
+
+
+
+
+
+
+
+
+% \begin{lemma}
+% 	Let $(R,G,M)$ be a finite class formation and let $S$ be a normal subgroup of $G$
+% 	with fundamental class $\sigma_G$.
+% 	Then $(R,G/S, M^S)$ is a finite class formation and there is a unique fundamental class
+% 	$\sigma_{G/S} \in H^2(G/S,M^S)$ such that such that
+% 	\[
+% 		\infl(\sigma_{G/S}) = |S| \cdot \sigma_G.
+% 	\]
+% \end{lemma}
+
+% \begin{proof}
+% 	We'll begin by showing that $(R,G/S, M^S)$ is a finite class formation.
+% 	The inflation-restriction sequences in dimensions $1$ is
+% 	\[
+% 		0 \to H^1(G/S,M^S) \to H^1(G,M) \to
+% 	\]
+% 	Since $H^1(G,M)=0$ is follows that $H^1(S,M^S)=0$.
+% 	Since $H^1(S,M)=0$ we also have an exact inflation restriction sequence in dimension 2:
+% 	\[
+% 		\begin{matrix}
+% 			0 \to H^2(G/S,M^S) \to & H^2(G,M) & \to & H^2(S,M) \\
+% 			&|| && || \\
+% 			& R / |G|\cdot R & \to & R / |S|\cdot M
+% 		\end{matrix}
+% 	\]
+% 	It follows (since $R$ has no additive torsion) that
+% 	\[
+% 		H^2(G/S,M^S) \cong |S| \cdot R / |G|\cdot R \cong R / |G/S| \cdot R.
+% 	\]
+% 	This shows that $(R,G/S,M^S)$ is a finite class formation
+% 	with a fundamental class $\sigma_{G/S}$ as described.
+% \end{proof}
+
+
+% \begin{lemma}
+% 	Let $(R,G,M)$ be a finite class formation and let $S$ be a normal subgroup of $G$.
+% 	Then the recoprocity map $G^{\ab} \cong M^G / N_G(M)$ maps elements of $SG' / G'$ to
+% 	elements of $N_{G/S}(M^S) / N_G(M)$.
+% \end{lemma}
+
+% \begin{proof}
+% 	Let $R$ be a set of coset representatives for $G / S$.
+% 	For $s \in S$ we have
+% 	\[
+% 		= \sum_{r \in R} \sum_{x \in S} \sigma(rx,s).
+% 	\]
+% 	By the cocycle relation we have:
+% 	\[
+% 		\reciprocity(s)
+% 		=\sum_{r \in R} \sum_{x \in S} \left(\sigma(r,xs) + r \bullet \sigma(x,s) - \sigma(r,x) \right).
+% 	\]
+% 	After reindexing, the first and last terms in the sum cancel, and we are left with
+% 	\[
+% 		\reciprocity(s)
+% 		=\sum_{r \in R} r \bullet \sum_{x \in S}   \sigma(x,s).
+% 	\]
+% 	The inner sum is congruent to $\reciprocity_{\sigma \downarrow S}(s)$, so is an element of $M^S$,
+% 	and we have
+% 	\[
+% 		\reciprocity_\sigma(s)
+% 		=N_{G/S}(\sum_{x \in S}   \sigma(x,s)).
+% 	\]
+% \end{proof}
+
+
+
+
 
 
 \section{The invariant map}
