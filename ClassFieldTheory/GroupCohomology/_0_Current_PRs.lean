@@ -15,12 +15,12 @@ def groupHomology.one_trivial_int_iso :
 end Homology
 
 
--- # 25937
-/-- Shapiro's lemma: given a finite index subgroup `S ≤ G` and an `S`-representation `A`, we have
-`Hⁿ(G, Coind_S^G(A)) ≅ Hⁿ(S, A).` -/
-noncomputable def groupCohomology.coindIso [DecidableEq G] (S : Subgroup G) (A : Rep R S) (n : ℕ) :
-    groupCohomology (coind S.subtype A) n ≅ groupCohomology A n :=
-  sorry
+-- -- # 25937
+-- /-- Shapiro's lemma: given a finite index subgroup `S ≤ G` and an `S`-representation `A`, we have
+-- `Hⁿ(G, Coind_S^G(A)) ≅ Hⁿ(S, A).` -/
+-- noncomputable def groupCohomology.coindIso [DecidableEq G] (S : Subgroup G) (A : Rep R S) (n : ℕ) :
+--     groupCohomology (coind S.subtype A) n ≅ groupCohomology A n :=
+--   sorry
 
 -- # 25996
 /-- Shapiro's lemma: given a finite index subgroup `S ≤ G` and an `S`-representation `A`, we have

@@ -25,7 +25,7 @@ abbrev carrier (σ : H2 M) : Type := (aug R G) × M
 
 variable (σ : H2 M)
 
-lemma H2π_surjective : (H2π M : twoCocycles M → H2 M).Surjective := by
+lemma H2π_surjective : (H2π M : cocycles₂ M → H2 M).Surjective := by
   sorry
 
 /--
@@ -61,7 +61,7 @@ def representation : Representation R G (carrier σ) where
       · rfl
       · dsimp only
         rw [zero_add]
-        simp only [twoCocycles_map_one_fst]
+        simp only [cocycles₂_map_one_fst]
         rw [←Finset.sum_smul, aug.sum_coeff_ι, zero_smul]
     · ext v : 1
       simp
@@ -189,21 +189,13 @@ lemma τ_property (g h : G) : (split σ).ρ g (τ σ h) - τ σ (g * h) + τ σ 
   · simp [leftRegular.of, Finsupp.single_apply, sub_smul]
     sorry
 
-
-
 /--
 Given a 2-cocycle `σ : Z²(G,M)`, the image of `σ` in `Z²(G,split σ)` is a coboundary.
 -/
-lemma splits : ι σ ∘ cocycle σ ∈ twoCoboundaries (split σ) := by
+lemma splits : ι σ ∘ cocycle σ ∈ coboundaries₂ (split σ) := by
   use τ σ
   ext : 1
-  rw [groupCohomology.dOne_hom_apply, Function.comp_apply, τ_property]
-
-/-
-# Warning : the following looks like a bad idea, but let's live with it for now.
--/
-instance : AddCommMonoid (H1 M) := AddCommGroup.toAddCommMonoid
-instance : AddCommMonoid (H2 M) := AddCommGroup.toAddCommMonoid
+  rw [d₁₂_hom_apply, Function.comp_apply, τ_property]
 
 /--
 The restriction of `σ` to a subgroup `H`.
