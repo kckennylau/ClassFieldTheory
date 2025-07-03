@@ -112,7 +112,7 @@ def ι : M ⟶ split σ := by
     val := LinearMap.inr R (aug R G) M
     property g := by
       ext m : 1
-      simp only [id_eq, ρ_hom, Function.comp_apply]
+      simp only [ρ_hom, Function.comp_apply]
       rw [apply]
       ext
       · change 0 = (aug R G).ρ g 0

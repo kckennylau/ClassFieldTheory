@@ -4,9 +4,6 @@ groupCohomology.rest
 groupCohomology.cochain_infl
 groupCohomology.infl
 groupCohomology.δ
-groupCohomology.longExactSequence₁
-groupCohomology.longExactSequence₂
-groupCohomology.longExactSequence₃
 groupCohomology.rest
 groupCohomology.infl
 groupCohomology.rest_δ_naturality
@@ -14,7 +11,7 @@ groupCohomology.infl_δ_naturality
 groupHomology.inhomogeneousChains
 groupHomology
 groupHomology.chainsMap
-groupHomology.Map
+groupHomology.map
 Representation.norm
 groupCohomology.TateNorm
 Representation.norm_comm
@@ -37,7 +34,6 @@ Rep.TrivialCohomology
 Rep.TrivialHomology
 Rep.TrivialTateCohomology
 Representation.coind₁
-Rep.coind₁_obj
 Rep.coind₁
 Rep.ind₁
 Rep.coind₁_trivialCohomology

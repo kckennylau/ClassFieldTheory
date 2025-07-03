@@ -193,9 +193,9 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	$H^n (G/S, -)\circ \Invar$ to $H^n(G,-)$.
 \end{definition}
 
-The following results are in a current PR.
 
 \begin{lemma} \label{lem:cochainsFunctor exact}
+	\mathlibok
   The functor taking $M$ to $C^\bullet (G,M)$ is exact.
   I.e. if $0 \to A \to B \to C \to 0$ is a short exact sequence in $\Rep(R,G)$.
   Then the corresponding sequence of cochain complexes is exact:
@@ -204,13 +204,11 @@ The following results are in a current PR.
   \]
 \end{lemma}
 
-As a consequence of this, we have the following (also a current PR):
+As a consequence of this, we have the following (which is in Mathlib):
 
 \begin{definition} \label{def:cohomology long exact sequence}
-  \lean{groupCohomology.δ,
-		groupCohomology.longExactSequence₁,
-		groupCohomology.longExactSequence₂,
-		groupCohomology.longExactSequence₃}
+  \lean{groupCohomology.δ}
+	\mathlibok
   \uses{lem:cochainsFunctor exact}
   Given a short exact sequence $0 \to A \stackrel{f}\to B \stackrel{g}\to C \to 0$ in $\Rep(R,G)$,
   the corresponding sequence of cochain complexes is exact:
@@ -299,7 +297,7 @@ As a consequence of this, we have the following (also a current PR):
 	\lean{groupHomology.inhomogeneousChains,
 		groupHomology,
 		groupHomology.chainsMap,
-		groupHomology.Map}
+		groupHomology.map}
 	There is also a chain complex of $R$-modules:
 	\[
 		\cdots \stackrel{d_2}\to C_2(G,M) \stackrel{d_1}\to C_1(G,M) \stackrel{d_0}\to C_0(G,M)
@@ -604,7 +602,6 @@ This case is described again below.
 \begin{definition}\label{def:induced}
 	\lean{
 		Representation.coind₁,
-		Rep.coind₁_obj,
 		Rep.coind₁,
 		Rep.ind₁
 	}
@@ -2013,7 +2010,7 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 	$N_{G/S_1}(M^{S_1}) \subseteq N_{G/S_2}(M^{S_2})$.
 \end{corollary}
 
-\begin{corollary} \label{cor:norm limitiation}
+\begin{corollary} [Norm Limitation Theorem] \label{cor:norm limitiation}
 	Let $S$ be a subgroup of $G$. Then
 	\[
 		N_{G/S} (M^S) = N_{G/SG'} (M^{SG'}).

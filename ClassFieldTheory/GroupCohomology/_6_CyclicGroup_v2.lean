@@ -31,7 +31,7 @@ open
 
 
 variable {R : Type} [CommRing R]
-variable (G : Type) [Group G] [IsCyclic G] [Finite G] [DecidableEq G]
+variable (G : Type) [Group G] [instCyclic :IsCyclic G] [Finite G] [DecidableEq G]
 variable (M : Rep R G)
 
 noncomputable section
@@ -55,6 +55,7 @@ variable {G}
 @[simp] lemma ofHom_one (A : ModuleCat R) :
   (ofHom 1 : A ⟶ A) = 𝟙 A := rfl
 
+omit [IsCyclic G] [Finite G] [DecidableEq G] in
 @[simp] lemma Rep.ρ_mul_eq_comp (M : Rep R G) (x y : G) :
     Action.ρ M (x * y) = (Action.ρ M y) ≫ (Action.ρ M x) := by
   rw [Rep.Action_ρ_eq_ρ, map_mul]
@@ -69,6 +70,7 @@ variable {A : Type} [AddCommGroup A] [Module R A] (ρ : Representation R G A)
   map_add' := sorry
   map_smul' := sorry
 
+omit [Finite G] [DecidableEq G] in
 lemma Representation.map₁_comm (g : G) :
     map₁ ∘ₗ ρ.coind₁' g = ρ.coind₁' g ∘ₗ map₁  := by
   apply LinearMap.ext
@@ -133,10 +135,12 @@ def map₁ : coind₁' (R := R) (G := G) ⟶ coind₁' where
   }
   naturality := sorry
 
+omit [Finite G] [DecidableEq G] in
 lemma coind_ι_gg_map₁_app : coind₁'_ι.app M ≫ map₁.app M = 0 := by
   ext : 2
   apply Representation.map₁_comp_coind_ι
 
+omit [Finite G] [DecidableEq G] in
 lemma coind_ι_gg_map₁ : coind₁'_ι ≫ map₁ (R := R) (G := G) = 0 := by
   ext : 2
   apply coind_ι_gg_map₁_app
@@ -210,7 +214,9 @@ lemma periodicitySequence_exactAt_one : (periodicitySequence M).ExactAt 1 := sor
 
 lemma periodicitySequence_exactAt_two : (periodicitySequence M).ExactAt 2 := sorry
 
+include instCyclic in
 def up_obj_iso_down_obj : up.obj M ≅ down.obj M :=
+  have := instCyclic
   /-
   `up.obj M` is the cokernel of the first map is `periodicitySequence`,
   so is isomorphic to the image of the second map. This in turn is isomorphic to the

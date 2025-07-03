@@ -185,16 +185,19 @@ def up_δiso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
   have := up_δ_isIso_res M inj n
   apply asIso (δ (up_shortExact_res M φ) (n + 1) (n + 2) rfl)
 
-
+omit [DecidableEq G] in
 lemma ind₁'_obj_ρ : (ind₁'.obj M).ρ = M.ρ.ind₁' := rfl
 
+omit [DecidableEq G] in
 lemma ind₁'_obj_ρ_apply (g : G) : (ind₁'.obj M).ρ g = M.ρ.ind₁' g := rfl
 
 abbrev ind₁'_toCoind₁' [DecidableEq G]: ind₁' (R := R) (G := G) ⟶ coind₁' :=
   ind₁'_iso_forget₂_ggg_ind₁.hom ≫ (𝟙 _ ◫ ind₁_toCoind₁ G) ≫ coind₁'_iso_forget₂_ggg_coind₁.inv
 
+omit [DecidableEq G] in
 lemma ind₁'_π.app_hom : (ind₁'_π.app M).hom = ofHom Representation.ind₁'_π := rfl
 
+omit [DecidableEq G] in
 lemma ind₁'_π.app_apply (f : ind₁'.obj M) :
     (ind₁'_π.app M) f = Finsupp.sum f (fun _ ↦ LinearMap.id (R := R)) := rfl
 
@@ -215,11 +218,13 @@ abbrev down_ses : ShortComplex (Rep R G) where
   g := ind₁'_π.app M
   zero := kernel.condition (ind₁'_π.app M)
 
+omit [DecidableEq G] in
 lemma down_shortExact : (down_ses M).ShortExact where
   exact   := ShortComplex.exact_kernel (ind₁'_π.app M)
   mono_f  := inferInstance
   epi_g   := inferInstance
 
+omit [DecidableEq G] in
 lemma down_shortExact_res {H : Type} [Group H] (φ : H →* G) :
     ((down_ses M).map (res φ)).ShortExact := by
   rw [res_respectsShortExact]

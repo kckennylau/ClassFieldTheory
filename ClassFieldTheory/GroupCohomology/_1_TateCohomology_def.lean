@@ -108,7 +108,7 @@ def TateComplex (M : Rep R G) : CochainComplex (ModuleCat R) ℤ where
             cases k with
             | ofNat k =>
               exfalso
-              simp only [Int.negSucc_eq, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,
+              simp only [Int.negSucc_eq, neg_add_rev, Int.reduceNeg,
                 Int.ofNat_eq_coe, ComplexShape.up_Rel, neg_add_cancel_comm,
                 Nat.neg_cast_eq_cast] at hjk
               simp only [Int.negSucc_eq, Nat.cast_add, Nat.cast_one, neg_add_rev, Int.reduceNeg,

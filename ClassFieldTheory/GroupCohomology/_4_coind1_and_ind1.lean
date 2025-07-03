@@ -337,8 +337,7 @@ variable {R G V}
 @[simp] lemma ind₁_toCoind₁_single (x : G) [DecidableEq G] (v : V) :
     (ind₁_toCoind₁ R G V) (single x v) = lcoeFun (R := R) (single x⁻¹ v) := by
   ext z
-  simp only [LinearMap.coe_comp, Function.comp_apply, lsingle_apply, ind₁_toCoind₁_apply,
-    lcoeFun_apply]
+  simp only [lcoeFun_apply]
   rw [single_apply]
   split_ifs with h
   · rw [ind₁_toCoind₁]
@@ -371,7 +370,7 @@ lemma ind₁_toCoind₁_comm [DecidableEq G] (g : G) :
     rw [h, mul_inv_cancel_right]
 
 variable (R G V)
-@[simps] def ind₁_equiv_coind₁ [Finite G] : (G →₀ V) ≃ₗ[R] coind₁V R G V  where
+@[simps!] def ind₁_equiv_coind₁ [Finite G] : (G →₀ V) ≃ₗ[R] coind₁V R G V  where
   toLinearMap := ind₁_toCoind₁ R G V
   invFun := sorry
   left_inv := sorry
