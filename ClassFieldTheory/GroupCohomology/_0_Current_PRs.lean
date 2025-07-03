@@ -9,15 +9,6 @@ variable {G : Type} [Group G] [DecidableEq G]
 noncomputable section Long_Exact_Sequences
 
 namespace groupCohomology
-/--
-# Leave this as a sorry, and then remove once Amelia's PR 25872 on long exact sequences is merged.
-
-(This has the same name and Type as in PR 25872.)
-
-The connecting homomorphism in the long exact sequence in group cohomology.
--/
-def δ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (i j : ℕ) (hij : i + 1 = j) :
-    groupCohomology S.X₃ i ⟶ groupCohomology S.X₁ j := sorry
 
 def longExactSequence₁ {S : ShortComplex (Rep R G)} (hS : S.ShortExact) (n : ℕ) :
   ShortComplex (ModuleCat R) where

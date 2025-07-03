@@ -10,7 +10,7 @@ open
   BigOperators
 
 variable {R : Type} [CommRing R]
-variable {G : Type} [Group G] [DecidableEq G]
+variable {G : Type} [Group G]
 
 noncomputable section
 
@@ -104,8 +104,8 @@ end Rep
 namespace groupCohomology
 
 variable
-  {S : Type} [Group S] [DecidableEq S] (φ : S →* G)
-  {S' : Type} [Group S'] [DecidableEq S'] (ψ : S' →* S)
+  {S : Type} [Group S] (φ : S →* G)
+  {S' : Type} [Group S'] (ψ : S' →* S)
 
 /--
 The restriction map `Hⁿ(G,M) ⟶ Hⁿ(H,M)`, defined as a forphism of functors:
@@ -128,8 +128,8 @@ lemma rest_id (n : ℕ) : rest (MonoidHom.id G) (R := R) n = 𝟙 (functor R G n
 lemma rest_comp (n : ℕ) : rest (φ.comp ψ) n = rest φ (R := R) n ≫ (𝟙 (res φ) ◫ rest ψ n) := by
   ext M : 2
   rw [rest_app]
-  simp only [functor_obj, Functor.comp_obj, NatTrans.id_hcomp, NatTrans.comp_app, whiskerLeft_app,
-    rest_app]
+  simp only [functor_obj, Functor.comp_obj, Functor.id_hcomp, NatTrans.comp_app,
+      Functor.whiskerLeft_app, rest_app]
   rw [←map_comp]
   rfl
 

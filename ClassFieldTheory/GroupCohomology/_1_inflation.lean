@@ -102,6 +102,4 @@ lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.Sh
   }
   have ses₁ : C.ShortExact := sorry -- current PR
   have ses₂ : C'.ShortExact := sorry -- current PR
-  convert HomologySequence.δ_naturality φ ses₂ ses₁ i j hij
-  · sorry --should be `rfl` after defn of `groupCohomology.δ` included in current PR
-  · sorry --should be `rfl` after defn of `groupCohomology.δ` included in current PR
+  exact HomologySequence.δ_naturality φ ses₂ ses₁ i j hij

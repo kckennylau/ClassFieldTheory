@@ -231,7 +231,7 @@ def up_iso_down : up (R := R) (G := G) ≅ down where
 def periodicCohomology (n : ℕ) :
     functor R G (n + 1) ≅ functor R G (n + 3) := by
   apply Iso.trans (down_δiso_natTrans n)
-  apply Iso.trans (isoWhiskerRight up_iso_down.symm _)
+  apply Iso.trans (Functor.isoWhiskerRight up_iso_down.symm _)
   apply up_δiso_natTrans
 
 /--
