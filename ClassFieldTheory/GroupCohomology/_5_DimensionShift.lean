@@ -329,13 +329,15 @@ lemma TateCohomology_ind₁' (M : Rep R G) {H : Type} [Group H] [DecidableEq H] 
   -/
   sorry
 
-instance (M : Rep R G) [DecidableEq G] (n : ℤ) : IsIso (TateCohomology.δ (up_shortExact M) n) :=
+instance instIsIso_up_shortExact (M : Rep R G) [DecidableEq G] (n : ℤ) :
+    IsIso (TateCohomology.δ (up_shortExact M) n) :=
   /-
   This follows from `TateCohomology_coind₁'`.
   -/
   sorry
 
-instance (M : Rep R G) [DecidableEq G] (n : ℤ) : IsIso (TateCohomology.δ (down_shortExact M) n) := by
+instance instIsIso_down_shortExact (M : Rep R G) [DecidableEq G] (n : ℤ) :
+    IsIso (TateCohomology.δ (down_shortExact M) n) := by
   /-
   This follows from `TateCohomology_coind₁'`.
   -/
@@ -343,6 +345,9 @@ instance (M : Rep R G) [DecidableEq G] (n : ℤ) : IsIso (TateCohomology.δ (dow
 
 def upδiso_Tate (n : ℤ) [DecidableEq G] (M : Rep R G) :
     (TateCohomology n).obj (up.obj M) ≅ (TateCohomology (n + 1)).obj M :=
+  -- typeclass inference spends a long time failing to apply `instIsIso_down_shortExact`
+  -- so let's shortcut the instance
+  have := instIsIso_up_shortExact M n
   asIso (TateCohomology.δ (up_shortExact M) n)
 
 def downδiso_Tate (n : ℤ) [DecidableEq G] (M : Rep R G) :
