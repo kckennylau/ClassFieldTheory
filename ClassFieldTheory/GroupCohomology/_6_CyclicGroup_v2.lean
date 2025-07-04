@@ -90,11 +90,11 @@ lemma Representation.map₁_ker :
   sorry
 
 @[simps!] def Representation.map₂ : (G →₀ A) →ₗ[R] (G →₀ A) :=
-  LinearMap.id - lmapDomain _ _ (fun x ↦ x * gen G)
+  LinearMap.id - lmapDomain _ _ (fun x ↦ gen G * x)
 
 omit [Finite G] [DecidableEq G] in
 @[simp] lemma Representation.map₂_comp_lsingle (x : G) :
-    map₂ (R := R) (G := G) (A := A) ∘ₗ lsingle x = lsingle x - lsingle (x * gen G) := by
+    map₂ (R := R) (G := G) (A := A) ∘ₗ lsingle x = lsingle x - lsingle (gen G * x) := by
   ext
   simp [map₂, LinearMap.sub_comp]
 
@@ -103,8 +103,8 @@ lemma Representation.map₂_comm (g : G) :
     map₂ ∘ₗ ρ.ind₁' g = ρ.ind₁' g ∘ₗ map₂ := by
   ext x : 1
   rw [LinearMap.comp_assoc, ind₁'_comp_lsingle, LinearMap.comp_assoc, map₂_comp_lsingle,
-    LinearMap.comp_sub, ind₁'_comp_lsingle, ←LinearMap.comp_assoc, map₂_comp_lsingle, mul_assoc,
-    LinearMap.sub_comp, ind₁'_comp_lsingle]
+    LinearMap.comp_sub, ind₁'_comp_lsingle, ←LinearMap.comp_assoc, map₂_comp_lsingle,
+    LinearMap.sub_comp, ind₁'_comp_lsingle, mul_assoc]
 
 omit [Finite G] [DecidableEq G] in
 lemma Representation.ind₁'_π_comp_map₂ :
@@ -240,6 +240,7 @@ def periodicCohomology (n : ℕ) :
   apply Iso.trans (Functor.isoWhiskerRight up_iso_down.symm _)
   apply up_δiso_natTrans
 
+omit [DecidableEq G] in
 /--
 Let `M` be a representation of a finite cyclic group `G`.
 If `H¹(G,M)` and `H²(G,M)` are both zero then `Hⁿ(G,M)` is zero for all `n > 0`.

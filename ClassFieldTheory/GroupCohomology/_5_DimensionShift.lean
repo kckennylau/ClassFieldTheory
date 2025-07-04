@@ -191,8 +191,8 @@ lemma ind₁'_obj_ρ : (ind₁'.obj M).ρ = M.ρ.ind₁' := rfl
 omit [DecidableEq G] in
 lemma ind₁'_obj_ρ_apply (g : G) : (ind₁'.obj M).ρ g = M.ρ.ind₁' g := rfl
 
-abbrev ind₁'_toCoind₁' [DecidableEq G]: ind₁' (R := R) (G := G) ⟶ coind₁' :=
-  ind₁'_iso_forget₂_ggg_ind₁.hom ≫ (𝟙 _ ◫ ind₁_toCoind₁ G) ≫ coind₁'_iso_forget₂_ggg_coind₁.inv
+-- abbrev ind₁'_toCoind₁' [DecidableEq G]: ind₁' (R := R) (G := G) ⟶ coind₁' :=
+--   ind₁'_iso_forget₂_ggg_ind₁.hom ≫ (𝟙 _ ◫ ind₁_toCoind₁ G) ≫ coind₁'_iso_forget₂_ggg_coind₁.inv
 
 omit [DecidableEq G] in
 lemma ind₁'_π.app_hom : (ind₁'_π.app M).hom = ofHom Representation.ind₁'_π := rfl

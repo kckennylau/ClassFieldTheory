@@ -40,14 +40,7 @@ Rep.coind₁_trivialCohomology
 Rep.coind₁_quotientToInvariants_iso
 Rep.coind₁_quotientToInvariants_trivialCohomology
 Rep.ind₁_trivialHomology
-Representation.ind₁_toCoind₁
-Rep.ind₁_toCoind₁
-Representation.ind₁_toCoind₁
-Representation.ind₁_toCoind₁_comm
-Representation.ind₁_equiv_coind₁
-Rep.ind₁_toCoind₁
-Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite
-Rep.ind₁_iso_coind₁
+Rep.ind₁_obj_iso_coind₁_obj
 Rep.ind₁_trivialCohomology
 Rep.coind₁_trivialHomology
 Rep.ind₁_trivialTateCohomology

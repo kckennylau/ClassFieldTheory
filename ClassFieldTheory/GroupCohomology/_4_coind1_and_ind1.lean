@@ -63,88 +63,51 @@ namespace Representation
 
 variable (V W : Type) [AddCommGroup V] [Module R V] [AddCommGroup W] [Module R W]
 
+abbrev coind₁V := coindV (⊥ : Subgroup G).subtype (trivial R _ V)
+
+instance : FunLike (coind₁V R G V) G V where
+  coe f := f.val
+  coe_injective' := Subtype.val_injective
+
+instance : Coe (G → V) (coind₁V R G V) where
+  coe f := ⟨f,by
+    intro ⟨g, hg⟩ x
+    rw [Subgroup.mem_bot] at hg
+    simp [hg]
+  ⟩
 
 /--
 The representation of `G` on the space `G → V` by right-translation on `G`.
 (`V` is an `R`-module with no action of `G`).
 -/
-abbrev coind₁ := coind (1 : Unit →* G) (trivial R Unit V)
-abbrev coind₁V := coindV (1 : Unit →* G) (trivial R Unit V)
-instance : FunLike (coind₁V R G V) G V where
-  coe f := f.val
-  coe_injective' := Subtype.val_injective
-instance : Coe (G → V) (coind₁V R G V) where
-  coe f := ⟨f,by intro; simp⟩
--- @[simps] def coind₁ : Representation R G (G → V) where
---   toFun g       := LinearMap.funLeft R V fun a ↦ a * g
---   map_one'      := by ext; simp
---   map_mul' _ _  := by ext; simp [mul_assoc]
+abbrev coind₁ := coind (⊥ : Subgroup G).subtype (trivial R _ V)
 
 @[simp] lemma coind₁_apply₃ (f : coind₁V R G V) (g x : G) : coind₁ R G V g f x = f (x * g) := rfl
 
-variable {R G V}
--- lemma mem_coindV_unit (f : G → V) :
---     f ∈ coindV (1 : Unit →* G) (1 : Unit →* (V →ₗ[R] V)) := by
---   intro h x
---   simp
-
-variable (R G V)
--- /--
--- The linear isomorphism from `coindV 1 1` to `G → V`.
--- -/
--- @[simps] def coindV_unit_lequiv :
---     coindV (1 : Unit →* G) (1 : Unit →* (V →ₗ[R] V)) ≃ₗ[R] (G → V) where
---   toFun f := f.val
---   map_add' _ _ := rfl
---   map_smul' _ _ := rfl
---   invFun f := ⟨f,mem_coindV_unit f⟩
---   left_inv _ := rfl
---   right_inv _ := rfl
-
--- /--
--- The isomorphism `coindV_unit_lequiv` intertwines the actions of `G`
--- by `coind 1 1` and `coind₁`.
--- -/
--- lemma coindV_unit_lequiv_comm (g : G) :
---     coind₁ R G V g ∘ₗ (coindV_unit_lequiv R G V).toLinearMap
---     = coindV_unit_lequiv R G V  ∘ₗ coind 1 1 g := rfl
-
-
+abbrev Ind₁V := IndV (⊥ : Subgroup G).subtype (trivial R _ V)
+abbrev Ind₁V.mk := IndV.mk (⊥ : Subgroup G).subtype (trivial R _ V)
 /--
 The induced representation of a group `G` on `G →₀ V`, where the action of `G` is by
 left-translation on `G`; no action of `G` on `V` is assumed.
 -/
-@[simps] def ind₁ : Representation R G (G →₀ V) where
-  toFun g       := lmapDomain _ _ (fun x ↦ g * x)
-  map_one'      := by ext; simp
-  map_mul' _ _  := by ext; simp [mul_assoc]
+abbrev ind₁ := ind (⊥ : Subgroup G).subtype (trivial R _ V)
 
-@[simp] lemma ind₁_apply₂ (g x : G) (f : G →₀ V) : ind₁ R G V g f x = f (g⁻¹ * x) := by
-  simp [ind₁_apply]
-  convert mapDomain_apply (mul_right_injective g) _ _
-  rw [mul_inv_cancel_left]
-
-@[simp] lemma ind₁_apply_single (g x : G) (v : V) :
-    ind₁ R G V g (single x v) = single (g * x) v := by
-  rw [ind₁_apply, lmapDomain_apply, mapDomain_single]
-
-@[simp] lemma ind₁_comp_lsingle (g x : G) : ind₁ R G V g ∘ₗ lsingle x = lsingle (g * x) := by
-  ext
-  simp
+lemma ind₁_apply (g x : G) : (ind₁ R G V) g ∘ₗ Ind₁V.mk R G V x = Ind₁V.mk R G V (x * g⁻¹) := by
+  ext; simp
 
 variable {R G V} (ρ : Representation R G V)
 
 /--
 Given a representation `ρ` of `G` on `V`, `coind₁' ρ` is the representation of `G`
-on `G → V`, where the action of `G` is `g f ↦ (x ↦ ρ g (f x * g))`.
+on `G → V`, where the action of `G` is `(g f) x = ρ g (f (x * g))`.
 -/
 @[simps] def coind₁' : Representation R G (G → V) where
   toFun g := {
     toFun f x := ρ g (f (x * g))
-    map_add' := sorry
-    map_smul' := sorry
+    map_add' _ _ := by ext; simp
+    map_smul' _ _ := by ext; simp
   }
-  map_one' := sorry
+  map_one' := by ext; simp
   map_mul' g₁ g₂ := by ext; simp [mul_assoc]
 
 @[simp] lemma coind₁'_apply₃ (g x : G) (f : G → V) : coind₁' ρ g f x = ρ g (f (x * g)) := rfl
@@ -181,45 +144,7 @@ representation `ρ.coind₁'` of `G` on `G → V`.
 -/
 lemma coind₁'_ι_comm (g : G) : coind₁' ρ g ∘ₗ coind₁'_ι = coind₁'_ι ∘ₗ ρ g := by ext; simp
 
--- /--
--- The natural incluion of a representation `(V,ρ)` into `(G → V, coind₁ R G V)`.
--- This takes a vector `v : V` to the function `x ↦ ρ x v`.
--- -/
--- @[simps] def coind₁_ι : V →ₗ[R] (G → V) where
---   toFun v       := fun g ↦ ρ g v
---   map_add' _ _  := by ext; simp
---   map_smul' _ _ := by ext; simp
-
--- /--
--- The map `coind_ι ρ : V ` commutes with the actions of `G`.
--- -/
--- lemma coind₁_ι_comm (g : G) : coind₁_ι ρ ∘ₗ ρ g = coind₁ R G V g ∘ₗ coind₁_ι ρ := by ext; simp
-
 variable {W X : Type} [AddCommGroup W] [Module R W] [AddCommGroup X] [Module R X]
-
-@[simp] def ind₁_map (φ : V →ₗ[R] W) : (G →₀ V) →ₗ[R] (G →₀ W) := mapRange.linearMap φ
-
-omit [Group G] in
-@[simp] lemma ind₁_map_comp_lsingle (φ : V →ₗ[R] W) (x : G) :
-    ind₁_map φ ∘ₗ lsingle x = lsingle x ∘ₗ φ := by ext; simp
-
-omit [Group G] in
-lemma ind₁_map_apply (φ : V →ₗ[R] W) (f : G →₀ V) : ind₁_map φ f = (mapRange.linearMap φ f) := rfl
-
-omit [Group G] in
-@[simp] lemma ind₁_map_apply₂ (φ : V →ₗ[R] W) (f : G →₀ V) (x : G) : ind₁_map φ f x = φ (f x) := rfl
-
-omit [Group G] in
-@[simp] lemma ind₁_map_single (φ : V →ₗ[R] W) (x : G) (v : V) :
-    ind₁_map φ (single x v) = single x (φ v) := by
-  rw [ind₁_map_apply, mapRange.linearMap_apply, mapRange_single]
-
-omit [Group G] in
-@[simp] lemma ind₁_map_id : ind₁_map (G := G) (1 : V →ₗ[R] V) = LinearMap.id := by ext; rfl
-
-omit [Group G] in
-@[simp] lemma ind₁_map_comp (φ : V →ₗ[R] W) (ψ : W →ₗ[R] X) :
-    ind₁_map (G := G) (ψ ∘ₗ φ) = ind₁_map ψ ∘ₗ ind₁_map φ := by ext; rfl
 
 /--
 `ind₁' ρ` is the representation of `G` on `G →₀ V`, where the action is defined by
@@ -229,25 +154,45 @@ Note : using left-translation instead of right-translation on the group allows u
 definition to representations of monoids.
 -/
 @[simps] def ind₁' : Representation R G (G →₀ V) where
-  toFun g := lmapDomain _ _ (fun x ↦ g * x) ∘ₗ mapRange.linearMap (ρ g)
-  map_one' := sorry
+  toFun g := lmapDomain _ _ (fun x ↦ x * g⁻¹) ∘ₗ mapRange.linearMap (ρ g)
+  map_one' := by ext; simp
   map_mul' _ _ := by ext; simp [mul_assoc]
 
-@[simp] lemma ind₁'_comp_lsingle (g x : G) : ρ.ind₁' g ∘ₗ lsingle x = lsingle (g * x) ∘ₗ ρ g := by
-  ext
+lemma ind₁'_apply₂ (f : G →₀ V) (g x : G) : ρ.ind₁' g f x = ρ g (f (x * g)) := by
+  dsimp only [ind₁'_apply, LinearMap.coe_comp, Function.comp_apply, mapRange.linearMap_apply,
+    lmapDomain_apply]
+  have : x = x * g * g⁻¹ := eq_mul_inv_of_mul_eq rfl
+  rw [this, mapDomain_apply (mul_left_injective g⁻¹)]
   simp
+
+private abbrev ind₁'_map (f : V →ₗ[R] W) : (G →₀ V) →ₗ[R] (G →₀ W) := mapRange.linearMap f
+
+omit [Group G] in
+private lemma ind₁'_map_comp_lsingle (f : V →ₗ[R] W) (x : G) :
+    (ind₁'_map f) ∘ₗ (lsingle x) = (lsingle x) ∘ₗ f  := by
+  ext; simp
+
+@[simp] lemma ind₁'_comp_lsingle (g x : G) : ρ.ind₁' g ∘ₗ lsingle x = lsingle (x * g⁻¹) ∘ₗ ρ g := by
+  ext; simp
+
+lemma ind₁'_map_comm {ρ' : Representation R G W} {f : V →ₗ[R] W}
+    (hf : ∀ g : G, f ∘ₗ ρ g = ρ' g ∘ₗ f) (g : G) :
+    ind₁'_map f ∘ₗ ρ.ind₁' g = ρ'.ind₁' g ∘ₗ ind₁'_map f := by
+  ext : 1
+  rw [LinearMap.comp_assoc, ind₁'_comp_lsingle, ←LinearMap.comp_assoc, ind₁'_map_comp_lsingle,
+    LinearMap.comp_assoc, hf, LinearMap.comp_assoc, ind₁'_map_comp_lsingle,
+    ←LinearMap.comp_assoc, ←LinearMap.comp_assoc, ind₁'_comp_lsingle]
 
 @[simps] def ind₁'_π : (G →₀ V) →ₗ[R] V where
   toFun f := f.sum (fun _ ↦ (1 : V →ₗ[R] V))
-  map_add' := sorry
-  map_smul' := sorry
+  map_add' _ _ :=  sum_add_index' (congrFun rfl) fun _ _ ↦ congrFun rfl
+  map_smul' _ _ := by simp
 
 omit [Group G] in
 @[simp] lemma ind₁'_π_comp_lsingle (x : G) :
     ind₁'_π ∘ₗ lsingle x = LinearMap.id (R := R) (M := V) := by
   ext
   simp
-
 
 lemma ind₁'_π_comm (g : G) : ind₁'_π ∘ₗ ind₁' ρ g = ρ g ∘ₗ ind₁'_π := by
   ext; simp
@@ -256,129 +201,67 @@ lemma ind₁'_π_comm (g : G) : ind₁'_π ∘ₗ ind₁' ρ g = ρ g ∘ₗ ind
 The linear automorphism of `G →₀ V`, which gives an isomorphism
 between `ind₁' ρ` and `ind₁ R G V`.
 -/
-@[simps] def ind₁'_lequiv : (G →₀ V) ≃ₗ[R] (G →₀ V) where
-  toFun f:= f.sum (fun x v ↦ single x (ρ x⁻¹ v))
-  map_add' := sorry
-  map_smul' := sorry
-  invFun f := f.sum (fun x v ↦ single x (ρ x v))
+@[simps] def ind₁'_lequiv : (G →₀ V) ≃ₗ[R] Ind₁V R G V where
+  toFun f:= f.sum (fun x v ↦ Ind₁V.mk R G V x (ρ x v))
+  map_add' _ _ := by
+    rw [sum_add_index']
+    · simp
+    · intros
+      simp only [map_add]
+  map_smul' _ _ := by
+    rw [sum_smul_index']
+    · simp only [map_smul, RingHom.id_apply, smul_sum]
+    · intro
+      simp only [map_zero]
+  invFun f := sorry
   left_inv f := sorry
   right_inv := sorry
 
 
 @[simp] lemma ind₁'_lequiv_comp_lsingle (x : G) :
-    ρ.ind₁'_lequiv.toLinearMap ∘ₗ lsingle x = lsingle x ∘ₗ ρ x⁻¹ := by ext; simp
+    ρ.ind₁'_lequiv ∘ₗ lsingle x = Ind₁V.mk R G V x ∘ₗ ρ x := by ext; simp
 
 lemma ind₁'_lequiv_comm (g : G) :
-    ind₁'_lequiv ρ ∘ₗ ind₁' ρ g = ind₁ R G V g ∘ₗ ind₁'_lequiv ρ := by ext; simp
+    ind₁'_lequiv ρ ∘ₗ ind₁' ρ g = ind₁ R G V g ∘ₗ ind₁'_lequiv ρ := by
+  ext x : 1
+  rw [LinearMap.comp_assoc, ind₁'_comp_lsingle,
+    ←LinearMap.comp_assoc, ind₁'_lequiv_comp_lsingle, LinearMap.comp_assoc, map_mul]
+  change _ ∘ₗ (_ * ρ g) = _
+  rw [mul_assoc, ←map_mul, inv_mul_cancel, map_one, mul_one]
+  nth_rw 2 [LinearMap.comp_assoc]
+  rw [ind₁'_lequiv_comp_lsingle, ←LinearMap.comp_assoc, ind₁_apply]
 
-variable {ρ}
+def ind₁'_lequiv_coind₁' [Finite G] : (G →₀ V) ≃ₗ[R] (G → V) :=
+  linearEquivFunOnFinite R V G
 
-/--
-If `f : V →ₗ[R] W` intertwines representations `ρ` and `ρ'` then `ind₁_map f` intertwines the
-representations `ρ.ind₁'` and `ρ'.ind₁'`.
--/
-lemma ind₁_map_comm {ρ' : Representation R G W} {f : V →ₗ[R] W}
-    (hf : ∀ g : G, f ∘ₗ ρ g = ρ' g ∘ₗ f) (g : G) :
-    ind₁_map f ∘ₗ ρ.ind₁' g = ρ'.ind₁' g ∘ₗ ind₁_map f := by
-  ext : 1
-  rw [LinearMap.comp_assoc, LinearMap.comp_assoc, ind₁'_comp_lsingle, ind₁_map_comp_lsingle,
-    ←LinearMap.comp_assoc, ←LinearMap.comp_assoc, ind₁'_comp_lsingle, ind₁_map_comp_lsingle,
-    LinearMap.comp_assoc, LinearMap.comp_assoc, hf]
+omit [Group G] in
+lemma ind₁'_lequiv_coind₁'_apply [Finite G] (x y : G) (v : V) :
+  ind₁'_lequiv_coind₁' (R := R) (single x v) y = (single x v y) := rfl
 
+lemma ind₁'_lequiv_coind₁'_comm [Finite G] (g : G) :
+    ind₁'_lequiv_coind₁'.toLinearMap ∘ₗ ρ.ind₁' g = ρ.coind₁' g ∘ₗ ind₁'_lequiv_coind₁'.toLinearMap
+    := by
+  ext x : 1
+  rw [LinearMap.comp_assoc, LinearMap.comp_assoc, ind₁'_comp_lsingle]
+  ext v y : 2
+  simp [ind₁'_lequiv_coind₁'_apply]
+  by_cases h : x * g⁻¹ = y
+  · rw [h, single_eq_same, ←h, mul_assoc, inv_mul_cancel, mul_one, single_eq_same]
+  · rw [single_eq_of_ne, single_eq_of_ne, map_zero]
+    · contrapose! h
+      rw [h, mul_inv_cancel_right]
+    · exact h
 
-
--- def ind₁_π : (G →₀ V) →ₗ[R] V where
---   toFun f := f.sum (fun x ↦ (1 : V →ₗ[R] V))
---   map_add' f₁ f₂ := sum_add_index' (by simp) (by simp)
---   map_smul' r f := by simp
-
--- lemma ind₁_π_apply (f : G →₀ V) : ind₁_π (R := R) f = f.sum (fun x ↦ trivial R G V x) := rfl
-
--- @[simp] lemma ind₁_π_single (x : G) (v : V) : ind₁_π (R := R) (single x v) = v := by
---   simp [ind₁_π_apply]
-
--- lemma ind₁_π_comm (g : G) : (ind₁_π ρ) ∘ₗ ind₁ R G V g = (ρ g) ∘ₗ (ind₁_π ρ) := by
---   ext x
---   simp [ind₁_apply, ind₁_π_apply]
-
--- lemma ind₁_π_comm_apply (g : G) (f : G →₀ V) : (ind₁_π ρ) (ind₁ R G V g f) = (ρ g) (ind₁_π ρ f)
---     := by
---   rw [←LinearMap.comp_apply, ind₁_π_comm, LinearMap.comp_apply]
-
-
-
--- lemma ind₁'_π_naturality {ρ' : Representation R G W} {φ : V →ₗ[R] W}
---     (hφ : ∀ g : G, ρ' g ∘ₗ φ = φ ∘ₗ ρ g) :
---     ind₁'_π ∘ₗ ind₁'_map hφ = φ ∘ₗ ind₁'_π := by
---   ext x v
---   simp only [LinearMap.coe_comp, Function.comp_apply, lsingle_apply, ind₁_map_single,
---     ind₁_π_apply, map_zero, sum_single_index]
---   rw [←LinearMap.comp_apply, hφ, LinearMap.comp_apply]
-
-variable (R G V)
-/--
-The map from `G →₀ V` to `G → V`. This takes `f : G →₀ V` to the function `G → V` defined by
-
-  `fun x ↦ f x⁻¹`.
-
-The reason for the inverse is because the `ind₁`-action of `G` on `G →₀ V` is by left-translation
-and the `coind₁`-action on `G → V` is by right-translation. These choices allow the actions to be
-defined in the case that `G` is only a monoid.
--/
-@[simps] def ind₁_toCoind₁ : (G →₀ V) →ₗ[R] coind₁V R G V where
-  toFun f := fun x ↦ f x⁻¹
-  map_add' _ _ := by ext; simp
-  map_smul' _ _ := by ext; simp
-
-lemma ind₁_toCoind₁_apply (f : G →₀ V) (x : G) : ind₁_toCoind₁ R G V f x = f x⁻¹ := rfl
-
-variable {R G V}
-
-@[simp] lemma ind₁_toCoind₁_single (x : G) [DecidableEq G] (v : V) :
-    (ind₁_toCoind₁ R G V) (single x v) = lcoeFun (R := R) (single x⁻¹ v) := by
-  ext z
-  simp only [lcoeFun_apply]
-  rw [single_apply]
-  split_ifs with h
-  · rw [ind₁_toCoind₁]
-    dsimp
-    simp [←h]
-  · dsimp
-    rw [single_apply, if_neg]
-    contrapose! h
-    rw [h, inv_inv]
-
-
-
--- lemma ind₁_toCoind₁_apply₂ (f : G →₀ V) (x : G) : ind₁_toCoind₁ (R := R) f x = f x := rfl
-
--- lemma ind₁_toCoind₁_single [DecidableEq G] (x : G) (v : V) :
---     ind₁_toCoind₁ (R := R) (single x v) = single x v :=
---   rfl
-
-lemma ind₁_toCoind₁_comm [DecidableEq G] (g : G) :
-    ind₁_toCoind₁ R G V ∘ₗ ind₁ R G V g = coind₁ R G V g ∘ₗ ind₁_toCoind₁ R G V := by
-  ext
-  simp only [ind₁_apply, LinearMap.coe_comp, Function.comp_apply, lsingle_apply, lmapDomain_apply,
-    mapDomain_single, ind₁_toCoind₁_single, mul_inv_rev, lcoeFun_apply, coind_apply,
-    LinearMap.restrict_coe_apply, LinearMap.funLeft_apply]
-  rw [single_apply]
-  split_ifs with h
-  · rw [←h, inv_mul_cancel_right, single_eq_same]
-  · rw [single_apply, if_neg]
-    contrapose! h
-    rw [h, mul_inv_cancel_right]
-
-variable (R G V)
-@[simps!] def ind₁_equiv_coind₁ [Finite G] : (G →₀ V) ≃ₗ[R] coind₁V R G V  where
-  toLinearMap := ind₁_toCoind₁ R G V
-  invFun := sorry
-  left_inv := sorry
-  right_inv := sorry
-
-lemma ind₁_equiv_coind₁_comm [DecidableEq G] [Finite G] (g : G) :
-    ind₁_equiv_coind₁ R G V ∘ₗ ind₁ R G V g = coind₁ R G V g ∘ₗ ind₁_equiv_coind₁ R G V :=
-  ind₁_toCoind₁_comm g
+lemma ind₁'_lequiv_coind₁'_comm' [Finite G] (g : G) :
+    ind₁'_lequiv_coind₁'.symm.toLinearMap ∘ₗ ρ.coind₁' g
+    = ρ.ind₁' g ∘ₗ ind₁'_lequiv_coind₁'.symm.toLinearMap := by
+  ext f : 1
+  simp only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply]
+  rw [LinearEquiv.symm_apply_eq]
+  symm
+  change (ind₁'_lequiv_coind₁'.toLinearMap ∘ₗ (ρ.ind₁' g)) _ = (ρ.coind₁' g) f
+  rw [ind₁'_lequiv_coind₁'_comm, LinearMap.comp_apply, LinearEquiv.coe_coe,
+    LinearEquiv.apply_symm_apply]
 
 end Representation
 
@@ -386,23 +269,8 @@ namespace Rep
 
 variable {R} (M : Rep R G) (A : ModuleCat R)
 
--- def coind₁_obj : Rep R G := of (coind₁ R G A)
-
--- instance : FunLike (coind₁_obj (R:=R) G A) G A :=
---   inferInstanceAs (FunLike (coind₁V R G A) G A)
-
--- @[simp] lemma coind₁_obj_ρ_apply (g x : G) (f : coind₁V R G A) : (coind₁_obj G A).ρ g f x = f (x * g) := rfl
-
--- @[simp] lemma coind₁_obj_ρ_apply' (g x : G) (f : coind₁_obj G A) :
---     (coind₁_obj G A).ρ g f x = f (x * g) := rfl
-
-abbrev coind₁ : ModuleCat R ⥤ Rep R G := trivialFunctor R Unit ⋙ coindFunctor R 1
-
--- lemma coind₁_map_hom (A B : ModuleCat R) (φ : A ⟶ B) :
---     ((coind₁ G).map φ).hom = ofHom ((hom φ).compLeft G) := rfl
-
--- @[simp] lemma coind₁_map_apply₂ (A B : ModuleCat R) (φ : A ⟶ B) (f : G → A):
---     ((coind₁ G).map φ) f = φ ∘ f := rfl
+abbrev coind₁ : ModuleCat R ⥤ Rep R G :=
+  trivialFunctor R (⊥ : Subgroup G) ⋙ coindFunctor R (⊥ : Subgroup G).subtype
 
 @[simp] lemma trivialFunctor_obj_apply (A : ModuleCat R) : ((trivialFunctor R G).obj A).V = A := rfl
 
@@ -414,46 +282,14 @@ def coind₁_iso_trivialFunctor_comp_coindFunctor :
     coind₁ G ≅ trivialFunctor R Unit ⋙ coindFunctor R 1 := sorry
 
 /--
-Coinduced representations are acyclic.
+Coinduced representations have trivial cohomology.
 -/
 instance coind₁_trivialCohomology (A : ModuleCat R) : ((coind₁ G).obj A).TrivialCohomology :=
   /-
   For any subgroup `S` of `G`, the restriction to `S` of `(coind₁ G).obj A` is isomorphic to
-  a direct sum of representations of the form `(coind₁ S).obj A`, one copy for each ocset of `S`.
-  It remains to show that `Hⁿ(S,(coind₁ S).obj A) ≅ 0`. By Shapiro's lemma (a current PR), we have
+  a direct sum of representations of the form `(coind₁ S).obj A`, one copy for each coset of `S`.
+  It remains to show that `Hⁿ(S,(coind₁ S).obj A) ≅ 0`. By Shapiro's lemma, we have
   `Hⁿ(S,(coind₁ S).obj A) ≅ Hⁿ(Unit,A) ≅ 0`.
-
-  Alternatively (and without using Shapiro's lemma) here is an elementary proof:
-
-  Fix a subgroup `H` of `G` and let `{gᵢ}` be a set of coset representatives for `H \ G`.
-  Recall that a homogeneous `n + 1`-cochain on `H` with values in `G → A`
-  is a function `σ : H^{n+2} → (G → A)` satisfying
-
-    `σ (h * h₀, ... , h * h_{n+1}) (h * g) = σ (h₀,...,hₙ).`
-
-  The cochain `σ` is a cocycle if it satisfies the relation
-
-    `∑ᵢ (-1)ⁱ * σ (h₀, ... , (not hᵢ), ... , h_{n+2}) (g) = 0`.
-
-  Given a homogeneous `n + 1`-cocycle `σ`, we'll define a homogeneous `n`-cochain `τ` by
-
-    `τ (h₀,...,hₙ) (h * gᵢ) = σ (h,h₀,...,hₙ) (h * gᵢ)`.
-
-  The cocycle relation for `σ` implies `∂ τ = σ`, so `σ` is a coboundary.
-
-  Let's rephrase this in terms of inhomogeneous cocycles. The inhomogeneous cocycle
-  corresponding to `σ` is
-
-    `σ' (h₀,...,hₙ) (h * gᵢ) = σ (1,h₁,h₁*h₂,..., h₁*...*hₙ) (h * gᵢ)`
-
-  and the inhomogeneous cochain corresponding to `τ` is
-
-    `τ' (h₁,...,hₙ) (h * gᵢ)  = τ (1,h₁,... , h₁*...*hₙ) (h * gᵢ)`
-    `                         = σ (h, 1, h₁, h₁*h₂, ..., h₁*...*hₙ) (h * gᵢ)`
-    `                         = σ (1, h⁻¹, h⁻¹*h₁, h⁻¹*h₁*h₂, ..., h⁻¹* h₁*...*hₙ) (gᵢ)`
-    `                         = σ' (h⁻¹,h₁,...,hₙ) (gᵢ)`.
-
-  The last formula above defines an inhomogeneous cochain `τ'`, such that `∂ τ' = σ'`.
   -/
   sorry
 
@@ -478,7 +314,6 @@ lemma coind₁_quotientToInvariants_trivialCohomology (A : ModuleCat R) {Q : Typ
     ((coind₁ G ⋙ quotientToInvariantsFunctor surj).obj A).TrivialCohomology :=
   Rep.trivialCohomology_of_iso ((Rep.coind₁_quotientToInvariants_iso surj).app A)
 
-
 /--
 The functor which takes a representation `ρ` of `G` on `V` to the
 coinduced representation on `G → V`, where the action of `G` is by `ρ` in `V` and by
@@ -486,19 +321,16 @@ right translation on `G`.
 -/
 def coind₁' : Rep R G ⥤ Rep R G where
   obj M := of M.ρ.coind₁'
-  map := by
-    intro X Y φ
-    exact {
-      hom := ofHom ((ModuleCat.Hom.hom φ.hom).compLeft G)
-      comm g := by
-        ext
-        change (Action.ρ X g ≫ φ.hom) _ = _
-        rw [φ.comm]
-        rfl
+  map φ := {
+    hom := ofHom ((ModuleCat.Hom.hom φ.hom).compLeft G)
+    comm g := by
+      ext
+      change (Action.ρ _ g ≫ φ.hom) _ = _
+      rw [φ.comm]
+      rfl
   }
-  map_id := sorry
-  map_comp := sorry
-
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
 /--
 The inclusion of a representation `M` of `G` in the coinduced representation `coind₁'.obj M`.
@@ -513,7 +345,9 @@ This map takes an element `m : M` to the constant function with value `M`.
 
 @[simps] def coind₁'_obj_iso_coind₁ : coind₁'.obj M ≅ (coind₁ G).obj M.V where
   hom := {
-    hom := ofHom M.ρ.coind₁'_lequiv_coind₁.toLinearMap
+    hom := ofHom (by
+      apply M.ρ.coind₁'_lequiv_coind₁.toLinearMap
+    )
     comm g := by
       ext : 1
       exact M.ρ.coind₁'_lequiv_coind₁_comm g
@@ -555,61 +389,18 @@ variable (G)
 The functor taking an `R`-module `A` to the induced representation of `G` on `G →₀ A`,
 where the action of `G` is by left-translation.
 -/
-def ind₁ : ModuleCat R ⥤ Rep R G where
-  obj A := of (Representation.ind₁ R G A)
-  map := by
-    intro X Y φ
-    exact {
-      hom := ofHom (ind₁_map (ModuleCat.Hom.hom φ))
-      comm g := by
-        ext : 1
-        simp only [RingHom.toMonoidHom_eq_coe, RingEquiv.toRingHom_eq_coe, MonoidHom.coe_comp,
-          MonoidHom.coe_coe, RingHom.coe_coe, Function.comp_apply, ModuleCat.hom_comp,
-          ModuleCat.hom_ofHom]
-        change ind₁_map _ ∘ₗ Representation.ind₁ R G X g = Representation.ind₁ R G Y g ∘ₗ _
-        ext : 1
-        rw [LinearMap.comp_assoc, LinearMap.comp_assoc, ind₁_comp_lsingle, ind₁_map_comp_lsingle,
-          ind₁_map_comp_lsingle, ←LinearMap.comp_assoc, ind₁_comp_lsingle]
-    }
-  map_id M := by ext : 2; exact ind₁_map_id
-  map_comp _ _ := by ext : 2; exact ind₁_map_comp _ _
-
-instance (A : ModuleCat R) : FunLike ((ind₁ G).obj A) G A :=
-  inferInstanceAs (FunLike (G →₀ A) _ _)
+def ind₁ : ModuleCat R ⥤ Rep R G :=
+  trivialFunctor R (⊥ : Subgroup G) ⋙ indFunctor R (⊥ : Subgroup G).subtype
 
 instance ind₁_trivialHomology (A : ModuleCat R) : TrivialHomology ((ind₁ G).obj A) :=
-  sorry -- relies on current PR (Shapiro's lemma).
-
-@[ext] lemma ind₁_obj.ext {A : ModuleCat R} (f₁ f₂ : (ind₁ G).obj A) (h : ⇑f₁ = ⇑f₂) :
-    f₁ = f₂ := by
-  apply DFunLike.ext
-  rw [h]
-  exact fun _ ↦ rfl
+  /-
+  Let `S` be a subgroup of `G`.
+  The restriction to `S` of `(ind₁ G).obj A` is isomorphic (after choosing coset representatives)
+  to `(ind₁ S).obj (G/S →₀ A)`. By Shapiro's lemma, this has trivial homology.
+  -/
+  sorry
 
 @[simp] lemma ind₁_obj_ρ (A : ModuleCat R) : ((ind₁ G).obj A).ρ = Representation.ind₁ R G A := rfl
-
-@[simp] lemma ind₁_map_hom (A B : ModuleCat R) (φ : A ⟶ B) :
-    ((ind₁ G).map φ).hom = ofHom (ind₁_map (R := R) (G := G) (V := A) (W := B) φ.hom) := rfl
-
-@[simp] lemma ind₁_map_apply₂ (A B : ModuleCat R) (φ : A ⟶ B) (f : (ind₁ G).obj A) (x : G):
-    ((ind₁ G).map φ) f x = φ (f x) := rfl
-
-/--
-The map from `ind₁ G` to `coind₁ G`. This takes `f : G →₀ V` to the function `G → V` defined by
-
-  `fun x ↦ f x⁻¹`.
-
-The reason for the inverse is because the action of `G` on `ind₁` is by left-translation and the
-action on `coind₁` is by right-translation. These choices allow the actions to be defined in the
-case that `G` is only a monoid.
--/
-def ind₁_toCoind₁ [DecidableEq G] : ind₁ G (R := R) ⟶ coind₁ G where
-  app _ := {
-    hom     := ofHom (Representation.ind₁_toCoind₁ _ _ _)
-    comm _  := by
-      ext : 1
-      apply ind₁_toCoind₁_comm
-  }
 
 variable {G}
 
@@ -621,19 +412,19 @@ by `M.ρ` on `M.V`.
 def ind₁' : Rep R G ⥤ Rep R G where
   obj M := of M.ρ.ind₁'
   map f := {
-    hom := ofHom (Representation.ind₁_map (ModuleCat.Hom.hom f.hom))
+    hom := ofHom (Representation.ind₁'_map (ModuleCat.Hom.hom f.hom))
     comm g := by
       ext : 1
-      apply ind₁_map_comm
+      apply ind₁'_map_comm
       intro g
       simpa [ConcreteCategory.ext_iff] using f.comm g
   }
   map_id _ := by
     ext : 2
-    apply ind₁_map_id
+    exact mapRange.linearMap_id
   map_comp _ _ := by
     ext : 2
-    apply ind₁_map_comp
+    exact mapRange.linearMap_comp _ _
 
 /--
 The natural projection `ind₁'.obj M ⟶ M`, which takes `f : G →₀ M.V` to the sum of the
@@ -658,8 +449,7 @@ instance : Epi (ind₁'_π.app M) :=
 lemma ind₁'_obj_ρ_apply (g : G) : (ind₁'.obj M).ρ g = M.ρ.ind₁' g := rfl
 
 def ind₁'_obj_iso : ind₁'.obj M ≅ (ind₁ G).obj M.V where
-  hom := by
-    apply ofHom {
+  hom := ofHom {
       val := M.ρ.ind₁'_lequiv.toLinearMap
       property g := by
         rw [←LinearMap.coe_comp, ←LinearMap.coe_comp, ←DFunLike.ext'_iff]
@@ -696,67 +486,39 @@ section FiniteGroup
 variable [DecidableEq G] (A : ModuleCat R)
 set_option linter.unusedSectionVars false
 
-instance [Finite G] : IsIso ((ind₁_toCoind₁ G).app A) := sorry
+instance : DecidableRel ⇑(QuotientGroup.rightRel (⊥ : Subgroup G)) :=
+  Classical.decRel _
 
-def ind₁_obj_iso_coind₁_obj [Finite G] : (ind₁ G).obj A ≅ (coind₁ G).obj A :=
-  asIso ((ind₁_toCoind₁ G).app A)
+abbrev ind₁_obj_iso_coind₁_obj [Finite G] : (ind₁ G).obj A ≅ (coind₁ G).obj A :=
+  indCoindIso _
 
-
-/--
-If `G` is a finite group then `ind₁ G` is isomorphic to `coind₁ G`.
--/
-def ind₁_iso_coind₁ [Finite G] : ind₁ (R := R) G ≅ coind₁ G where
-  hom := ind₁_toCoind₁ G
+def ind₁'_iso_coind₁' [Finite G] : ind₁' (R := R) (G := G) ≅ coind₁' where
+  hom := {
+    app M := {
+      hom := ofHom ind₁'_lequiv_coind₁'.toLinearMap
+      comm g := by
+        ext : 1
+        apply ind₁'_lequiv_coind₁'_comm
+    }
+  }
   inv := {
-    app M := (ind₁_obj_iso_coind₁_obj M).inv
-    naturality := sorry
+    app M := {
+      hom := ofHom ind₁'_lequiv_coind₁'.symm.toLinearMap
+      comm g := by
+        ext : 1
+        apply ind₁'_lequiv_coind₁'_comm'
+    }
+    naturality _ _ _ := by
+      ext : 3
+      change ind₁'_lequiv_coind₁'.symm _ = _
+      rw [LinearEquiv.symm_apply_eq]
+      rfl
   }
 
-/--
-If `G` is a finite group then the functors `ind₁'` and `coind₁'` from `Rep R G` to itself
-are isomorphic.
--/
-@[simp] def ind₁'_iso_coind₁' [Finite G] : ind₁' (R := R) (G := G) ≅ coind₁' :=
-  ind₁'_iso_forget₂_ggg_ind₁.trans
-  ((NatIso.hcomp (Iso.refl (forget₂ (Rep R G) (ModuleCat R))) ind₁_iso_coind₁).trans
-  coind₁'_iso_forget₂_ggg_coind₁.symm)
 
 lemma ind₁'_iso_coind₁'_app_apply [Finite G] (f : G →₀ M.V) (x : G) :
-    (ind₁'_iso_coind₁'.app M).hom f x = f x⁻¹ := by
-  simp
-  rw [coind₁'_obj_iso_coind₁]
-  dsimp
-  change M.ρ.coind₁'_lequiv_coind₁.symm
-    ((hom (ind₁_iso_coind₁.hom.app ((forget₂ (Rep R G) (ModuleCat R)).obj M)))
-    ((hom (ind₁'_iso_forget₂_ggg_ind₁.hom.app M)) f)) x = f x⁻¹
-  simp
-  rw [ind₁_iso_coind₁]
-  dsimp
-  rw [ind₁_toCoind₁]
-  dsimp
-  change (M.ρ x⁻¹)
-    (((Representation.ind₁_toCoind₁ R G ↑((forget₂ (Rep R G) (ModuleCat R)).obj M)))
-    ((hom (ind₁'_iso_forget₂_ggg_ind₁.hom.app M)) f) x) = f x⁻¹
-  simp
-  rw [ind₁'_iso_forget₂_ggg_ind₁]
-  dsimp [ind₁'_obj_iso, ind₁'_lequiv]
-  rw [hom_ofHom]
-  change (M.ρ x⁻¹) (( f.sum fun x v ↦ fun₀ | x => (M.ρ x⁻¹) v) x⁻¹) = f x⁻¹
-  rw [Finsupp.sum]
-  simp
-  rw [Finset.sum_eq_single x⁻¹]
-  · simp
-  · intro y _ hxy
-    convert map_zero (M.ρ x⁻¹)
-    rw [single_apply_eq_zero]
-    intro
-    symm at hxy
-    contradiction
-  · intro hx
-    convert map_zero (M.ρ x⁻¹)
-    simp at hx
-    rw [hx]
-    simp
+    (ind₁'_iso_coind₁'.app M).hom f x = f x := by
+  rfl
 
 instance ind₁_trivialCohomology [Finite G] : TrivialCohomology ((ind₁ G).obj A) :=
   trivialCohomology_of_iso (ind₁_obj_iso_coind₁_obj A)

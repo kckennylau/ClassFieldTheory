@@ -712,21 +712,11 @@ This case is described again below.
 
 \begin{definition} \label{def:ind₁ to coind₁}
 	\lean{
-		Representation.ind₁_toCoind₁,
-		Rep.ind₁_toCoind₁,
-		Representation.ind₁_toCoind₁,
-		Representation.ind₁_toCoind₁_comm,
-		Representation.ind₁_equiv_coind₁,
-		Rep.ind₁_toCoind₁,
-		Rep.instIsIsoAppModuleCatInd₁_toCoind₁OfFinite,
-		Rep.ind₁_iso_coind₁}
+		Rep.ind₁_obj_iso_coind₁_obj}
 	\uses{def:induced}
 	\leanok
 	There is a morphism of representations $\ind_1(G,A) \to \coind_1(G,A)$,
-	which takes a finitely supported function $f : G \to_0 A$ to the function
-	\[
-		x \mapsto f(x^{-1}).
-	\]
+	which takes a finitely supported function $f : G \to_0 A$ to the function $f$.
 	If the group $G$ is finite then this map is an isomorphism.
 	More precisely, this is an isomorphism of functors $\ind_1(G,-) \cong \coind_1(G,-)$.
 \end{definition}

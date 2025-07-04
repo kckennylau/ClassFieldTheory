@@ -116,23 +116,58 @@ lemma isShortExactSequence' {H : Type} [Group H] (φ : H →* G) :
     ((aug_shortExactSequence R G).map (res φ)).ShortExact := by
   sorry
 
+open Finsupp
+
+def leftRegularToInd₁' : (G →₀ R) →ₗ[R] G →₀ R := lmapDomain R R (fun x ↦ x⁻¹)
+
+lemma leftRegularToInd₁'_comp_lsingle (x : G) : leftRegularToInd₁' R G ∘ₗ lsingle x = lsingle x⁻¹
+    := by
+  sorry
+
+lemma leftRegularToInd₁'_comm (g : G) : leftRegularToInd₁' R G ∘ₗ (leftRegular R G).ρ g
+    = (Representation.trivial R G R).ind₁' g ∘ₗ leftRegularToInd₁' R G := by
+  ext : 1
+  rw [LinearMap.comp_assoc, ρReg_comp_lsingle, leftRegularToInd₁'_comp_lsingle,
+    LinearMap.comp_assoc, leftRegularToInd₁'_comp_lsingle, Representation.ind₁'_comp_lsingle,
+    mul_inv_rev, Representation.isTrivial_def, LinearMap.comp_id]
+
+lemma leftRegularToInd₁'_comm' (g : G) :
+    leftRegularToInd₁' R G ∘ₗ (Representation.trivial R G R).ind₁' g =
+    (leftRegular R G).ρ g ∘ₗ leftRegularToInd₁' R G := by
+  ext : 1
+  rw [LinearMap.comp_assoc, Representation.ind₁'_comp_lsingle, Representation.isTrivial_def,
+    LinearMap.comp_id, leftRegularToInd₁'_comp_lsingle, LinearMap.comp_assoc, leftRegularToInd₁'_comp_lsingle,
+    ρReg_comp_lsingle, mul_inv_rev, inv_inv]
+
+lemma leftRegularToInd₁'_comp_leftRegularToInd₁' :
+    leftRegularToInd₁' R G ∘ₗleftRegularToInd₁' R G = 1 := by
+  ext : 1
+  rw [LinearMap.comp_assoc, leftRegularToInd₁'_comp_lsingle, leftRegularToInd₁'_comp_lsingle,
+    inv_inv]
+  rfl
 
 /--
 The left regular representation is isomorphic to `ind₁'.obj (trivial R G R)`
 -/
 def _root_.Rep.leftRegular.iso_ind₁' : leftRegular R G ≅ ind₁'.obj (trivial R G R) where
   hom := {
-    hom := ofHom LinearMap.id
+    hom := ofHom (leftRegularToInd₁' R G)
     comm g := by
       ext : 1
-      change (leftRegular R G).ρ g = (ind₁'.obj (trivial R G R)).ρ g
-      ext
-      simp [ind₁'_obj_ρ_apply]
+      apply leftRegularToInd₁'_comm
   }
   inv := {
-    hom := ofHom LinearMap.id
-    comm := sorry
+    hom := ofHom (leftRegularToInd₁' R G)
+    comm g := by
+      ext : 1
+      apply leftRegularToInd₁'_comm'
   }
+  hom_inv_id := by
+    ext : 2
+    apply leftRegularToInd₁'_comp_leftRegularToInd₁'
+  inv_hom_id := by
+    ext : 2
+    apply leftRegularToInd₁'_comp_leftRegularToInd₁'
 
 /--
 For a finite group, the left regular representation is acyclic.
