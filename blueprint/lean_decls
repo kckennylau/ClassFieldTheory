@@ -85,6 +85,7 @@ groupCohomology.instIsIsoModuleCatδ
 groupCohomology.instIsIsoModuleCatδ_1
 groupCohomology.upδiso_Tate
 groupCohomology.downδiso_Tate
+Rep.aug
 groupCohomology.inflationRestriction
 groupCohomology.inflation_restriction_mono
 groupCohomology.inflation_restriction_exact

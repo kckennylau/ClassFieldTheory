@@ -19,17 +19,6 @@ open scoped CategoryTheory BigOperators
 -/
 namespace Rep.leftRegular
 
--- /--
--- The definitional equivalence between `leftRegular R G` and `G →₀ R`.
--- -/
--- def coeff : leftRegular R G ≃ₗ[R] (G →₀ R) where
---   toFun     := id
---   invFun    := id
---   left_inv  := by tauto
---   right_inv := by tauto
---   map_add'  := by tauto
---   map_smul' := by tauto
-
 /--
 `Rep.leftRegular.of g` is the group element `g : G` regarded as
 as element of `Rep.leftRegular ℤ G`. Its type is `CoeSort.coe (Rep.leftRegular ℤ G)`.
@@ -58,12 +47,6 @@ lemma eq_sum_smul_of (v : leftRegular R G) : v = ∑ x ∈ v.support, (v x) • 
   change v = v.sum (fun x s ↦ s • of x)
   simp
 
--- noncomputable abbrev ρReg := (leftRegular R G).ρ
-
-/-This is a collection of definitional lemmas concerning `ρReg`.-/
-
--- lemma ρReg_defn : ρReg = (leftRegular R G).ρ := rfl
-
 lemma ρReg_apply (g : G) : (leftRegular R G).ρ g = lmapDomain R R (g * ·) := rfl
 
 lemma ρReg_apply_apply (g : G) (v : leftRegular R G) :
@@ -91,11 +74,6 @@ lemma ρReg_comp_lsingle (g x : G) : (leftRegular R G).ρ g ∘ₗ lsingle x = l
 
 lemma of_eq_ρReg_of_one (g : G) : of g = (leftRegular R G).ρ g (of 1) := by
   rw [ρReg_apply_of, mul_one]
-
--- lemma ρReg_apply_of_one (g : G) :
---     ρReg (R := R) g (of 1) = of g :=
--- by
---   rw [ρReg_apply_of, mul_one]
 
 lemma hom_comp_ρReg {B : Rep R G} (b : B) (g : G) (v : leftRegular R G) :
     (leftRegularHom B b) ((leftRegular R G).ρ g v) = B.ρ g ((leftRegularHom B b) v) :=
