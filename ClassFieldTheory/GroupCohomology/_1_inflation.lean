@@ -4,6 +4,7 @@ import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._1_restriction
 
 open CategoryTheory
+  ConcreteCategory
   Limits
   Rep
   groupCohomology
@@ -13,13 +14,35 @@ variable {R G : Type} [CommRing R] [Group G] [DecidableEq G]
 
 variable {H : Type} [Group H] {φ : G →* H} (surj : Function.Surjective φ) [DecidableEq H]
 
+
 noncomputable def Rep.quotientToInvariantsFunctor :
     Rep R G ⥤ Rep R H where
   obj M := M.quotientToInvariants φ.ker ↓ (QuotientGroup.quotientKerEquivOfSurjective φ surj).symm
-  map f := by
-    sorry
+  map f := ConcreteCategory.ofHom {
+    val := LinearMap.restrict (ModuleCat.Hom.hom f.hom) (by
+      rename_i X Y
+      intro x hx g
+      specialize hx g
+      simp only [MonoidHom.coe_comp, Subgroup.coe_subtype, Function.comp_apply] at hx ⊢
+      rw [←Rep.ρ_hom, ←LinearMap.comp_apply, ←ModuleCat.hom_comp, ←f.comm,
+        ModuleCat.hom_comp, LinearMap.comp_apply, Rep.ρ_hom, hx])
+    property h := by
+      rename_i X Y
+      ext ⟨x,hx⟩
+      rw [Function.comp_apply, Function.comp_apply]
+      apply Subtype.ext
+      change f.hom (X.ρ _ _) = Y.ρ _ (f.hom _)
+      rw [←LinearMap.comp_apply]
+      nth_rw 2 [←LinearMap.comp_apply]
+      congr 1
+      rw [←Rep.ρ_hom, ←Rep.ρ_hom, ←ModuleCat.Hom.hom, ←ModuleCat.hom_comp, ←ModuleCat.hom_comp,
+        f.comm]
+  }
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
-instance : (quotientToInvariantsFunctor (R := R) surj).PreservesZeroMorphisms := sorry
+instance : (quotientToInvariantsFunctor (R := R) surj).PreservesZeroMorphisms where
+  map_zero _ _ := rfl
 
 set_option quotPrecheck false in
 /--
@@ -27,9 +50,15 @@ set_option quotPrecheck false in
 -/
 notation M " ↑ " surj => (Rep.quotientToInvariantsFunctor surj).obj M
 
-def groupCohomology.cochain_infl :
-    quotientToInvariantsFunctor surj ⋙ cochainsFunctor R H ⟶ cochainsFunctor R G :=
-  sorry -- current PR
+noncomputable def groupCohomology.cochain_infl :
+    quotientToInvariantsFunctor surj ⋙ cochainsFunctor R H ⟶ cochainsFunctor R G where
+  app M := cochainsMap φ <| ConcreteCategory.ofHom <| {
+      val := Submodule.subtype _
+      property g := by
+        sorry
+    }
+  naturality M₁ M₂ f := by
+    sorry
 
 /--
 The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformation.
@@ -54,7 +83,9 @@ lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep
   -/
   sorry
 
-omit [DecidableEq G] [DecidableEq H] in
+
+-- set_option maxHeartbeats 1000000
+--omit [DecidableEq G] [DecidableEq H] in
 /--
 Assume that we have a short exact sequence `0 → A → B → C → 0` in `Rep R G`
 and that the sequence of `H`- invariants is also a short exact in `Rep R (G ⧸ H)` :
@@ -88,8 +119,12 @@ lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.Sh
     τ₃ := by
         change (cochainsFunctor _ _).obj S'.X₃ ⟶ (cochainsFunctor _ _).obj S.X₃
         exact (cochain_infl surj).app S.X₃
-    comm₁₂ := ((cochain_infl surj).naturality S.f).symm
-    comm₂₃ := ((cochain_infl surj).naturality S.g).symm
+    comm₁₂ := by
+      simp only [id_eq]
+      exact ((cochain_infl surj).naturality S.f).symm
+    comm₂₃ := by
+      simp only [id_eq]
+      exact ((cochain_infl surj).naturality S.g).symm
   }
   have ses₁ : C.ShortExact := map_cochainsFunctor_shortExact hS
   have ses₂ : C'.ShortExact := map_cochainsFunctor_shortExact hS'

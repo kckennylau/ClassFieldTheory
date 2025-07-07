@@ -12,8 +12,6 @@ we have `Hₙ(S,M) ≅ 0`.
 
 `M` has *trivial Tate cohomology* if for all subgroups `S` and all `n : ℤ`
 we have `Hⁿ_{Tate}(S,M) ≅ 0`.
-
-
 -/
 
 open
