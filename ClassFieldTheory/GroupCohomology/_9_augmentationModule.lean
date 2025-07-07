@@ -127,7 +127,7 @@ lemma leftRegularToInd₁'_comp_lsingle (x : G) : leftRegularToInd₁' R G ∘�
 lemma leftRegularToInd₁'_comm (g : G) : leftRegularToInd₁' R G ∘ₗ (leftRegular R G).ρ g
     = (Representation.trivial R G R).ind₁' g ∘ₗ leftRegularToInd₁' R G := by
   ext : 1
-  rw [LinearMap.comp_assoc, ρReg_comp_lsingle, leftRegularToInd₁'_comp_lsingle,
+  rw [LinearMap.comp_assoc, ρ_comp_lsingle, leftRegularToInd₁'_comp_lsingle,
     LinearMap.comp_assoc, leftRegularToInd₁'_comp_lsingle, Representation.ind₁'_comp_lsingle,
     mul_inv_rev, Representation.isTrivial_def, LinearMap.comp_id]
 
@@ -136,8 +136,8 @@ lemma leftRegularToInd₁'_comm' (g : G) :
     (leftRegular R G).ρ g ∘ₗ leftRegularToInd₁' R G := by
   ext : 1
   rw [LinearMap.comp_assoc, Representation.ind₁'_comp_lsingle, Representation.isTrivial_def,
-    LinearMap.comp_id, leftRegularToInd₁'_comp_lsingle, LinearMap.comp_assoc, leftRegularToInd₁'_comp_lsingle,
-    ρReg_comp_lsingle, mul_inv_rev, inv_inv]
+    LinearMap.comp_id, leftRegularToInd₁'_comp_lsingle, LinearMap.comp_assoc,
+    leftRegularToInd₁'_comp_lsingle, ρ_comp_lsingle, mul_inv_rev, inv_inv]
 
 lemma leftRegularToInd₁'_comp_leftRegularToInd₁' :
     leftRegularToInd₁' R G ∘ₗleftRegularToInd₁' R G = 1 := by

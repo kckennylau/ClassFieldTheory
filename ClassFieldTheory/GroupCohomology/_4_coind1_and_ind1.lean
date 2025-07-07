@@ -1,27 +1,22 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._1_inflation
 import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
--- # TODO change all this because Shapiro's Lemma is a current PR in cohomology and homology.
-/-!
-We define two functors:
 
-  `coind₁ G : ModuleCat R ⥤ Rep R G` and
-  `ind₁ G : ModuleCat R ⥤ Rep R G`.
+/-!
+Let `G` be a group. We define two functors:
+
+  `Rep.coind₁ G : ModuleCat R ⥤ Rep R G` and
+  `Rep.ind₁ G   : ModuleCat R ⥤ Rep R G`.
 
 For an `R`-module `A`, the representation `(coind₁ G).obj A` is the space of functions `f : G → A`,
 with the action of `G` by right-translation. In other words `(g f) x = f (x g)` for `g : G`.
 
-The space `(ind₁ G).obj A` is `G →₀ A` with the action of `G` by left-translation, i.e.
-`g (single x v) = single (g * x) v`.
+The space `(ind₁ G).obj A` is `G →₀ A` with the action of `G` by right-translation, i.e.
+`g (single x v) = single (x * g⁻¹) v`.
+
+Both `ind₁` and `coind₁` are defined as special cases of the functors `ind` and `coind` in Matlib.
 
 We prove that `coind₁.obj A` is acyclic and `ind₁.obj X` is homology-acyclic.
-
-W show that `coind₁` is isomorphic to the functor `coindFunctor R (1 : Unit →* G)` in Mathlib.
-
-There is an intertwining map `ind₁_toCoind₁ : (ind₁ G).obj A ⟶ (coind₁ G).obj A`,
-which takes a finitely supported function `f` to the function `x ↦ f x⁻¹`.
-If `G` is finite then this map is an isomorphism, so in this case both representations
-are both acyclic and homology-acyclic.
 
 We also define two functors
 
@@ -29,10 +24,10 @@ We also define two functors
   `ind₁' : Rep R G ⥤ Rep R G`.
 
 For a representation `M` of `G`, the representation `coind₁'.obj M` is the representation of `G`
-on `G → M.V`, where the actio of `G` is by `M.ρ` on `M.V` and by right-translation on `G`.
+on `G → M.V`, where the action of `G` is by `M.ρ` on `M.V` and by right-translation on `G`.
 
 `ind₁'.obj M` is the representation of `G` on `G →₀ M.V`, where the action of `G` is by `M.ρ` on
-`M.V` and by left-translation on `G`.
+`M.V` and by right-translation on `G`.
 
 We define the canonical monomorphism `coind₁'_ι : M ⟶ coind₁'.obj M` which takes a vector `v` to
 the constant function on `G` with value `v`.

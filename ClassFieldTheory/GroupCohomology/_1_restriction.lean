@@ -35,10 +35,10 @@ notation M "↓" φ => (res φ).obj M
 `simp` lemmas for `Action.res` also work for `Rep.res` because it is an abbreviation:
 -/
 example (M : Rep R G) (H : Type) [Group H] (φ : H →* G) (h : H) :
-  (M ↓ φ).ρ h = M.ρ (φ h) := by simp
+  (M ↓ φ).ρ h = M.ρ (φ h) := by simp only [Action.res_obj_V, res_obj_ρ]
 
 example (M : Rep R G) (H : Type) [Group H] (φ : H →* G)  :
-  (M ↓ φ).V = M.V := by simp
+  (M ↓ φ).V = M.V := by simp only [Action.res_obj_V]
 
 instance (H : Type) [Group H] (f : H →* G) : ReflectsLimits (Action.res (ModuleCat.{0} R) f) :=
   reflectsLimits_of_reflectsIsomorphisms
@@ -58,15 +58,12 @@ example (H : Type) [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
     (S.map (res φ)).Exact ↔ S.Exact := by
   rw [ShortComplex.exact_map_iff_of_faithful]
 
-
-
 /--
 An object of `Rep R G` is zero iff the underlying `R`-module is zero.
 -/
 lemma isZero_iff (M : Rep R G) : IsZero M ↔ IsZero (M.V) := by
   simp only [IsZero.iff_id_eq_zero]
   apply Action.hom_ext_iff
-
 
 /--
 An object of `Rep R G` is zero iff its restriction to `H` is zero.
@@ -81,23 +78,33 @@ exact sequences.
 -/
 lemma res_respectsShortExact {H : Type} [Group H] (φ : H →* G) (S : ShortComplex (Rep R G)) :
     (S.map (Rep.res φ)).ShortExact ↔ S.ShortExact := by
-  -- easy (see the example above)
-  sorry
+  constructor
+  · intro h
+    have h₁ := h.1
+    have h₂ := h.2
+    have h₃ := h.3
+    rw [ShortComplex.exact_map_iff_of_faithful] at h₁
+    simp only [ShortComplex.map_X₁, ShortComplex.map_X₂, ShortComplex.map_f,
+      Functor.mono_map_iff_mono, ShortComplex.map_X₃, ShortComplex.map_g,
+      Functor.epi_map_iff_epi] at h₂ h₃
+    exact {
+      exact := h₁
+      mono_f := h₂
+      epi_g := h₃
+    }
+  · intro h
+    have h₁ := h.1
+    have h₂ := h.2
+    have h₃ := h.3
+    exact {
+      exact := by rwa [ShortComplex.exact_map_iff_of_faithful]
+      mono_f := by simpa using h₂
+      epi_g := by simpa using h₃
+    }
 
 lemma res_ofShortExact {H : Type} [Group H] (φ : H →* G) {S : ShortComplex (Rep R G)}
     (hS : S.ShortExact) : (S.map (Rep.res φ)).ShortExact := by
   rwa [res_respectsShortExact]
-
-lemma res_of_projective (H : Type) [Group H] (φ : H →* G) (inj : Function.Injective φ) {P : Rep R G}
-    (hP : Projective P) (H : Subgroup G) : Projective (P ↓ φ) := by
-  /-
-  *Note : this is probably probably not needed.*
-
-  A representation is projective iff it is a direct summand of a free module over the group ring.
-  This lemma follows because "R[G]" is free as an "R[H]"-module (a basis is given by a set of
-  coset representatives).
-  -/
-  sorry
 
 end Rep
 
@@ -152,12 +159,18 @@ lemma rest_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     {H : Type} [Group H] [DecidableEq H] (φ : H →* G) (i j : ℕ) (hij : i + 1 = j) :
     (δ hS i j hij) ≫ (rest φ j).app S.X₁ = (rest φ i).app S.X₃ ≫ δ (res_ofShortExact φ hS) i j hij
     := by
-  /-
-  This will essentially be `HomologicalComplex.HomologySequence.δ_naturality`, but it relies on
-  the definition of `groupCohomology.δ`, which is a current PR.
-  -/
-  sorry
-
+  let C₁ := S.map (cochainsFunctor R G)
+  let C₂ := (S.map (res φ)).map (cochainsFunctor R H)
+  have ses₁ : C₁.ShortExact := map_cochainsFunctor_shortExact hS
+  have ses₂ : C₂.ShortExact := by
+    apply map_cochainsFunctor_shortExact
+    rwa [res_respectsShortExact]
+  let this : C₁ ⟶ C₂ := {
+    τ₁ := cochainsMap φ (𝟙 ((res φ).obj S.X₁))
+    τ₂ := cochainsMap φ (𝟙 ((res φ).obj S.X₂))
+    τ₃ := cochainsMap φ (𝟙 ((res φ).obj S.X₃))
+  }
+  exact HomologicalComplex.HomologySequence.δ_naturality this ses₁ ses₂ i j hij
 
 end groupCohomology
 

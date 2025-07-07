@@ -5,6 +5,18 @@ import ClassFieldTheory.GroupCohomology._5_DimensionShift
 import ClassFieldTheory.GroupCohomology._7_inflationRestriction
 import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
 
+/-
+Suppose `G` is a finite group, and there are positive integers `r` and `s`
+with `r` even and `s` odd, such that `Hʳ(S,M) ≅ Hˢ(S,M) ≅ 0` for all subgroup `S` of `G`.
+Then we prove that `M` has trivial cohomology.
+This is used in proving that `split σ` has trivial cohomology, where `σ` is a `2`-cocycle
+in a finite class formation.
+
+The theorem is proved first for solvable groups, by induction on the subgroup
+using inflation-restriction.
+The proof in the general case requires the corestriction map `Cor : Hⁿ(H,M) ⟶ Hⁿ(G,M)`.
+-/
+
 open
   CategoryTheory
   CategoryTheory.Limits
@@ -18,7 +30,7 @@ variable {G : Type} [Group G]
 /--
 If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H` of `G` then `M` is acyclic.
 -/
-theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
+private theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
       IsZero (groupCohomology (M ↓ φ) (2 * n + 2)))
@@ -50,8 +62,15 @@ theorem groupCohomology.trivialCohomology_of_even_of_odd [Finite G]
     (h_odd : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
       IsZero (groupCohomology (M ↓ φ) (2 * m + 1))) :
     M.TrivialCohomology := by
+  /-
+  Let `p` be any prime number and let `S` be a subgroup of `G`.
+  The group `Hⁿ(S,M)[p^∞]` is isomorphic to a subgroup of `Hⁿ(Sₚ,M)` where
+  `Sₚ` is a Sylow `p`-subgroup of `S`.
+  Since `p`-groups are solvable, the previous theorem implies that `Hⁿ(Sₚ,M) ≅ 0`.
+  This shows that `Hⁿ(S,M)` has no elements of finite order.
+  Since `n > 0`, the cohomology groups are torsion.
+  -/
   sorry
-
 
 instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     (up.obj M).TrivialCohomology := sorry
@@ -59,8 +78,6 @@ instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.Tri
 instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     (down.obj M).TrivialCohomology := sorry
 
-lemma groupCohomology.TateCohomology_of_trivialCohomology [Finite G] [DecidableEq G] (M : Rep R G)
-    [M.TrivialCohomology] (n : ℤ) : IsZero ((TateCohomology n).obj M) := sorry
+instance [Finite G] (M : Rep R G) [M.TrivialCohomology] : M.TrivialTateCohomology := sorry
 
-instance Rep.trivialHomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
-    M.TrivialHomology := sorry
+instance [Finite G] (M : Rep R G) [M.TrivialCohomology] : M.TrivialHomology := sorry

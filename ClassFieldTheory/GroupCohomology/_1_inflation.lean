@@ -32,16 +32,6 @@ def groupCohomology.cochain_infl :
   sorry -- current PR
 
 /--
-# TODO :
-  move this to the file `Basic.lean`.
-
-The `n`-th group cohomology functor is the composition of the cochains functor and the
-`n`-homology functor.
--/
-noncomputable def groupCohomology.functor_iso_cochainsFunctor_comp_homology (n : ℕ) :
-    functor R G n ≅ cochainsFunctor R G ⋙ homologyFunctor _ _ n := Iso.refl _
-
-/--
 The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformation.
 This is defined using the inflation map on cocycles.
 -/
@@ -64,6 +54,7 @@ lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep
   -/
   sorry
 
+omit [DecidableEq G] [DecidableEq H] in
 /--
 Assume that we have a short exact sequence `0 → A → B → C → 0` in `Rep R G`
 and that the sequence of `H`- invariants is also a short exact in `Rep R (G ⧸ H)` :
@@ -100,6 +91,6 @@ lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.Sh
     comm₁₂ := ((cochain_infl surj).naturality S.f).symm
     comm₂₃ := ((cochain_infl surj).naturality S.g).symm
   }
-  have ses₁ : C.ShortExact := sorry -- current PR
-  have ses₂ : C'.ShortExact := sorry -- current PR
+  have ses₁ : C.ShortExact := map_cochainsFunctor_shortExact hS
+  have ses₂ : C'.ShortExact := map_cochainsFunctor_shortExact hS'
   exact HomologySequence.δ_naturality φ ses₂ ses₁ i j hij
