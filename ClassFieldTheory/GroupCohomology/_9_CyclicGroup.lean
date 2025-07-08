@@ -1,6 +1,6 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._3_LeftRegular
-import ClassFieldTheory.GroupCohomology._5_DimensionShift
+import ClassFieldTheory.GroupCohomology._6_LeftRegular
+import ClassFieldTheory.GroupCohomology._8_DimensionShift
 
 /-!
 Let `M : Rep R G`, where `G` is a finite cyclic group.
@@ -61,17 +61,17 @@ omit [IsCyclic G] [Finite G] [DecidableEq G] in
   rw [Rep.Action_ρ_eq_ρ, map_mul]
   rfl
 
-section Representation
+namespace Representation
 
 variable {A : Type} [AddCommGroup A] [Module R A] (ρ : Representation R G A)
 
-@[simps] def Representation.map₁ : (G → A) →ₗ[R] (G → A) where
+@[simps] def map₁ : (G → A) →ₗ[R] (G → A) where
   toFun f x := f x - f ((gen G)⁻¹ * x)
   map_add' := sorry
   map_smul' := sorry
 
 omit [Finite G] [DecidableEq G] in
-lemma Representation.map₁_comm (g : G) :
+lemma map₁_comm (g : G) :
     map₁ ∘ₗ ρ.coind₁' g = ρ.coind₁' g ∘ₗ map₁  := by
   apply LinearMap.ext
   intro
@@ -80,26 +80,26 @@ lemma Representation.map₁_comm (g : G) :
   simp [mul_assoc]
 
 omit [Finite G] [DecidableEq G] in
-lemma Representation.map₁_comp_coind_ι :
+lemma map₁_comp_coind_ι :
     map₁ (R := R) (G := G) (A := A) ∘ₗ coind₁'_ι = 0 := by
   ext; simp
 
 omit [Finite G] [DecidableEq G] in
-lemma Representation.map₁_ker :
+lemma map₁_ker :
     LinearMap.ker (map₁ (R := R) (G := G) (A := A)) = LinearMap.range coind₁'_ι :=
   sorry
 
-@[simps!] def Representation.map₂ : (G →₀ A) →ₗ[R] (G →₀ A) :=
+@[simps!] def map₂ : (G →₀ A) →ₗ[R] (G →₀ A) :=
   LinearMap.id - lmapDomain _ _ (fun x ↦ gen G * x)
 
 omit [Finite G] [DecidableEq G] in
-@[simp] lemma Representation.map₂_comp_lsingle (x : G) :
+@[simp] lemma map₂_comp_lsingle (x : G) :
     map₂ (R := R) (G := G) (A := A) ∘ₗ lsingle x = lsingle x - lsingle (gen G * x) := by
   ext
   simp [map₂, LinearMap.sub_comp]
 
 omit [Finite G] [DecidableEq G] in
-lemma Representation.map₂_comm (g : G) :
+lemma map₂_comm (g : G) :
     map₂ ∘ₗ ρ.ind₁' g = ρ.ind₁' g ∘ₗ map₂ := by
   ext x : 1
   rw [LinearMap.comp_assoc, ind₁'_comp_lsingle, LinearMap.comp_assoc, map₂_comp_lsingle,
@@ -107,16 +107,15 @@ lemma Representation.map₂_comm (g : G) :
     LinearMap.sub_comp, ind₁'_comp_lsingle, mul_assoc]
 
 omit [Finite G] [DecidableEq G] in
-lemma Representation.ind₁'_π_comp_map₂ :
+lemma ind₁'_π_comp_map₂ :
     ind₁'_π ∘ₗ map₂ (R := R) (G := G) (A := A) = 0 := by
   ext : 1
   rw [LinearMap.comp_assoc, map₂_comp_lsingle, LinearMap.comp_sub,
     LinearMap.zero_comp, sub_eq_zero, ind₁'_π_comp_lsingle, ind₁'_π_comp_lsingle]
 
-lemma Representation.map₂_range :
+lemma map₂_range :
     LinearMap.range (map₂ (R := R) (G := G) (A := A)) = LinearMap.ker ind₁'_π :=
   sorry
-
 
 end Representation
 
@@ -240,19 +239,29 @@ def periodicCohomology (n : ℕ) :
   apply Iso.trans (Functor.isoWhiskerRight up_iso_down.symm _)
   apply up_δiso_natTrans
 
+def periodicCohomology' (n m : ℕ) :
+    functor R G (n + 1) ≅ functor R G (n + 1 + 2 * m) := by
+  induction m with
+  | zero =>
+    apply Iso.refl
+  | succ m ih =>
+    apply Iso.trans ih
+    rw [mul_add, mul_one, ←add_assoc, add_assoc, add_comm 1, ←add_assoc]
+    apply periodicCohomology
+
+
 omit [DecidableEq G] in
 /--
-Let `M` be a representation of a finite cyclic group `G`.
-If `H¹(G,M)` and `H²(G,M)` are both zero then `Hⁿ(G,M)` is zero for all `n > 0`.
+Let `M` be a representation of a finite cyclic group `G`. Suppose there are even
+and positive integers `e` and `o` with `e` even and `o` odd, such that
+`Hᵉ(G,M)` and `Hᵒ(G,M)` are both zero.
+Then `Hⁿ(G,M)` is zero for all `n > 0`.
 -/
-lemma isZero_ofH1_ofH2 {M : Rep R G} (h1 : IsZero (groupCohomology M 1))
-    (h2 : IsZero (groupCohomology M 2)) (n : ℕ) : IsZero (groupCohomology M (n + 1)) := by
-  induction n using Nat.twoStepInduction with
-  | zero => exact h1
-  | one => exact h2
-  | more n ih _ =>
-    apply IsZero.of_iso ih
-    apply (periodicCohomology n).symm.app
+lemma isZero_ofEven_ofOdd {M : Rep R G} {a b : ℕ}
+    (hₑ : IsZero (groupCohomology M (2 * a + 2)))
+    (hₒ : IsZero (groupCohomology M (2 * b + 1))) (n : ℕ) :
+    IsZero (groupCohomology M (n + 1)) := by
+  sorry
 
 
 end Rep

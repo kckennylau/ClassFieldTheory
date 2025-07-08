@@ -1,20 +1,24 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
-import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
-import ClassFieldTheory.GroupCohomology._5_DimensionShift
-import ClassFieldTheory.GroupCohomology._7_inflationRestriction
-import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
+import ClassFieldTheory.GroupCohomology._4_TateCohomology_def
+import ClassFieldTheory.GroupCohomology._5_TrivialCohomology
+import ClassFieldTheory.GroupCohomology._8_DimensionShift
+import ClassFieldTheory.GroupCohomology._10_inflationRestriction
+import ClassFieldTheory.GroupCohomology._9_CyclicGroup
 
 /-
 Suppose `G` is a finite group, and there are positive integers `r` and `s`
 with `r` even and `s` odd, such that `Hʳ(S,M) ≅ Hˢ(S,M) ≅ 0` for all subgroup `S` of `G`.
 Then we prove that `M` has trivial cohomology.
-This is used in proving that `split σ` has trivial cohomology, where `σ` is a `2`-cocycle
+This is used in proving that `split σ` has trivial cohomology, where `σ` is a fundamental class
 in a finite class formation.
 
 The theorem is proved first for solvable groups, by induction on the subgroup
 using inflation-restriction.
 The proof in the general case requires the corestriction map `Cor : Hⁿ(H,M) ⟶ Hⁿ(G,M)`.
+
+As a corollary, we show that if `M` has trivial cohomology then `up.obj M` and `down.obj M`
+both have trivial cohomology. Using this, we show that if `M` has trivial cohomology then it has
+trivial Tate cohomology.
 -/
 
 open
@@ -79,5 +83,3 @@ instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.T
     (down.obj M).TrivialCohomology := sorry
 
 instance [Finite G] (M : Rep R G) [M.TrivialCohomology] : M.TrivialTateCohomology := sorry
-
-instance [Finite G] (M : Rep R G) [M.TrivialCohomology] : M.TrivialHomology := sorry

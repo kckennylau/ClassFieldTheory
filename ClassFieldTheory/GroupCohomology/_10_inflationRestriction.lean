@@ -1,8 +1,7 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._0_Current_PRs
-import ClassFieldTheory.GroupCohomology._1_inflation
-import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
-import ClassFieldTheory.GroupCohomology._5_DimensionShift
+import ClassFieldTheory.GroupCohomology._3_inflation
+import ClassFieldTheory.GroupCohomology._8_DimensionShift
 
 noncomputable section
 
@@ -19,14 +18,29 @@ variable {Q : Type} [Group Q] [DecidableEq Q] {φ : G →* Q} (surj : Function.S
 
 namespace groupCohomology
 
+/--
+Suppose we have a short exact sewuence `0 ⟶ A ⟶ B ⟶ C ⟶ 0` in `Rep R G`.
+If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R H`:
+
+  `0 ⟶ Aᴷ ⟶ Bᴷ ⟶ Cᴷ ⟶ 0`, where `K = φ.ker`.
+-/
+lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep R G)}
+    (hS : S.ShortExact) (hS' : IsZero (H1 (S.X₁ ↓ φ.ker.subtype))) :
+    (S.map (quotientToInvariantsFunctor surj)).ShortExact := by
+  /-
+  This is the opening section of the long exact sequence. The next term is `H¹(K,S.X₁)`, which
+  is assumeed to be zero.
+  -/
+  sorry
+
+
 def inflationRestriction (n : ℕ) (M : Rep R G) : ShortComplex (ModuleCat R) where
   X₁ := groupCohomology (M ↑ surj) (n + 1)
   X₂ := groupCohomology M (n + 1)
   X₃ := groupCohomology (M ↓ φ.ker.subtype) (n + 1)
   f := (infl surj (n + 1)).app M
   g := (rest φ.ker.subtype (n + 1)).app M
-  zero := sorry -- uses current PR for definitions.
-
+  zero := sorry
 
 theorem inflation_restriction_mono (n : ℕ) {M : Rep R G}
     (hM : ∀ i : ℕ, i < n → IsZero (groupCohomology (M ↓ φ.ker.subtype) (i + 1))) :

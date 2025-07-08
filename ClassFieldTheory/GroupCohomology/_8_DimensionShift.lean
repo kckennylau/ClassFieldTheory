@@ -1,32 +1,30 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
-import ClassFieldTheory.GroupCohomology._4_coind1_and_ind1
+import ClassFieldTheory.GroupCohomology._4_TateCohomology_def
+import ClassFieldTheory.GroupCohomology._7_coind1_and_ind1
 
 /-!
-We define two "coinduction" functors taking values in the acyclic objects of `Rep R G`.
-
-The first is `coind₁ G : ModuleCat R ⥤ Rep R G`.
-
-This takes an `R`-module `A` to the space of linear maps `R[G] ⟶ A`, where `G` acts by
-its action of `R[G]`. Note that the linear maps `R[G] ⟶ A` are equivalent to the functions
-`G → A`, since the elements of `G` form a basis for the group ring `R[G]`.
-
-The second functor is `coind₁' : Rep R G ⥤ Rep R G`.
-
-This takes a representation `M` of `G` to the space of
-This takes an `R`-module `A` to the space of linear maps `R[G] ⟶ M`, where `G` acts by
-conjugation (i.e. on both `R[G]` and on `M`).
-
-The representations `coind₁'.obj M` and `(coind₁ G).obj M.V` are isomorphic (although
-the isomorphism is not simply the identity map on the space of functions `G → M`, since the
-actions of `G` on these spaces are not the same).
-
-For any `M : Rep R G` we construct two short exact sequences
+We define functors `up` and `down` from `Rep R G` to itself.
+`up.obj M` is defined to be the cokernel of the injection `coind₁'_ι : M ⟶ coind₁'.obj M` and
+`down.obj M` is defined to be the kernel of the surjection `ind₁'_π : ind₁'.obj M → M`.
+Hence for any `M : Rep R G` we construct two short exact sequences
 (the second defined only for finite `G`):
 
-  `0 ⟶ M ⟶ coind₁'.obj M ⟶ up M ⟶ 0` and `0 ⟶ down M ⟶ coind₁'.obj M ⟶ M ⟶ 0`.
+  `0 ⟶ M ⟶ coind₁'.obj M ⟶ up.obj M ⟶ 0` and
+  `0 ⟶ down.obj M ⟶ coind₁'.obj M ⟶ M ⟶ 0`.
 
-These can be used for dimension-shifting because `coind₁'.obj M` is acyclic.
+These can be used for dimension-shifting because `coind₁'.obj M` has trivial cohomology and
+`ind₁'.obj M` has trivial homology. I.e. for all `n > 0` we have (for every subgroup `S` of `G`):
+
+  `Hⁿ(S,up M) ≅ Hⁿ⁺¹(S,M)` and
+  `Hₙ(S,down M) ≅ Hₙ₊₁(S,M)`.
+
+If `G` is finite then both the induced and the
+coinduced representations have trivial Tate cohomology,
+so we have:
+
+  `Hⁿ_{Tate}(S, up M) ≅ Hⁿ⁺¹_{Tate}(S,M)`,
+  `Hⁿ_{Tate}(S, down M) ≅ Hⁿ⁻¹_{Tate}(S,M)`.
+
 -/
 
 open
@@ -127,7 +125,7 @@ variable [DecidableEq G]
 The connecting homomorphism from `H⁰(G,up M)` to `H¹(G,M)` is
 an epimorphism (i.e. surjective).
 -/
-lemma up_δ_zero_epi : Epi (δ (up_shortExact M) 0 1 rfl) :=
+instance up_δ_zero_epi : Epi (δ (up_shortExact M) 0 1 rfl) :=
   /-
   The next term in the long exact sequence is `H¹(G,coind₁'.obj M)`, which is zero
   since coinduced representations are acyclic.
@@ -157,10 +155,10 @@ def up_δiso_natTrans (n : ℕ) : up ⋙ functor R G (n + 1) ≅ functor R G (n 
   }
 
 /--
-The connecting homomorphism from `H^{n+1}(G,dimensionShift M)` to `H^{n+2}(G,M)` is
+The connecting homomorphism from `H^{n+1}(G,up M)` to `H^{n+2}(G,M)` is
 an epimorphism (i.e. surjective).
 -/
-lemma up_δ_zero_epi_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+instance up_δ_zero_epi_res {S : Type} [Group S] [DecidableEq S] {φ : S →* G}
     (inj : Function.Injective φ) : Epi (δ (up_shortExact_res M φ) 0 1 rfl) :=
   /-
   The next term in the long exact sequence is zero.
@@ -171,7 +169,7 @@ lemma up_δ_zero_epi_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
 The connecting homomorphism from `H^{n+1}(G,up M)` to `H^{n+2}(G,M)` is an
 isomorphism.
 -/
-lemma up_δ_isIso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+instance up_δ_isIso_res {S : Type} [Group S] [DecidableEq S] {φ : S →* G}
     (inj : Function.Injective φ) (n : ℕ) : IsIso (δ (up_shortExact_res M φ) (n + 1) (n + 2) rfl)
   :=
   /-
@@ -179,7 +177,7 @@ lemma up_δ_isIso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
   -/
   sorry
 
-def up_δiso_res {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+def up_δiso_res {S : Type} [Group S] [DecidableEq S] {φ : S →* G}
     (inj : Function.Injective φ) (n : ℕ) :
     groupCohomology (up.obj M ↓ φ) (n + 1) ≅ groupCohomology (M ↓ φ) (n + 2) := by
   have := up_δ_isIso_res M inj n
@@ -191,9 +189,6 @@ lemma ind₁'_obj_ρ : (ind₁'.obj M).ρ = M.ρ.ind₁' := rfl
 omit [DecidableEq G] in
 lemma ind₁'_obj_ρ_apply (g : G) : (ind₁'.obj M).ρ g = M.ρ.ind₁' g := rfl
 
--- abbrev ind₁'_toCoind₁' [DecidableEq G]: ind₁' (R := R) (G := G) ⟶ coind₁' :=
---   ind₁'_iso_forget₂_ggg_ind₁.hom ≫ (𝟙 _ ◫ ind₁_toCoind₁ G) ≫ coind₁'_iso_forget₂_ggg_coind₁.inv
-
 omit [DecidableEq G] in
 lemma ind₁'_π.app_hom : (ind₁'_π.app M).hom = ofHom Representation.ind₁'_π := rfl
 
@@ -203,12 +198,10 @@ lemma ind₁'_π.app_apply (f : ind₁'.obj M) :
 
 def down : Rep R G ⥤ Rep R G where
   obj M := kernel (ind₁'_π.app M)
-  map φ := by
-    dsimp only [Functor.id_obj]
-    apply kernel.lift _ (kernel.ι _ ≫ ind₁'.map φ)
-    rw [Category.assoc, ind₁'_π.naturality, ←Category.assoc, kernel.condition, zero_comp]
-  map_id := sorry
-  map_comp := sorry
+  map φ := kernel.lift _ (kernel.ι _ ≫ ind₁'.map φ) (by
+    rw [Category.assoc, ind₁'_π.naturality, ←Category.assoc, kernel.condition, zero_comp])
+  map_id _ := sorry
+  map_comp _ := sorry
 
 abbrev down_ses : ShortComplex (Rep R G) where
   X₁ := down.obj M
@@ -235,7 +228,7 @@ variable [Finite G]
 /--
 The connecting homomorphism `H⁰(G,down.obj M) ⟶ H¹(G, M)` is an epimorphism if `G` is finite.
 -/
-lemma down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) := by
+instance down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) := by
   have := ind₁'_trivialCohomology M
   sorry
 
@@ -243,7 +236,7 @@ lemma down_δ_zero_epi : Epi (δ (down_shortExact M) 0 1 rfl) := by
 The connecting homomorphism `H⁰(H,down.obj M ↓ H) ⟶ H¹(H, M ↓ H)` is an epimorphism if
 `H` is a subgroup of a finite group `G`.
 -/
-lemma down_δ_zero_res_epi {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+instance down_δ_zero_res_epi {S : Type} [Group S] [DecidableEq S] {φ : S →* G}
     (inj : Function.Injective φ) : Epi (δ (down_shortExact_res M φ) 0 1 rfl) := by
   have := ind₁'_trivialCohomology M
   sorry
@@ -273,7 +266,7 @@ def down_δiso_natTrans (n : ℕ) : functor R G (n + 1) ≅ down ⋙ functor R G
 The connecting homomorphism `Hⁿ⁺¹(H,down.obj M ↓ H) ⟶ Hⁿ⁺²(H, M ↓ H)` is an isomorphism
 if `H` is a subgroup of a finite group `G`.
 -/
-lemma down_δ_res_isIso (n : ℕ) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
+instance down_δ_res_isIso (n : ℕ) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
     (inj : Function.Injective φ) : IsIso (δ (down_shortExact_res M φ) (n + 1) (n + 2) rfl) := by
   have := ind₁'_trivialCohomology M
   sorry
@@ -294,43 +287,9 @@ variable [Finite G]
 open Rep
   dimensionShift
 
-/--
-All of the Tate cohomology groups of `(coind₁ G).obj A ↓ H` are zero.
--/
-lemma TateCohomology_coind₁ (A : ModuleCat R) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
-    (inj : Function.Injective φ) (n : ℕ) :
-    let _ := Finite.of_injective (⇑φ) inj
-    IsZero ((TateCohomology n).obj ((Rep.coind₁ G).obj A ↓ φ)) :=
-  /-
-  For `n > 0` this is proved elsewhere for `groupCohomology`.
-  For `n < -1` this is proved elsewhere for `groupHomology` (and relies on a current PR).
-  The cases `n = 0` and `n = -1` need to be proved here.
-  -/
-  sorry -- requires current PR.
-
-/--
-All of the Tate cohomology groups of `coind₁'.obj M ↓ H` are zero.
--/
-lemma TateCohomology_coind₁' (M : Rep R G) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
-    (inj : Function.Injective φ) (n : ℕ) :
-    let _ := Finite.of_injective (⇑φ) inj
-    IsZero ((TateCohomology n).obj (coind₁'.obj M ↓ φ)) :=
-  /-
-  It is shown earier that `coind₁'.obj M ≅ (coind₁ G).obj M.V`, so we can use the previous result.
-  -/
-  sorry
-
-lemma TateCohomology_ind₁' (M : Rep R G) {H : Type} [Group H] [DecidableEq H] {φ : H →* G}
-    (inj : Function.Injective φ) (n : ℕ) :
-    let _ := Finite.of_injective (⇑φ) inj
-    IsZero ((TateCohomology n).obj (ind₁'.obj M ↓ φ)) :=
-  /-
-  It is shown earier that `ind₁'.obj M ≅ coind₁'.obj M`, so we can use the previous result.
-  -/
-  sorry
-
 instance instIsIso_up_shortExact (M : Rep R G) [DecidableEq G] (n : ℤ) :
-    IsIso (TateCohomology.δ (up_shortExact M) n) :=
+    IsIso (TateCohomology.δ (up_shortExact M) n) := by
+  have _ : TrivialTateCohomology (coind₁'.obj M) := inferInstance
   /-
   This follows from `TateCohomology_coind₁'`.
   -/

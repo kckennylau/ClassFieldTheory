@@ -1,6 +1,6 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._6_CyclicGroup_v2
-import ClassFieldTheory.GroupCohomology._1_TateCohomology_def
+import ClassFieldTheory.GroupCohomology._9_CyclicGroup
+import ClassFieldTheory.GroupCohomology._4_TateCohomology_def
 
 noncomputable section
 

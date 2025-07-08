@@ -114,3 +114,10 @@ lemma groupCohomology.H1_isZero_of_trivial [DecidableEq G] (M : Rep R G) [NoZero
   This uses `groupCohomology.H1LequivOfIsTrivial`.
   -/
   sorry
+
+noncomputable
+def groupHomology.functor (n : ℕ) [DecidableEq G]: Rep R G ⥤ ModuleCat R where
+  obj M := groupHomology M n
+  map f := groupHomology.map (MonoidHom.id G) f n
+  map_comp _ _ := map_id_comp _ _ _
+  

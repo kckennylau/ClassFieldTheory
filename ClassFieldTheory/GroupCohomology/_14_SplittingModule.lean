@@ -1,7 +1,7 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._2_TrivialCohomology
-import ClassFieldTheory.GroupCohomology._8_TrivialityCriterion
-import ClassFieldTheory.GroupCohomology._9_augmentationModule
+import ClassFieldTheory.GroupCohomology._5_TrivialCohomology
+import ClassFieldTheory.GroupCohomology._11_TrivialityCriterion
+import ClassFieldTheory.GroupCohomology._12_augmentationModule
 
 open
   CategoryTheory
@@ -308,7 +308,7 @@ def reciprocity_iso (N : Rep ℤ G) (τ : H2 N) [FiniteClassFormation τ] :
     (TateCohomology 0).obj N ≅ ModuleCat.of ℤ (Additive (Abelianization G)) := by
   symm
   apply Iso.trans (Y := (TateCohomology (-2)).obj (trivial ℤ G ℤ))
-  · sorry
+  · sorry -- current PR.
   · apply TateCohomology_iso τ
 
 end Rep.split
