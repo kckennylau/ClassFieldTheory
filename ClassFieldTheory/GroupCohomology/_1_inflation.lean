@@ -10,12 +10,12 @@ open CategoryTheory
   groupCohomology
   HomologicalComplex
 
-variable {R G : Type} [CommRing R] [Group G] [DecidableEq G]
+variable {R G : Type} [CommRing R] [Group G] --[DecidableEq G]
 
-variable {H : Type} [Group H] {φ : G →* H} (surj : Function.Surjective φ) [DecidableEq H]
+variable {H : Type} [Group H] {φ : G →* H} (surj : Function.Surjective φ) -- [DecidableEq H]
 
-
-noncomputable def Rep.quotientToInvariantsFunctor :
+namespace Rep
+@[simps] noncomputable def quotientToInvariantsFunctor :
     Rep R G ⥤ Rep R H where
   obj M := M.quotientToInvariants φ.ker ↓ (QuotientGroup.quotientKerEquivOfSurjective φ surj).symm
   map f := ConcreteCategory.ofHom {
@@ -41,8 +41,33 @@ noncomputable def Rep.quotientToInvariantsFunctor :
   map_id _ := rfl
   map_comp _ _ := rfl
 
+lemma quotientToInvariantsFunctor_obj_ρ (M : Rep R G) :
+    ((quotientToInvariantsFunctor surj).obj M).ρ =
+    (M.quotientToInvariants φ.ker).ρ.comp ((QuotientGroup.quotientKerEquivOfSurjective φ surj).symm)
+    := rfl
+
+lemma quotientToInvariantsFunctor_obj_ρ_apply (M : Rep R G) (g : G) :
+    ((quotientToInvariantsFunctor surj).obj M).ρ (φ g) =
+    (M.quotientToInvariants φ.ker).ρ g
+    := by
+  rw [quotientToInvariantsFunctor_obj_ρ]
+  simp only [quotientToInvariantsFunctor_obj, Action.res_obj_V, of_ρ, MonoidHom.coe_comp,
+    MonoidHom.coe_coe, Function.comp_apply]
+  congr
+  rw [MulEquiv.symm_apply_eq]
+  rfl
+
+lemma quotientToInvariantsFunctor_obj_ρ_apply₂ (M : Rep R G) (g : G)
+    (v : (quotientToInvariantsFunctor surj).obj M) :
+    (((quotientToInvariantsFunctor surj).obj M).ρ (φ g) v).val =
+    M.ρ g v.val
+    := by
+  rw [quotientToInvariantsFunctor_obj_ρ_apply]
+  rfl
+
 instance : (quotientToInvariantsFunctor (R := R) surj).PreservesZeroMorphisms where
   map_zero _ _ := rfl
+
 
 set_option quotPrecheck false in
 /--
@@ -50,21 +75,31 @@ set_option quotPrecheck false in
 -/
 notation M " ↑ " surj => (Rep.quotientToInvariantsFunctor surj).obj M
 
-noncomputable def groupCohomology.cochain_infl :
+noncomputable def res_quotientToInvariantsFunctor_ι (M : Rep R G) :
+    (res φ).obj (M ↑ surj) ⟶ M where
+  hom := ofHom (Submodule.subtype _)
+  comm g := by
+    ext m
+    simp only [quotientToInvariantsFunctor_obj, Action.res_obj_V, Action.res_obj_ρ,
+      RingHom.toMonoidHom_eq_coe, RingEquiv.toRingHom_eq_coe, MonoidHom.coe_comp, MonoidHom.coe_coe,
+      RingHom.coe_coe, Function.comp_apply, ModuleCat.hom_comp, ModuleCat.hom_ofHom,
+      LinearMap.coe_comp, Submodule.coe_subtype, ρ_hom]
+    rw [←Rep.quotientToInvariantsFunctor_obj_ρ_apply₂ surj M]
+    rfl
+
+end Rep
+namespace groupCohomology
+
+noncomputable def cochain_infl :
     quotientToInvariantsFunctor surj ⋙ cochainsFunctor R H ⟶ cochainsFunctor R G where
-  app M := cochainsMap φ <| ConcreteCategory.ofHom <| {
-      val := Submodule.subtype _
-      property g := by
-        sorry
-    }
-  naturality M₁ M₂ f := by
-    sorry
+  app M := cochainsMap φ <| res_quotientToInvariantsFunctor_ι surj M
+  naturality _ _ _ := rfl
 
 /--
 The inflation map `Hⁿ(G⧸H, M ↑ H) ⟶ Hⁿ(G,M)` as a natural transformation.
 This is defined using the inflation map on cocycles.
 -/
-noncomputable def groupCohomology.infl (n : ℕ) :
+noncomputable def infl (n : ℕ) :
     Rep.quotientToInvariantsFunctor surj ⋙ functor R H n ⟶ functor R G n :=
   (groupCohomology.cochain_infl surj) ◫ 𝟙 (homologyFunctor _ _ n)
 
@@ -76,16 +111,13 @@ If `H¹(H,A) = 0` then the invariants form a short exact sequence in `Rep R H`:
 -/
 lemma quotientToInvariantsFunctor_shortExact_ofShortExact {S : ShortComplex (Rep R G)}
     (hS : S.ShortExact) (hS' : IsZero (H1 (S.X₁ ↓ φ.ker.subtype))) :
-    (S.map (quotientToInvariantsFunctor surj)).ShortExact :=
+    (S.map (quotientToInvariantsFunctor surj)).ShortExact := by
   /-
   This is the opening section of the long exact sequence. The next term is `H¹(K,S.X₁)`, which
   is assumeed to be zero.
   -/
   sorry
 
-
--- set_option maxHeartbeats 1000000
---omit [DecidableEq G] [DecidableEq H] in
 /--
 Assume that we have a short exact sequence `0 → A → B → C → 0` in `Rep R G`
 and that the sequence of `H`- invariants is also a short exact in `Rep R (G ⧸ H)` :
@@ -102,7 +134,7 @@ Then we have a commuting square
 where the horizontal maps are connecting homomorphisms
 and the vertical maps are inflation.
 -/
-lemma groupCohomology.infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
+lemma infl_δ_naturality {S : ShortComplex (Rep R G)} (hS : S.ShortExact)
     (hS' : (S.map (quotientToInvariantsFunctor surj)).ShortExact)  (i j : ℕ) (hij : i + 1 = j) :
     δ hS' i j hij ≫ (infl surj j).app _ = (infl surj i).app _ ≫ δ hS i j hij
     := by
