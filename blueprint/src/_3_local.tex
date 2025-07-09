@@ -1,6 +1,6 @@
 \chapter{Local Class Field Theory}
 
-In this chapter we shall consider finite Galois extensions of local fields $l/k$.
+In this chapter we shall consider finite Galois extensions of non-archimedean local fields $l/k$.
 We shall regard the multiplicative group $l^\times$ as a representation of $\Gal(l/k)$, where
 addition in the module is the operation which is usually written as multiplication.
 We shall always write $H^\bullet(l/k,-)$ as an abbreviation of $H^\bullet(\Gal(l/k),-)$.
@@ -42,10 +42,10 @@ For all intermediate fields $l / m / k$ we have isomorphisms:
 	H^1(l/m,l^\times) \cong 0, \qquad H^2(l/m,l^\times) \cong \Z / [l:m] \Z.
 \]
 The reason why this reformulation is so useful is because the base field $k$ is no longer involved,
-so it's sufficient to prove the isomorphisms above for any Galois extension of local fields $l/m$
+so it's sufficient to prove the isomorphisms above for any finite Galois extension of local fields $l/m$
 (i.e. without considering any subgroups of the Galois group).
 
-The proof that $l^\times$ is a clas formation is achieved in the following steps:
+The proof that $l^\times$ is a class formation is achieved in the following steps:
 \begin{enumerate}
 	\item
 	It is already proven in Mathlib that $H^1(l/k,l^\times) \cong 0$;
@@ -112,14 +112,14 @@ The following result (called Hilbert's theorem 90) is already in Mathlib.
 	\]
 	Define a map $\ind_1(k) \cong l$ by
 	\[
-		\Phi (f : G \to_0 k) = \sum_{x \in \Gal(l/k)} f(x) \cdot x \bullet b_0.
+		\Phi (f : G \to_0 k) = \sum_{x \in \Gal(l/k)} f(x) \cdot x^{-1} \bullet b_0.
 	\]
 	The map $\Phi$ is clearly a linear bijection;
 	we check that it commutes with the Galois action:
 	\[
 		\Phi(g\bullet f)
-		= \sum_x f(g^{-1}x) \cdot x b_0
-		= \sum_x f(x) \cdot (gx) \bullet b_0
+		= \sum_x f(xg) \cdot x^{-1} \bullet b_0
+		= \sum_x f(x) \cdot (xg^{-1}^{-1}) \bullet b_0
 		= g \bullet \Phi(f).
 	\]
 \end{proof}
@@ -168,25 +168,32 @@ $h(l/k,l^\times) = [l:k]$.
 
 
 \begin{lemma}\label{lem:local isomorphism}
-	There is a non-zero ideal $P^n \subset \cO_l$ such that the
-	exponential and logarithm maps give inverse isomorphisms
+	For $n \in \N$ sufficiently large, the
+	exponential map give inverse isomorphisms
 	\[
-		(1 + P^n, \times) \cong (P^n,+).
+		(P^n,+) \cong (1 + P^n, \times).
 	\]
 	This isomorphism commutes with the action of the Galois group.
 \end{lemma}
 
 \begin{proof}
-	Choose $n$ large enough so that for all $r > 0$,
-	\[
-		rn - v_l(r!) \ge n, \qquad
-		rn - v_l(r!) \stackrel{r \to \infty}\to \infty.
-	\]
-	Then $\exp(x)$ converges for all $x \in P^n$ to an element of $1 + P^n$ and
-	$\log(1+x)$ converges to an element of $P^n$.
-	Hence both $\exp(\log(1+x))$ and $\log(\exp(x))$ converge.
-	The identities $\exp(\log(1+x))=1+x$ etc. follow by observing that they are true as
-	an equations of power series
+	Choose $n$ large enough so that $\exp(x)$ converges for all $x \in P^n$,
+	and such that all the terms $x^r/r!$ are in $P^n$ for $r \ge 1$
+	and all the terms $x^r / r!$ with $r \ge 2$ have strictly larger valuation than that of $x$.
+	It is already proved in Mathlib that $\exp(x+y)=\exp(x)\exp(y)$, and the fact that $\exp$ commutes
+	with the Galois action is straightforward.
+	We'll show that the map is a bijection from $P^n$ to $1+P^n$.
+
+	Suppose $\exp(x)=1$ with $x \in P^n$.
+	If $x \ne 0$ then $x = \pi^mu$ for some unit $u$.
+	By assumption on $n$, $\exp(x) = 1 + \pi^m u + O(\pi^{m+1})$; this gives a contradcition.
+	Therefore the map $\exp : P^n \to 1+P^n$ is injective.
+
+	One can show that the map $P^n \to 1+P^n$ is surjective using Hensel's lemma as follows.
+	Choose $y \in 1+P^n$. Then $x_0 = y-1$ is in $P^n$ and $\exp(x) \equiv y \bmod P^{n+1}$.
+	Furthermore $\exp'(x_0) = \exp(x_0) \not\equiv 0 \bmod P$. Hensel's lemma shows that there exists
+	a solution to $\exp(x)=y$ with $x \equiv x_0 \bmod P^{n+1}$.
+	In particular $x \in P^n$.
 \end{proof}
 
 
@@ -311,15 +318,14 @@ then $\pi_k$ is also a uniformizer in $l$, so we may identify $\F_l$ with $\cO_l
 	Let $y \in \cO_l$ be a lift of $x_0$.
 	We claim that $\{g \bullet y\}$ is a normal basis	in $\cO_l$.
 	It's sufficient to show that these vectors span $\cO_l$ over $\cO_k$.
-	Choose any $z \in \cO_l$. By assumption we may solve the congruence
+	Choose any $z \in \cO_l$. By assumption we may choose elements
+	$\lambda_{g,0} \in \cO_k$ for $g \in G$, such that
 	\[
-		z \equiv \sum \lambda_{g,0} g y \mod \pi_k.
-		\qquad
-		(\lambda_{g,0} \in \cO_k).
+		\sum \lambda_{g,0} g y \equiv z \mod \pi_k.
 	\]
-	Similarly we may solve the congruence
+	Similarly we may choose $\lambda_{g,1} \in \cO_k$, such that
 	\[
-		(z - \sum \lambda_{g,0} g y) / \pi_k \equiv \sum \lambda_{g,1} g y \mod \pi_k.
+		\sum \lambda_{g,1} g y \equiv \frac{z - \sum \lambda_{g,0} g y}{\pi_k} \mod \pi_k.
 		\qquad
 		(\lambda_{g,1} \in \cO_k).
 	\]
@@ -330,7 +336,7 @@ then $\pi_k$ is also a uniformizer in $l$, so we may identify $\F_l$ with $\cO_l
 	etc.
 	Proceeding in this way, we construct convergent series
 	$\lambda_{g} = \sum \lambda_{g,r}\pi_k^r \in \cO_k$,
-	such that $z = \sum_g \lambda_g y$.
+	such that $z = \sum_g \lambda_g \cdot g \bullet y$.
 \end{proof}
 
 
@@ -389,7 +395,7 @@ then $\pi_k$ is also a uniformizer in $l$, so we may identify $\F_l$ with $\cO_l
 \end{proof}
 
 
-\begin{lemma} \label{lem:unrammified fundamental class}
+\begin{lemma} \label{lem:unramified fundamental class}
 	\uses{cor:cohomology unramified iso cohomology Z,
 		lem:H2 cyclic Z}
 	Let $l/k$ be an unramified cyclic extension of local fields.
@@ -478,7 +484,7 @@ the unramified extension of the same degree.
 We shall let $m$ be the field generated by $l$ and $l'$.
 Let $e$ and $f$ be the ramification index and inertia degree of $l/k$.
 Then we have $[m:l] = e$, $v_l(\pi_k)= e$.
-We shall write $F_l$ for the Frobenius element in $\Gal(l/m)$, which we regard as a subgroup
+We shall write $F_l$ for the Frobenius element in $\Gal(m/l)$, which we regard as a subgroup
 of $\Gal(m/k)$. We also write $F_k$ for the Frobenius element in $l'/k$.
 With this notation we have:
 \[
@@ -487,7 +493,7 @@ With this notation we have:
 We have a class $\sigma_{l'/k} \in H^2(l'/k,l'^\times)$, and by inflation we can regard
 $\sigma_{l'/k}$ as an element of $H^2(m/k,m^\times)$.
 Let $\psi\in H^2(m/k,m^\times)$ be the inflation of $\sigma_{l/k}$.
-Since the imflation map is injectove, $\psi$ has order exactly $[l:k]$.
+Since the inflation map is injective, $\psi$ has order exactly $[l:k]$.
 We also have an inflation restriction sequence
 \[
 	0 \to H^2(l/k, l^\times) \to H^2(m/k , m^\times) \to H^2(m/l, m^\times)
