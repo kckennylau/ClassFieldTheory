@@ -83,7 +83,10 @@ lemma leftRegularHom_eq_ρReg (g : G) (hg : g ∈ Subgroup.center G) :
     hom ((leftRegular R G).leftRegularHom (of g)).hom = (leftRegular R G).ρ g :=
 by
   ext
-  simp [hg.comm]
+  simp only [leftRegularHom_hom, of_ρ, Representation.ofMulAction_single, smul_eq_mul,
+    ModuleCat.hom_ofHom, LinearMap.coe_comp, Function.comp_apply, lsingle_apply, lift_apply,
+    smul_single, mul_one, single_zero, sum_single_index]
+  rw [hg.comm]
 
 
 variable (R G)

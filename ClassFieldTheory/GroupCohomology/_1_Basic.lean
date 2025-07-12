@@ -1,5 +1,4 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._0_Current_PRs
 
 variable {R G : Type} [Group G] [CommRing R]
 
@@ -120,4 +119,3 @@ def groupHomology.functor (n : ℕ) [DecidableEq G]: Rep R G ⥤ ModuleCat R whe
   obj M := groupHomology M n
   map f := groupHomology.map (MonoidHom.id G) f n
   map_comp _ _ := map_id_comp _ _ _
-  

@@ -1,5 +1,4 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._1_Basic
 import ClassFieldTheory.GroupCohomology._2_restriction
 

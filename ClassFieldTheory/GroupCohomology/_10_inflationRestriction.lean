@@ -1,5 +1,4 @@
 import Mathlib
-import ClassFieldTheory.GroupCohomology._0_Current_PRs
 import ClassFieldTheory.GroupCohomology._3_inflation
 import ClassFieldTheory.GroupCohomology._8_DimensionShift
 
