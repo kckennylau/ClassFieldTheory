@@ -34,7 +34,7 @@ variable {G : Type} [Group G]
 /--
 If `H²ⁿ⁺²(H,M)` and `H²ᵐ⁺¹(H,M)` are both zero for every subgroup `H` of `G` then `M` is acyclic.
 -/
-private theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
+theorem groupCohomology.trivialCohomology_of_even_of_odd_of_solvable [Finite G] [IsSolvable G]
     (M : Rep R G) (n m : ℕ)
     (h_even : ∀ (H : Type) [Group H] {φ : H →* G} (inj : Function.Injective φ) [DecidableEq H],
       IsZero (groupCohomology (M ↓ φ) (2 * n + 2)))
@@ -82,4 +82,8 @@ instance Rep.dimensionShift.up_trivialCohomology [Finite G] (M : Rep R G) [M.Tri
 instance Rep.dimensionShift.down_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
     (down.obj M).TrivialCohomology := sorry
 
-instance [Finite G] (M : Rep R G) [M.TrivialCohomology] : M.TrivialTateCohomology := sorry
+instance Rep.TateCohomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
+    M.TrivialTateCohomology := sorry
+
+instance Rep.trivialHomology_of_trivialCohomology [Finite G] (M : Rep R G) [M.TrivialCohomology] :
+    M.TrivialHomology := sorry

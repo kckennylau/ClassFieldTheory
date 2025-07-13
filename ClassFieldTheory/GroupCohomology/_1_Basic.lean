@@ -35,9 +35,9 @@ lemma Rep.hom_apply {A B : Rep R G} (f : A ⟶ B) (x : A) : f.hom x = f x := by
 example (A B : Rep R G) (f : A ⟶ B ) (a b : A) (c : R) : f (a + c • b) = f a + c • f b := by
   simp
 
-#check Action.zero_hom
-#check Action.add_hom
-#check Action.smul_hom
+-- #check Action.zero_hom
+-- #check Action.add_hom
+-- #check Action.smul_hom
 @[simp]
 lemma Action.sub_hom.{u} {V : Type (u + 1)} [LargeCategory V] {G : Type u} [Monoid G]
     [CategoryTheory.Preadditive V] {X Y : Action V G} (f g : X ⟶ Y) : (f - g).hom = f.hom - g.hom

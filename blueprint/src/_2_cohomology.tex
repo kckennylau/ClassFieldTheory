@@ -914,8 +914,8 @@ This case is described again below.
 		Rep.dimensionShift.up_δiso,
 		Rep.dimensionShift.up_δ_zero_epi_res,
 		Rep.dimensionShift.up_δ_isIso_res,
-		Rep.dimensionShift.up_δiso_res}	\lean{Rep.dimensionShift.up_δiso_natTrans}
-
+		Rep.dimensionShift.up_δiso_res,
+		Rep.dimensionShift.up_δiso_natTrans}
 	\uses{def:up,
 		cor:coind₁' trivial cohomology}
 	\leanok
@@ -970,8 +970,8 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\lean{
 		Representation.ind₁'_lequiv,
 		Representation.ind₁'_lequiv_comm,
-		Rep.ind₁'_obj_iso,
-		Rep.ind₁'_iso_forget₂_ggg_ind₁
+		Rep.ind₁'_obj_iso
+		% Rep.ind₁'_iso_forget₂_ggg_ind₁
 	}
 	\uses{def:ind',
 		def:induced}
@@ -1074,9 +1074,9 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 % \end{proof}
 
 \begin{lemma} \label{lem:induced' trivial Tate}
-	\lean{groupCohomology.TateCohomology_coind₁,
-		groupCohomology.TateCohomology_coind₁',
-		groupCohomology.TateCohomology_ind₁'}
+	\lean{Rep.coind₁_trivialTate,
+		Rep.coind₁'_trivialTate,
+		Rep.ind₁'_trivialTate}
 	\uses{lem:induced trivial Tate,
 		lem:ind₁' iso ind₁,
 		lem:coind₁' iso coind₁}
@@ -1092,8 +1092,8 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 \end{proof}
 
 \begin{corollary}	\label{cor:Tate up down isos}
-	\lean{groupCohomology.instIsIsoModuleCatδ,
-		groupCohomology.instIsIsoModuleCatδ_1,
+	\lean{groupCohomology.instIsIso_up_shortExact,
+		groupCohomology.instIsIso_down_shortExact,
 		groupCohomology.upδiso_Tate,
 		groupCohomology.downδiso_Tate
 	}
@@ -1669,7 +1669,7 @@ $G$ and all $n > 0$, the cohomology groups $H^{n}(S,M)$ are zero.
 \end{proof}
 
 \begin{theorem} \label{thm:trivial cohomology implies trivial Tate}
-	\lean{groupCohomology.TateCohomology_of_trivialCohomology,
+	\lean{Rep.TateCohomology_of_trivialCohomology,
 		Rep.trivialHomology_of_trivialCohomology}
 	\uses{cor:up and down trivial cohomology,
 		cor:Tate up down isos,

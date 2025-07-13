@@ -68,7 +68,6 @@ Rep.ind₁'
 Representation.ind₁'_lequiv
 Representation.ind₁'_lequiv_comm
 Rep.ind₁'_obj_iso
-Rep.ind₁'_iso_forget₂_ggg_ind₁
 Rep.ind₁'_trivialHomology
 Representation.ind₁'_π
 Representation.ind₁'_π_comm
@@ -78,11 +77,11 @@ Rep.dimensionShift.down
 Rep.dimensionShift.down_ses
 Rep.dimensionShift.down_shortExact
 Rep.dimensionShift.down_shortExact_res
-groupCohomology.TateCohomology_coind₁
-groupCohomology.TateCohomology_coind₁'
-groupCohomology.TateCohomology_ind₁'
-groupCohomology.instIsIsoModuleCatδ
-groupCohomology.instIsIsoModuleCatδ_1
+Rep.coind₁_trivialTate
+Rep.coind₁'_trivialTate
+Rep.ind₁'_trivialTate
+groupCohomology.instIsIso_up_shortExact
+groupCohomology.instIsIso_down_shortExact
 groupCohomology.upδiso_Tate
 groupCohomology.downδiso_Tate
 Rep.aug
@@ -98,5 +97,5 @@ groupCohomology.trivialCohomology_of_even_of_odd_of_solvable
 groupCohomology.trivialCohomology_of_even_of_odd
 Rep.dimensionShift.up_trivialCohomology
 Rep.dimensionShift.down_trivialCohomology
-groupCohomology.TateCohomology_of_trivialCohomology
+Rep.TateCohomology_of_trivialCohomology
 Rep.trivialHomology_of_trivialCohomology

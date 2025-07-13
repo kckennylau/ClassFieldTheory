@@ -345,8 +345,8 @@ This map takes an element `m : M` to the constant function with value `M`.
 instance coind₁'_trivialCohomology : (coind₁'.obj M).TrivialCohomology :=
   trivialCohomology_of_iso (coind₁'_obj_iso_coind₁ M)
 
-instance {Q : Type} [Group Q] {φ : G →* Q} (surj : Function.Surjective φ) :
-    ((coind₁'.obj M) ↑ surj).TrivialCohomology := by
+instance coind₁'_quotientToInvariants_trivialCohomology {Q : Type} [Group Q] {φ : G →* Q}
+    (surj : Function.Surjective φ) : ((coind₁'.obj M) ↑ surj).TrivialCohomology := by
   have iso := (quotientToInvariantsFunctor surj).mapIso (coind₁'_obj_iso_coind₁ M)
   have _ : ((quotientToInvariantsFunctor surj).obj ((coind₁ G).obj M.V)).TrivialCohomology
   · exact coind₁_quotientToInvariants_trivialCohomology M.V surj
@@ -490,13 +490,13 @@ instance coind₁'_trivialHomology [Finite G] : TrivialHomology (coind₁'.obj M
 
 instance ind₁_trivialTateCohomology [Finite G] : TrivialTateCohomology ((ind₁ G).obj A) := sorry
 
-instance [Finite G] : TrivialTateCohomology ((coind₁ G).obj A) :=
+instance coind₁_trivialTate [Finite G] : TrivialTateCohomology ((coind₁ G).obj A) :=
   trivialTateCohomology_of_iso (ind₁_obj_iso_coind₁_obj A).symm
 
-instance [Finite G] : TrivialTateCohomology (coind₁'.obj M) :=
+instance coind₁'_trivialTate [Finite G] : TrivialTateCohomology (coind₁'.obj M) :=
   trivialTateCohomology_of_iso (coind₁'_obj_iso_coind₁ M)
 
-instance [Finite G] : TrivialTateCohomology (ind₁'.obj M) :=
+instance ind₁'_trivialTate [Finite G] : TrivialTateCohomology (ind₁'.obj M) :=
   trivialTateCohomology_of_iso (ind₁'_iso_coind₁'.app M)
 
 end FiniteGroup
