@@ -20,7 +20,7 @@ We note the following consequence of Hilbert's theorem 90:
 
 \begin{lemma} \label{lem:idele class invariants}
 	\uses{thm:hilbert 90}
-	Let $l/k$ be any Galois extension of number fields.
+	Let $l/k$ be a finite Galois extension of number fields (or even global fields).
 	The map $\Cl_k \to \Cl_l ^ {\Gal(l/k)}$ is an isomorphism.
 \end{lemma}
 
@@ -221,7 +221,7 @@ We have an isomorphism
 \end{proof}
 
 
-The vector $(1,1,\ldots,1) \in V_S$ in fixed by all elements of $\Gal(l/k)$, so it spans
+The vector $(1,1,\ldots,1) \in V_S$ is fixed by all elements of $\Gal(l/k)$, so it spans
 a subrepresentation isomorphic to the trivial representation $\Z$.
 Recall the we have a logarithmic map
 \[
@@ -252,8 +252,14 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \end{proof}
 
 \begin{corollary}
-	If $l/k$ is cyclic then $h(\A_{l,S}^\times / \cO_{l,S}^\times) = [l:k]$.
+	If $l/k$ is cyclic then $h(l/k,\Cl_l) = [l:k]$.
 \end{corollary}
+
+\begin{proof}
+	Our choice of $S$ implies $\Cl_l \cong \A_{l,S}^\times / \cO_{l,S}^\times$, and
+	we have calculated the Herbrand quotients of $\A_{l,S}^\times$ and $\cO_{l,S}^\times$.
+\end{proof}
+
 
 
 
@@ -264,9 +270,12 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 	Let $M$ be a set of primes of $\cO_k$.
 	We'll say that $M$ has a \emph{Dirichlet density} $c \in \R$ if
 	\[
-		\sum_{P \in M} N(P)^{-s} \stackrel{s \to 1+}\sim c  \cdot \log\left(\frac{1}{s-1}\right)
+		\sum_{P \in M} N(P)^{-s} \stackrel{s \to 1+}\sim c  \cdot \log\left(\frac{1}{s-1}\right).
 	\]
 	where $s$ tends to $1$ through the real numbers $s>1$.
+	The symbol $\sim$ denotes asymptotic equivalence, which means that the ratio of the left hand
+	side to the right hand side converges to $1$ as $s$ tends to $1$ from above.
+	Implied constants may depend of the set $M$ and the field $k$.
 \end{definition}
 
 
@@ -288,7 +297,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \end{lemma}
 
 \begin{proof}
-	Let $P$ be a prime. We have
+	Let $P$ be a prime. For $s > 1$ we have
 	\[
 		\left|N(P)^{-s} - \log\left( \frac{1}{1-N(P)^{-s}}\right)\right| \ll N(P)^{-2s}
 	\]
@@ -376,7 +385,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \begin{proof}
 	We have
 	\begin{align*}
-		\Cl_{l} / N(\Cl_l)
+		\Cl_{k} / N(\Cl_l)
 		& \cong \A_{k,S}^\times / \cO_{k,S}^\times N(\A_{l,S}^\times) \\
 		& \cong \left(\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)\right) / \cO_{k,S}^\times,
 	\end{align*}
@@ -386,7 +395,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 	decomposition group of $\hat v$).
 \end{proof}
 
-Given any maximal ideal $P$ of $\cO_S$, we let $\pi_P$ be an idele whose
+Given any maximal ideal $P$ of $\cO_{k,S}$, we let $\pi_P$ be an idele whose
 $P$-component is a uniformizer in $k_P$, and whose other components are all $1$.
 The coset of $\pi_P$ in $H^0(l/k,\Cl_l)$ does not depend on the choice of uniformizer since
 all the local units at $P$ are local norms from $l_{Q}$ for any $Q|P$
@@ -395,12 +404,12 @@ Equivalently, if we choose a generator $P=(\pi)$ then the coset of $\pi_P$ is th
 the image of $\pi$ in $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
 This clearly extends to a map
 \[
-	\iota : \textrm{non-zero fractional ideals of $\cO_S$}
+	\iota : \textrm{non-zero fractional ideals of $\cO_{k,S}$}
 	\to
 	H^0_{\Tate}(l/k,\Cl_l),
 \]
-whose kernel is the sub group of ideals with a generator in
-$\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
+whose kernel is the subgroup of ideals with a generator which is a local norm at $v$ for
+all $v \in S$.
 
 \begin{definition}
 	For any character $\chi : H^0_{\Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
@@ -411,18 +420,19 @@ $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
 		=
 		\prod_{P} \frac{1}{1-\chi(P) \cdot N(P)^{-s}}.
 	\]
-	Here $s$ is a complex number with real part greater than $1$; bith the product and the series
+	Here $s$ is a complex number with real part greater than $1$; both the product and the series
 	converge absolutely in that region.
-	In the sum, $I$ ranges over the non-zero ideals of $\cO_S$, and in the product $P$
-	ranges over the maximal ideals of $\cO_S$.
+	In the sum, $I$ ranges over the non-zero ideals of $\cO_{k,S}$, and in the product $P$
+	ranges over the maximal ideals of $\cO_{k,S}$.
 
 	If $\chi$ is the trivial character, then $L(s,\chi)$ is
 	(up to finitely many Euler factors for primes in $S$)
-	equal to the Dedekind zera function of $k$.
+	equal to the Dedekind zeta function of $k$.
 \end{definition}
 
 
 It's known that $L(s,\chi)$ has a meromorphic continuation to $\C$
+and is entire if $\chi$ is non-trivial
 (see for example Tate's thesis, which is chapter XV of \cite{cassells frohlich}).
 We won't need such a strong result here; we can make do with the following:
 
@@ -571,36 +581,25 @@ We won't need such a strong result here; we can make do with the following:
 \end{theorem}
 
 \begin{proof}
-	The easiest proof of this theorem is rather like that of Dirichlet's primes in arithmetic
-	progressions result.
-	We'll sketch the argument.
-
-	One can easily show that $H^0_{\Tate}(l/k, \Cl_{l})$ is finite.
-	We have a function
+	Let $M_1$ be the set of defree $1$ primes of $\cO_{k,S}$ which split in $l$ and let $M_2$ be the
+	set of primes of $\cO_{k,S}$ whose image in $H^0_{\Tate}(l/k,\Cl_l)$ is zero.
+	Given $P \in M_1$, the norm map $l_{\hat v}^\times \to k_v^\times$ is the identity map, and is
+	in particular surjective. Hence the image of $P$ in $H^0(l/k,\Cl_l)$ is zero.
+	This shows that $M_1 \subseteq M_2$.
+	This implies for $s> 1$:
 	\[
-		\textrm{primes in $\cO_{S,k}$} \to H^0_{\Tate}(l/k, \Cl_{l}),
+		\sum_{P \in M_1} N(P)^{-s}
+		\le \sum_{P \in M_2} N(P)^{-s} .
 	\]
-	which takes a prime $P$ to the coset of an idele, whose $P$ component is
-	a uniformizer in $k_P$, and whose other components are $1$.
-	This coset does not depend on the choice of uniformizer because $P$ is unramified in $l$
-	(by choice of $S$), and therefore every element of $\cO_P^\times$ is a local norm in the extension.
-
-	By the method of Dirichlet's primes in arithmetic progressions theorem, we may show that
-	the images in $H^0_{\Tate}(l/k, \Cl_{l})$ of the primes of $\cO_{k,S}$ are equidistributed,
-	meaning that the set of primes in the preimage of an element of $H^0_{\Tate}(l/k, \Cl_{l})$ has
-	Dirichlet density $\frac{1}{|H^0_{\Tate}(l/k, \Cl_{l})|}$. The proof of this equidistribution
-	result can be reduced to proving $L(1,\chi) \ne 0$ for each non-trivial character
-	$\chi$ of $H^0_{\Tate}(l/k,\Cl_l)$ (see for example chapter VIII of \cite{cassells frohlich}).
-
-	Let $P$ be a degree one prime which splits completely in $l$.
-	Then the norm map $(l \otimes k_P)^\times \to k_P$ is surjective,
-	and therefore the image of $P$ in $H^0_{\Tate}(l/k, \Cl_{l})$ is $0$.
-	We have shown in \ref{lem:Dirichlet density split} that the set of such primes has
-	Dirichlet density $\frac{1}{[l:k]}$. It follows that
+	The results of the previous section implies
 	\[
-		\frac{1}{[l:k]} \le \frac{1}{|H^0_{\Tate}(l/k, \Cl_{l})|}.
+		\sum_{P \in M_1} N(P)^{-s}
+		\le
+		\frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log \left(\frac{1}{1-s}\right) + O(1).
 	\]
-	This proves the result.
+	We showed earlier that the left hand side is asymptotic to
+	$\frac{1}{[l:k]}\log \left(\frac{1}{1-s}\right)$.
+	Therefore $\frac{1}{[l:k]} \le \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}$.
 \end{proof}
 
 
@@ -642,12 +641,12 @@ We won't need such a strong result here; we can make do with the following:
 	the inductive hypothesis.
 	Therefore $H^1(l/k,\Cl_l)=0$.
 
-	This implies that we have an inflation-restriction sequence
+	Since $H^1(l/m,\Cl_l)$ is assumed to be zero, we also have an inflation-restriction sequence
 	\[
 		0 \to H^2(m/k, \Cl_m) \to H^2(l/k, \Cl_l) \to H^2(l/m,\Cl_l).
 	\]
 	By the inductive hypothesis we have $|H^2(l/m,\Cl_l)| \le [l:m]$
-	and by \ref{cor:H1 H2 cyclic idele class} we have $|H^2(m/k, \Cl_m)| \le [m : k]$.
+	and by \ref{cor:H1 H2 cyclic idele class} we have $|H^2(m/k, \Cl_m)| = [m : k]$.
 	It follows that $|H^2(l/k,\Cl_l)| \le [l : k]$.
 \end{proof}
 
