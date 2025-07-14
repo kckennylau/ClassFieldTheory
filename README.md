@@ -10,7 +10,7 @@ This is the main repository for the 2025 Clay Maths summer school
 
 ## Local installation
 
-First you need to install Visual Studio Code and the Lean 4 extension. Instructions for doing that are [here](https://leanprover-community.github.io/get_started.html#regular-install).
+First you need to install Visual Studio Code and the Lean 4 extension. Instructions for doing that are [here](https://docs.lean-lang.org/lean4/doc/quickstart.html).
 
 Then it's just a matter of installing this repository onto your computer. There are two ways to do this.
 
@@ -42,8 +42,8 @@ cd ClassFieldTheory
 lake exe cache get
 ```
 
-Now open the folder `ClassFieldTheory` which you just created, using VS Code's "open folder" functionality. You will find all the code inside a subdirectory also called `ClassFieldTheory`. 
- 
+Now open the folder `ClassFieldTheory` which you just created, using VS Code's "open folder" functionality. You will find all the code inside a subdirectory also called `ClassFieldTheory`.
+
 ## Online play
 
 If you don't have the 4.5 gigabytes necessary to install all this, or if your computer is too slow to make the experience of using Lean on it fun (you'll need at least 8 gigs of ram, for example), then you can work on the repository through a web browser (and you don't need to install anything onto your computer using this method).
