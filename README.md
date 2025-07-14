@@ -80,4 +80,4 @@ Just click here: [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)
 
 ### Method 2: via Codespaces
 
-Just click here: [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/b-mehta/kbuzzard/ClassFieldTheory)
+Just click here: [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kbuzzard/ClassFieldTheory)
