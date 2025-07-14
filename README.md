@@ -12,7 +12,7 @@ This is the main repository for the 2025 Clay Maths summer school
 
 There are two ways that you can interact with the project.
 
-A *local installation* (recommended) involves install Lean and the project locally on your
+A *local installation* (recommended) involves installing Lean and the project locally on your
 computer. Advantages: you can hack on the project without any internet access.
 Disadvantages: if your computer is slow or if you don't have much memory, it might
 be quite a painful process to use Lean this way.
