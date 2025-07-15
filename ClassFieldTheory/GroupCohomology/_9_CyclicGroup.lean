@@ -57,9 +57,7 @@ variable {G}
 
 omit [IsCyclic G] [Finite G] [DecidableEq G] in
 @[simp] lemma Rep.ρ_mul_eq_comp (M : Rep R G) (x y : G) :
-    Action.ρ M (x * y) = (Action.ρ M y) ≫ (Action.ρ M x) := by
-  rw [Rep.Action_ρ_eq_ρ, map_mul]
-  rfl
+    Action.ρ M (x * y) = (Action.ρ M y) ≫ (Action.ρ M x) := map_mul (Action.ρ M) x y
 
 namespace Representation
 

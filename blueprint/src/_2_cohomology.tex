@@ -71,10 +71,13 @@ If the subgroup $S$ is normal then $M^S$ is a representation of the quotient gro
 \begin{definition} \label{def:inflation restriction functors}
 	\lean{Rep.quotientToInvariantsFunctor,
 		Rep.res}
+	\leanok
+	\mathlibok
 	The map $M \mapsto M \downarrow S$ defines a functor $\Res : \Rep(R,G) \to \Rep(R,S)$.
 	If $S$ is a normal subgroup of $G$ then then map $M \mapsto M^S$ defines
 	a functor $\Invar : \Rep(R,G) \to \Rep(R, G/S)$.
 	These functors are called \emph{restriction} and \emph{inflation} respectively.
+	These are defined in Mathlib as \texttt{Rep.res} and \texttt{Rep.quotientToInvariantsFunctor}.
 \end{definition}
 
 
@@ -113,13 +116,17 @@ $G$-module $M$, and are written $H^n(G,M)$. These are defined in Mathlib as
 	$H^1(G,M) \cong \Hom(G,M)$.
 \end{example}
 
-\begin{example} \label{eg:Hn unit}
+\begin{lemma} \label{lem:Hn unit}
 	If $G$ is the trivial group then for all $n>0$, $H^n(G,M)\cong 0$.
-	In this case each of the modules $C^n(G,M)$ may be identified with $M$,
+\end{lemma}
+
+\begin{proof}
+	Each of the modules $C^n(G,M)$ may be identified with $M$,
 	and the coboundary maps reduce to alternating sums of the form
 	$d^n(m) = \sum_{i=0}^{n+1} (-1)^i m$.
 	Hence $d^n$ is the identity map for odd $n$, and is the zero map for even $m$.
-\end{example}
+	It follows that the image of $d^n$ is equal to the kernel of $d^{n+1}$.
+\end{proof}
 
 \begin{remark}
 	The functions $d^i : (G^i \to M) \to (G^{i+1} \to M)$ do not depend on the
@@ -318,7 +325,8 @@ As a consequence of this, we have the following (which is in Mathlib):
 	and are written $H_n(G,M)$.
 \end{definition}
 
-\begin{example}
+\begin{example} \label{eg:homology 0}
+	\uses{def:group homology}
 	We'll sometimes write $\single(g,m)$ for the function with value $m$ at $g$ and value
 	zero elsewhere. The $R$-module $C_1(G,M)$ is spanned by the elements $\single(g,m)$
 	for $g \in G$ and $m \in M$ (\texttt{Finsupp.single} in Mathlib).
@@ -335,10 +343,51 @@ As a consequence of this, we have the following (which is in Mathlib):
 \end{example}
 
 \begin{example} \label{eg:homology unit}
+	\uses{def:group homology}
 	In the case that $G=1$ is the trivial group then for all $n > 0$ we have
 	$H_n(1,M)$.
-	This follows in a similar way to \ref{eg:Hn unit}
+	This follows in a similar way to \ref{lem:Hn unit}
 \end{example}
+
+\begin{lemma} \label{lem:homology 1 trivial}
+	\uses{def:group homology}
+	\mathlibok
+	\leanok
+	If $M$ is a trivial representation of $G$ then $H_1(G,M) \cong G^{\ab} \otimes \Z M$.
+	The isomorphism takes a 1-cycle $\single(x,m)$ to $xG' \otimes m$ for $x \in G$ and $m \in M$.
+	(This result is already in Mathlib).
+\end{lemma}
+
+\begin{proof}
+	\mathlibok
+	\leanok
+	Since $M$ is trivial, the map $d_0 : C_1(G,M) \to C_0(G,M)$ is zero, so every $1$-chain is
+	a 1-cycle.
+	The map $d_1 : C_1(G,M) \to C_0(G,M)$ is given by
+	\[
+		d_1 \single((x,y),m)
+		= \single(y,x^{-1} \bullet m) - \single(xy,m) + \single(x,m).
+	\]
+	Therefore $H_1(G,M)$ is the quotient of $G \to_0 M$ by the relations
+	\[
+		\single(xy,m) = \single(x,m) + \single(y,m),
+		\qquad x,y \in G.
+	\]
+	If we fix an $m \in M$, then these relations imply that the map $G \to H_1(G,M)$ defined by
+	$x \mapsto \single(x,m)$ is a group homomorphism.
+	In particular this map descends to a homomorphism $G^{\ab} \to H_1(G,M)$.
+	If we fix $x \in G$ and allow $m$ to vary, then $\single(x,m)$
+	is $\Z$-linear in $m$. It is therefore a $\Z$-bilinear map $G^\ab \times M \to H_1(G,M)$.
+	Such a map lifts to a linear map $\Phi : G^{\ab} \otimes_{\Z} M \to H_1(G,M)$	given by
+	\[
+		xG' \otimes m \mapsto \single(x,m)
+	\]
+	To construct an inverse of $\Phi$, we note that all of the relations are in the kernel of the
+	linear map $(G\to_0 M) \to (G^\ab \otimes_\Z M)$ defined by $\single(x,m) \mapsto xG' \otimes m$.
+	Therefore this map descends to a linear map $\Psi : H_1(G,M) \to (G^\ab \otimes_\Z M)$.
+	It is trivial to check that $\Phi$ and $\Psi$ are inverses.
+\end{proof}
+
 
 
 \section{Tate Cohomology}
@@ -361,7 +410,7 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	We shall also regard the norm as a linear map from $C_0(G,M)$ to $C^0(G,M)$, both of which may
 	be identified with $M$.
 
-	(We'll see in the next two lemmas that $N_G$ commutes with the action of $G$,
+	(We'll see in the next lemma that $N_G$ commutes with the action of $G$,
 	so is a morphism in $\Rep(R,G)$. However, we shall only regard it as a morphism in $\Mod(R)$.
 	The reason is that the chain and cochain modules $C^0(G,M)$ and
 	$C_0(G,M)$ are regarded as $R$-modules rather than representations of $G$.)
@@ -423,6 +472,7 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 \end{proof}
 
 \begin{lemma} \label{lem:norm naturality}
+	\uses{def:norm}
 	For every map $f : A \to B$ in $\Rep(R,G)$ we have a commuting square:
 	\[
 		\begin{array}{rcl}
@@ -450,7 +500,8 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 		groupCohomology.TateCohomology}
 	\uses{
 		lem:norm comp d,
-		lem:d comp norm}
+		lem:d comp norm,
+		lem:norm naturality}
 	\leanok
 	Recall that we have a cochain complex $C^n(G,M)$, indexed by $n \in \N$,
 	whose zeroth term may be identified with $M$.
@@ -551,6 +602,8 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 
 
 
+
+
 \section{Coinduction and induction}
 
 
@@ -558,7 +611,9 @@ may both be regarded as part of a bigger cohomology theory, which is called Tate
 	\lean{Rep.TrivialCohomology,
 		Rep.TrivialHomology,
 		Rep.TrivialTateCohomology}
-	\uses{def:group homology}
+	\uses{def:group homology,
+		def:inflation restriction functors
+	}
 	\leanok
 	Let $M$ be a representation of $G$ over a ring $R$.
 	\begin{itemize}
@@ -582,9 +637,10 @@ Let $\phi : S \to G$ be a group homomorphism and let $M$ be a representation of 
 We define a representation $\coind_\phi(M)$ of $G$ as follows.
 As an $R$-module we have
 \[
-	\coind_\phi(M) ; \{ f : G \to M| \forall s \in S, x \in G, f(\phi(s)x) = s \bullet f(x)\}.
+	\coind_\phi(M) =
+	\{ f : G \to M| \forall s \in S, x \in G, f(\phi(s)x) = s \bullet f(x)\}.
 \]
-This can be thought of as the $(G \to M)^S$, where the action of $S$ is
+This space can be regarded as the $(G \to M)^S$, where the action of $S$ is
 $(s\bullet f)(x)=s \bullet f(\phi(s^{-1})\bullet x)$.
 The action of an element $g \in G$ on $f \in \coind_\phi(M)$ is defined by
 \[
@@ -650,8 +706,8 @@ This case is described again below.
 		on the space of all finitely supported functions $f : G \to_0 A$.
 		The action of an element $g \in G$ on $f$ is defined by
 		\[
-			(g \bullet f) (x) = f(g^{-1}x), \qquad i.e.\;
-			g \bullet \single(x,m) = \single(gx,m).
+			(g \bullet f) (x) = f(xg), \qquad i.e.\;
+			g \bullet \single(x,m) = \single(xg^{-1},m).
 		\]
 		This representation is called the induced representation and is denoted $\ind_1(G,A)$.
 	\end{itemize}
@@ -662,54 +718,76 @@ This case is described again below.
 	\lean{Rep.coind₁_trivialCohomology}
 	\uses{def:trivial cohomology,
 		def:induced,
-		lem:Shapiro}
+		lem:Shapiro,
+		lem:Hn unit}
 	\leanok
 	The representation $\coind_1(G,A)$ has trivial cohomology.
 \end{lemma}
 
 \begin{proof}
-  There is an elementary proof outlined in lean file involving cocycles which we describe here.
-	A more intuitive method of proof would give a more general statement (Shapiro's Lemma).
-	The proof given here is most easily stated in terms of inhomogeneous cochains, rather than
-	the homogeneous cochains in Mathlib, so we explain the proof in that context first, before
-	reformulating the same proof in terms of inhomogeneous cochains.
+	Let $S$ be a subgroup of $G$ and let $R$ be a set of representatives for the cosets $rS$
+	of $S$ in $G$.
+	There is an isomorphism of $S$-representations
+	\[
+		\coind_1(G,M) \downarrow S
+		\cong
+		\coind_1(S,R \to M).
+	\]
+	This isomorphism takes a function $f : G \to M$ to function $S \to (R \to M)$
+	defined by $s \mapsto (r \mapsto f(rs))$.
 
-  Choose any subgroup $S$ of $G$ and let $n > 0$; we shall prove that $H^n(S,\coind_1(A))\cong 0$.
-	Let $\{g_i\}$ be a set of coset representatives for $G/S$.
-  Recall that a homogeneous $n$-cochain on $S$ with values in $\coind_1(A)$
-  is a function $\sigma : S^{n+1} \to (G \to A)$ satisfying
-	(for all $s,s_0,\ldots,s_n\in S$ and $g \in G$) the following homogeneity condition:
+	The isomorphism, together with \ref{lem:Shapiro} and \ref{lem:Hn unit} implies for $n >0$:
 	\[
-		\sigma (ss_0, ... , ss_n) (g) = \sigma (s_0,...,s_n) (gs).
+		H^n(S,\coind_1(G,M)) \cong
+		H^n(S,\coind_1(S,R \to M)) \cong
+		H^n(1,R \to M) \cong 0.
 	\]
-  The cochain $\sigma$ is a cocycle if it satisfies the following cocycle relation
-	for all $s_i \in S$, $g \in G$:
-	\[
-		\sum_i (-1)^i  \sigma (s_0, ... ,\hat{s_i}, ... , s_{n+1}) (g) = 0.
-	\]
-  Given a homogeneous $n$-cocycle $\sigma$, we'll define a homogeneous $n-1$-cochain $\tau$ by
-	\[
-    \tau (s_0,...,s_{n-1}) (g_i) = \sigma (s^{-1},s_0,...,s_{n-1}) (g_i s).
-	\]
-  The cocycle relation for $\sigma$ implies $d^{n-1} \tau = \sigma$, so $\sigma$ is a coboundary.
-
-  Let's rephrase this in terms of inhomogeneous cocycles.
-	The inhomogeneous cocycle corresponding to $\sigma$ is
-	\[
-    \sigma' (s_1,...,s_n) (g_i s) = \sigma (1,s_1,s_1 s_2,..., s_1 \cdots s_n) (g_i s)
-	\]
-  and the inhomogeneous cochain corresponding to $\tau$ is
-	\begin{align*}
-		\tau' (s_1,...,s_{n-1}) (g_i s)
-		&= \tau (1,s_1,... , s_1 \cdots s_{n-1}) (g_i s)\\
-    &= \sigma (s^{-1}, 1, s_1, s_1 s_2,\ldots , s_1 \cdots s_n) (g_i s)\\
-    &= \sigma (1, s, s s_1, s s_1 s_2, ..., s s_1 \cdots s_{n-1}) (g_i)\\
-    &= \sigma' (s,s_1,\ldots,s_{n-1}) (g_i).
-	\end{align*}
-  The final formula above defines an inhomogeneous cochain $\tau' \in C^{n-1}(G,\coind_1(A))$,
-	such that $d^{n-1} \tau' = \sigma'$.
-	Therefore $H^n(S,\coind_1(A)) = 0$.
 \end{proof}
+
+
+
+%   There is an elementary proof outlined in lean file involving cocycles which we describe here.
+% 	A more intuitive method of proof would give a more general statement (Shapiro's Lemma).
+% 	The proof given here is most easily stated in terms of inhomogeneous cochains, rather than
+% 	the homogeneous cochains in Mathlib, so we explain the proof in that context first, before
+% 	reformulating the same proof in terms of inhomogeneous cochains.
+
+%   Choose any subgroup $S$ of $G$ and let $n > 0$; we shall prove that $H^n(S,\coind_1(A))\cong 0$.
+% 	Let $\{g_i\}$ be a set of coset representatives for $G/S$.
+%   Recall that a homogeneous $n$-cochain on $S$ with values in $\coind_1(A)$
+%   is a function $\sigma : S^{n+1} \to (G \to A)$ satisfying
+% 	(for all $s,s_0,\ldots,s_n\in S$ and $g \in G$) the following homogeneity condition:
+% 	\[
+% 		\sigma (ss_0, ... , ss_n) (g) = \sigma (s_0,...,s_n) (gs).
+% 	\]
+%   The cochain $\sigma$ is a cocycle if it satisfies the following cocycle relation
+% 	for all $s_i \in S$, $g \in G$:
+% 	\[
+% 		\sum_i (-1)^i  \sigma (s_0, ... ,\hat{s_i}, ... , s_{n+1}) (g) = 0.
+% 	\]
+%   Given a homogeneous $n$-cocycle $\sigma$, we'll define a homogeneous $n-1$-cochain $\tau$ by
+% 	\[
+%     \tau (s_0,...,s_{n-1}) (g_i) = \sigma (s^{-1},s_0,...,s_{n-1}) (g_i s).
+% 	\]
+%   The cocycle relation for $\sigma$ implies $d^{n-1} \tau = \sigma$, so $\sigma$ is a coboundary.
+
+%   Let's rephrase this in terms of inhomogeneous cocycles.
+% 	The inhomogeneous cocycle corresponding to $\sigma$ is
+% 	\[
+%     \sigma' (s_1,...,s_n) (g_i s) = \sigma (1,s_1,s_1 s_2,..., s_1 \cdots s_n) (g_i s)
+% 	\]
+%   and the inhomogeneous cochain corresponding to $\tau$ is
+% 	\begin{align*}
+% 		\tau' (s_1,...,s_{n-1}) (g_i s)
+% 		&= \tau (1,s_1,... , s_1 \cdots s_{n-1}) (g_i s)\\
+%     &= \sigma (s^{-1}, 1, s_1, s_1 s_2,\ldots , s_1 \cdots s_n) (g_i s)\\
+%     &= \sigma (1, s, s s_1, s s_1 s_2, ..., s s_1 \cdots s_{n-1}) (g_i)\\
+%     &= \sigma' (s,s_1,\ldots,s_{n-1}) (g_i).
+% 	\end{align*}
+%   The final formula above defines an inhomogeneous cochain $\tau' \in C^{n-1}(G,\coind_1(A))$,
+% 	such that $d^{n-1} \tau' = \sigma'$.
+% 	Therefore $H^n(S,\coind_1(A)) = 0$.
+% \end{proof}
 
 \begin{lemma}	\label{lem:coind₁ invariants}
 	\lean{Rep.coind₁_quotientToInvariants_iso,
@@ -780,9 +858,9 @@ This case is described again below.
 	and $H^{-1}_{\Tate}(S,\ind_1(M))$ are zero	for all subgroups $S$ of $G$.
 
 	Recall that $\ind_1(G,M)$ is the space of functions $G \to_0 M$, and the action of $G$ is by
-	left-translation:
+	right-translation:
 	\[
-		g \bullet \single(x,m) = \single(gx,m).
+		g \bullet \single(x,m) = \single(xg^{-1},m).
 	\]
 
 	To prove that $H^0_{\Tate}(S,\ind_1(G,A))=0$, we use the isomorphism
@@ -790,7 +868,7 @@ This case is described again below.
 	\[
 		H^0_{\Tate}(S,\ind_1(G,A)) \cong \ind_1(G,A)^S / N_S \ind_1(G,A).
 	\]
-	A function $f : G \to_0 M$ is $S$-invariant if $f$ is constant on cosets $Sg$ of $S$.
+	A function $f : G \to_0 M$ is $S$-invariant if $f$ is constant on cosets $gS$ of $S$.
 	If we let $\{g_i\}$ be a set of coset representatives,
 	then we have $f = N_S (\sum_i \single(g_i, f(g_i)))$.
 	Therefore $H^0_{\Tate}(S,\ind_1(G,A))=0$.
@@ -808,8 +886,8 @@ This case is described again below.
 	We can then write $f$ in the form
 	\begin{align*}
 		f
-		& = \sum_i \sum_{s \in S} (\single(sg_i, f(sg_i)) - \single(g_i,f(sg_i)))\\
-		& = \sum_i \sum_{s \in S} (s \bullet \single(g_i, f(sg_i)) - \single(g_i,f(sg_i))).
+		& = \sum_i \sum_{s \in S} (\single(g_i s^{-1}, f(g_is^{-1})) - \single(g_i,f(g_is^{-1})))\\
+		& = \sum_i \sum_{s \in S} (s \bullet \single(g_i, f(g_is^{-1})) - \single(g_i,f(g_is^{-1}))).
 	\end{align*}
 	Therefore $f \in I_S \ind_1(M)$. This shows that $H^{-1}(S,\ind_1(M)) = 0$.
 \end{proof}
@@ -877,7 +955,7 @@ This case is described again below.
 	We've seen in Lemma \ref{lem:coind₁' iso coind₁} that $\coind_1'(M)$
 	is isomorphic to $\coind_1(M)$.
 	Applying the functor $\Invar$, we obtain an isomorphism between $\coind_1'(M)^S$ and $\coind_1(M)^S$.
-	The result then follows from Lemma \ref{lem:coind₁ trivial cohomology}.
+	The result then follows from Lemma \ref{lem:coind₁ invariants}.
 \end{proof}
 
 \begin{definition} \label{def:up}
@@ -924,14 +1002,14 @@ This case is described again below.
 	isomorphism.
 	The corresponding map $H^{0}(S,\up(M)) \to H^{1}(S,M)$ is	surjective.
 
-	The isomorphism $H^{n}(G,\up(-)) \cong H^{n+1}(G,-)$ is an isomorphism of functors.
+	The isomorphism $H^{n}(S,\up(-)) \cong H^{n+1}(S,-)$ is an isomorphism of functors.
 	This means that for every morphism $f : M \to N$ of representations,
 	the following square commutes:
 	\[
 		\begin{matrix}
-			H^{n}(G,\up(M)) & \cong & H^{n+1}(G,M) \\
+			H^{n}(S,\up(M)) & \cong & H^{n+1}(S,M) \\
 			\downarrow && \downarrow \\
-			H^{n}(G,\up(N)) & \cong & H^{n+1}(G,N)
+			H^{n}(S,\up(N)) & \cong & H^{n+1}(S,N)
 		\end{matrix}.
 	\]
 \end{corollary}
@@ -959,9 +1037,9 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	functions $G \to_0 M$.
 	The action of an element $g \in G$ on a function $f : G \to_0 M$ is given by
 	\[
-		(g \bullet f)(x) = g \bullet (f (g^{-1}x)),\qquad
+		(g \bullet f)(x) = g \bullet (f (xg)),\qquad
 		\text{i.e. }
-		g \bullet \single(g,m) = \single(gx, g\bullet m).
+		g \bullet \single(g,m) = \single(xg^{-1}, g\bullet m).
  	\]
 	The map $\ind_1'$ is functorial in $M$.
 \end{definition}
@@ -984,7 +1062,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	The data of the isomorphism is contained in the lean file; the isomorphism
 	takes $f : G \to_0 M$ to the finitely supported function
 	\[
-		x \mapsto x^{-1} \bullet f(x).
+		x \mapsto x \bullet f(x).
 	\]
 	It remains to check linearity and naturality.
 \end{proof}
@@ -1000,7 +1078,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 \begin{proof}
 	\leanok
 	We've shown that $\ind_1'(M)$ is isomorphic to $\ind_1(M)$, which is already known to
-	have trivial homology.
+	have trivial homology by \ref{lem:ind₁ trivial homology}.
 \end{proof}
 
 % \begin{corollary}	\label{cor:ind₁' iso coind₁'}
@@ -1037,7 +1115,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\[
 		0 \to \down(M) \to \ind_1'(M) \to M \to 0.
 	\]
-	Both $\down(M)$ and the short exact seqeunce are functors of $M$; this means that for
+	Both $\down(M)$ and the short exact sequence are functors of $M$; in particular for
 	every map $f : M \to N$ in $\Rep(R,G)$, we have a commutative diagram:
 	\[
 		\begin{matrix}
@@ -1121,7 +1199,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 \begin{definition} \label{def:augmentation module}
 	\lean{Rep.aug}
 	\leanok
-	As a simple example we consider the case of the trivial representation $R$.
+	As an example we consider the case of the trivial representation $R$.
 	The induced representation is then the group ring $RG$, which is referred to
 	Mathlib as \verb|Rep.leftRegular R G|; this is a free $R$-module with basis
 	$\single(g,1)$ for $g \in G$.
@@ -1131,60 +1209,56 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\emph{augmentation module}.
 	We shall write $\aug(R,G)$ for this kernel.
 	The kernel $\aug(R,G)$ is spanned by the elements $[g]-[1]$ for $g \in G$.
-	Note that $I_G \aug(R,G)$ is spanned by elements of the form $[gh]-[h] -[g] + [1]$.
 \end{definition}
 
-\begin{lemma} \label{lem:homology 0 aug}
+\begin{lemma} \label{lem:Tate -1 aug}
 	\uses{
 		def:augmentation module,
-		def:group homology
+		lem:homology 1 trivial,
+		lem:Tate cohomology is cohomology or homology
 	}
-	Let $G$ be a finite group.
+	Let $S$ be a subgroup of a finite group $G$.
 	Then there is an isomorphism of $R$-modules
 	\[
-		G^{\ab} \otimes_{\Z} R \cong H_0(G,\aug(R,G)),
+		S^{\ab} \otimes_{\Z} R \cong H^{-1}_{\Tate}(S,\aug(R,G)),
 	\]
-	which takes an element $g \otimes 1$ for $g \in G$ to the coset of $[g]-[1]$
-	in $\aug(R,G) / I_G \aug(R,G)$.
+	which takes an element $s \otimes 1$ for $s \in S$ to the coset of $[s]-[1]$
+	in $H^{-1}(S,\aug(R,G)) \cong \aug(R,G) / I_G \aug(R,G)$.
 	In particular, taking $R = \Z$ we have an isomorphism
 	\[
-		G^{\ab} \cong H_0(G,\aug(\Z,G)).
+		S^{\ab} \cong H^{-1}_{\Tate}(S,\aug(\Z,G)).
 	\]
 \end{lemma}
 
 \begin{proof}
-	We'll first define a function $\phi : G \to H_0(G,\aug(G,R))$	by $\phi (g) = [g]-[1]$.
-	The following calculation shows that $\phi$ is a group homomrphism.
-	\begin{align*}
-		\phi(gh)
-		&= \phi(g) +\phi(h) + ([gh]-[1]) -([g]-[1]) - ([h]-[1])\\
-		&= \phi(g) +\phi(h) + [gh] - [g] - [h] + [1]\\
-		&\equiv \phi(g) +\phi(h) \bmod  I_G \aug(R,G).
-	\end{align*}
-	It follows that $\phi$ descends to a homomorphism $G^{\ab} \to H_0(G,\aug(R,G))$, which
-	may be extended uniquely to a linear map $G^{\ab} \otimes R \to H_0(G,\aug(R,G))$.
+	Recall that by \ref{lem:homology 1 trivial}, \ref{lem:Tate cohomology is cohomology or homology}
+	we already have an isomorphism
+	$S^\ab \otimes R \cong H_1(S,R) \cong H^{-2}_{\Tate}(S,R)$ which takes $s \otimes 1$ to
+	(the coset of) $\single(s,1)$.
+	Furthermore by \ref{cor:Tate up down isos} there is an isomorphism
+	$H^{-2}_{\Tate}(S,R) \cong H^{-1}_{\Tate}(S,\aug(G,R))$.
+	It remains to check that the image of $s \otimes 1$ in $H^{-1}_{\Tate}(S,\aug(G,R))$ is
+	$[s]-[1]$.
 
-	Next we define a linear map $\psi : \aug(G,R) \to G^{\ab} \otimes R$
-	taking the generator $[g]-[1]$ to $g \otimes 1$.
-	It's trivial to check that $I_G\aug(R,G)$ is in the kernel of $\psi$, so $\psi$ descends to
-	a map $H_0(G,\aug(R,G)) \to G^{\ab} \otimes R$.
-	The two maps are easily seen to be inverses.
-\end{proof}
-
-
-\begin{corollary} \label{eq:Tate -1 aug}
-	\uses{lem:homology 0 aug,
-		lem:Tate cohomology is cohomology or homology}
-	Suppose now that the group $G$ is finite.
-	The map $N_G : \aug(R,G) \to \aug(R,G)$ in this case is zero, so we have
+	In the following diagram the rows are short exact sequences and the vertical maps are
+	the differentials in the Tate complex.
 	\[
-		H^{-1}_{\Tate}(G,\aug(R,G)) \cong H_{0}(G, \aug(R,G)) \cong G^{\ab} \otimes R.
+		\begin{matrix}
+			0 \to C^{-2}_{\Tate}(S,\aug(R,G)) & \to & C^{-2}_{\Tate}(S,RG) & \to &C^{-2}_{\Tate}(S,R) \to 0\\
+			\downarrow & &\downarrow & &\downarrow
+			0 \to C^{-1}_{\Tate}(S,\aug(R,G)) & \to & C^{-1}_{\Tate}(S,RG) & \to &C^{-1}_{\Tate}(S,R) \to 0
+		\end{matrix}
 	\]
-\end{corollary}
+	By \ref{lem:homology 1 trivial}, the image of $s \otimes 1$ in $H^{-2}_{\Tate}(S,R)$ is
+	represented by the element $\single(s,1)$
+	in $C^{-2}_{\Tate}(S,R)$.
+	To calculate the image in $H^{-1}_{\Tate}(S,\aug(R,G))$, we take a pre-image of $\single(s,1)$
+	in $C^{-2}_{\Tate}(S,RG)$; map that preimage into $C^{-1}_{\Tate}(S,RG)$, and then take its
+	preimage in $C^{-1}_{\Tate}(S,\aug(R,G))$.
 
-\begin{proof}
-	The first isomorphism follows because the map $N_G : \aug(R,G) \to \aug(R,G)$ is zero.
-	The second isomorphism is \ref{lem:homology 0 aug}.
+	An obvious pre-image of $\single(s,1)$ in $C^{-2}_{\Tate}(S,RG)$ is $\single(s,[1])$.
+	The image of this in $C^{-1}_{\Tate}(S,RG) \cong RG$ is $[s]-[1]$.
+	Therefore the image of $s \otimes 1$ in $H^{-1}_{\Tate}(S,\aug(R,G))$ is $[s]-[1]$.
 \end{proof}
 
 
@@ -1215,8 +1289,8 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	Assume the result is true for some $n\ge 1$; we will prove it for $n+1$
 	by dimension-shifting.
 
-	Let $M$ be a representation such that $H^i(S,M)=0$ for all $0 < i < n+1$.
-	This implies $H^i(S,\up(M)) = 0$ for all $0 < i < n$.
+	Let $M$ be a representation such that $H^i(S,M)\cong 0$ for all $0 < i < n+1$.
+	This implies $H^i(S,\up(M)) \cong 0$ for all $0 < i < n$.
 	Hence by the inductive hypothesis the following sequence is exact:
 	\[
 		0 \to H^n( G/S, \up(M)^S) \to H^n(G, \up(M)) \to H^n(S,\up(M)).
@@ -1225,7 +1299,7 @@ Let $G$ be a group and $M$ a representation of $G$ over a commutative ring $R$.
 	\[
 		0 \to M \to \coind_1'(M) \to \up(M) \to 0.
 	\]
-	Since $0 < 1 < n+1$ we have $H^1(S,M)=0$,
+	Since $0 < 1 < n+1$, our condition on $M$ implies $H^1(S,M) \cong 0$,
 	so by taking $S$-invariants we obtain a short exact sequence of
 	$G/S$-modules:
 	\[
@@ -1346,7 +1420,7 @@ We define this now, and point out some easy consequences of the definition.
 
 \begin{corollary} \label{cor:cohomology G-torsion}
 	\uses{lem:cor comp rest,
-		eg:Hn unit,
+		lem:Hn unit,
 		lem:Tate cohomology is cohomology or homology,
 		cor:Tate up down isos
 	}
@@ -1355,12 +1429,12 @@ We define this now, and point out some easy consequences of the definition.
 \end{corollary}
 
 \begin{proof}
-	By dimension-shifting (ref{cor:Tate up down isos}) it's enough to prove the result for $n > 0$,
+	By dimension-shifting (\ref{cor:Tate up down isos}) it's enough to prove the result for $n > 0$,
 	in which case by \ref{lem:Tate cohomology is cohomology or homology}
 	Tate cohomology is isomorphic to cohomology.
 	Take $S$ to be the trivial subgroup $1$ of $G$.
 	By \ref{lem:cor comp rest} it's sufficient to prove that $\cor(\rest(\sigma))= 0$.
-	This follows because $\rest(\sigma) \in H^n(1,M) \cong 0$ by \ref{eg:Hn unit}.
+	This follows because $\rest(\sigma) \in H^n(1,M) \cong 0$ by \ref{lem:Hn unit}.
 \end{proof}
 
 \begin{corollary} \label{cor:cohomology sub Sylow}
@@ -1368,8 +1442,8 @@ We define this now, and point out some easy consequences of the definition.
 		lem:Tate cohomology is cohomology or homology,
 		lem:cor comp rest
 	}
-	Let $M$ be a representation of a finite group $G$ and let $S_p$ be a Sylow $p$-
-	subgroup of $G$ for some prime number $p$.
+	Let $M$ be a representation of a finite group $G$ and let $S_p$ be a Sylow $p$-subgroup of $G$
+	for some prime number $p$.
 	Then for any $n \in \Z$, $H^n_{\Tate}(G,M)[p^\infty]$ is isomorphic to an $R$-submodule
 	of $H^n_{\Tate}(S_p,M)$.
 \end{corollary}
@@ -1385,6 +1459,9 @@ We define this now, and point out some easy consequences of the definition.
 
 
 
+
+
+
 \section{Periodicity for finite cyclic groups}
 
 In this section we shall assume that $G$ is a finite cyclic group of order $n$.
@@ -1393,7 +1470,7 @@ We shall write $\gen$ for a fixed generator of $G$.
 Given any representation $M$ of $G$, there is a map
 $\map_1 : \coind_1'(M) \to \coind_1'(M)$ which takes a function $f : G \to M$ to the function
 \[
-	x \mapsto f(x) - f(\gen\cdot x).
+	x \mapsto f(x) - f(\gen^{-1}\cdot x).
 \]
 The kernel of $\map_1$ consists of the constant functions $G \to M$, i.e. the image of the
 map $M \to \coind_1'(M)$.
@@ -1403,8 +1480,8 @@ Since $G$ is finite, the representations $\coind_1'(M)$ and $\ind_1'(M)$
 are isomorphic, and we define $\map_2$ to be the corresponding map $\ind_1'(M) \to \ind_1'(M)$.
 This is given by
 \[
-	\map_2(f) (x) = f(x) - f(\gen \cdot x), \qquad i.e.\;
-	\map_2(\single(x,m)) = \single(x,m) - \single(\gen^{-1} \cdot x, m).
+	\map_2(f) (x) = f(x) - f(\gen^{-1} \cdot x), \qquad i.e.\;
+	\map_2(\single(x,m)) = \single(x,m) - \single(\gen \cdot x, m).
 \]
 \begin{lemma} \label{lem:map2 image}
 	\uses{def:ind'}
@@ -1457,7 +1534,7 @@ We have a commutative square with vertical isomorphisms:
 	we have a commuting square:
 	\[
 		\begin{matrix}
-			\up(M) & \stackrel{\up(f)}\to & \up(N) \\
+			\up(M) & \stackrel{\up(f)}\to & \up(N) \\[2mm]
 			\downarrow && \downarrow \\
 			\down(M) & \stackrel{\down(f)}\to & \down(N)
 		\end{matrix}.
@@ -1751,19 +1828,19 @@ relation for all $x,y,z\in G$
 		= \left(g \bullet m + \sum_{x \in G} f(x) \sigma'(g,x) , g \bullet f\right),
 		\qquad m \in M, \; f \in \aug(R,G).
 	\]
-	(Although we don't need this fact right now, it's worth knowing that up to isomorphism,
-	the splitting module depends only on the cohomology class $\sigma$. For this reason, we'll write
-	$\Split(\sigma)$ for this representation).
+	We'll write $\Split(\sigma')$ for the splitting module.
+	Although we don't need this fact, it's worth knowing that up to isomorphism,
+	the splitting module depends only on the cohomology class of $\sigma'$.
 \end{definition}
 
 There is evidently a short exact sequence of representations of $G$.
 \begin{equation}\label{eq:split ses}
-	0 \to M \to \Split(\sigma) \to \aug(R,G) \to 0.
+	0 \to M \to \Split(\sigma') \to \aug(R,G) \to 0.
 \end{equation}
 
 \begin{lemma} \label{lem:splits in splitting module}
 	\uses{def:splitting module}
-	The image of $\sigma$ in $H^2(G,\Split(\sigma))$ is zero.
+	The image of $\sigma'$ in $H^2(G,\Split(\sigma))$ is zero.
 \end{lemma}
 
 \begin{proof}
@@ -1804,9 +1881,9 @@ There is evidently a short exact sequence of representations of $G$.
 	We shall call $(R,G,M)M$ is a \emph{finite class formation} if:
 	\begin{itemize}
 		\item
-		The ring $R$ has no additive torsion. This implies
+		The ring $R$ has no additive torsion. This implies for all subgroups $S$ of $G$:
 		\[
-			H^2(G,\aug(R,G)) \cong H^1(G,R) \cong \Hom(G,R) = 0.
+			H^2(S,\aug(R,G)) \cong H^1(S,R) \cong \Hom(S,R) = 0.
 		\]
 		\item
 		For all subgroups $S \le G$ we have $H^1(S,M) \cong 0$.
@@ -1817,10 +1894,10 @@ There is evidently a short exact sequence of representations of $G$.
 	a \emph{fundamental class}.
 \end{definition}
 
-In this section we'll show that if $M$ is a finite class formation over the ring $\Z$
+In this section we'll show that if $(R,G,M)$ is a finite class formation
 then there is an isomorphism (called the \emph{reciprocity isomorphism})
 \[
-	G^{\ab} \cong H^0_{\Tate}(G,M).
+	G^{\ab} \otimes R \cong H^0_{\Tate}(G,M).
 \]
 The reciprocity isomorphism depends on the choice of a fundamental class.
 
@@ -1839,6 +1916,7 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 \end{lemma}
 
 \begin{proof}
+	\mathlibok
 	(This lemmma is already in Mathlib.)
 	Without loss of generality $I=0$, since such a map is also $R/I$-linear.
 	Let $c\in R$ be a preimage of $1$ and let $d = f(1)$.
@@ -1866,7 +1944,7 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 	Since $R$ has no additive torsion, the image of $R/|S|$ in $R/|G|$
 	is contained in the $S$-torsion, which is $[G:S] R / |G|$.
 	Furthermore, since the composition is $[G:S]$,
-	it follows that the image of $\cor$ is contains $[G:S] R / |G|$.
+	it follows that the image of $\cor$ contains $[G:S] R / |G|$.
 	Therefore the image of $\cor$ is precisely $[G:S] R / |G|$, which
 	is isomorphic to $R/|S|$. Hence $\cor$ may be regarded as a surjective linear map
 	$R/|S| \to R/|S|$.
@@ -1884,31 +1962,31 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 		thm:triviality criterion,
 		lem:linear injective of surjective,
 		def:cohomology long exact sequence}
-	Let $\sigma \in H^2(G,M)$ be a fundamental class.
-	Then $\Split(\sigma)$ has trivial cohomology.
+	Let $\sigma'$ be a 2-cocycle representing a fundamental class in $H^2(G,M)$.
+	Then $\Split(\sigma')$ has trivial cohomology.
 \end{theorem}
 
 \begin{proof}
 	By \ref{thm:triviality criterion}, it's enough to prove for every subgroup $S$ of $G$ that
-	$H^1(S,\Split(\sigma)) \cong 0$ and $H^2(S,\Split(\sigma)) \cong 0$.
+	$H^1(S,\Split(\sigma')) \cong 0$ and $H^2(S,\Split(\sigma')) \cong 0$.
 	We have a long exact sequence with the following terms:
 	\[
-		0 \to H^1(S,\Split(\sigma)) \to H^1(S,\aug(R,G)) \to H^2(S,M) \to H^2(S,\Split(\sigma))
+		0 \to H^1(S,\Split(\sigma')) \to H^1(S,\aug(R,G)) \to H^2(S,M) \to H^2(S,\Split(\sigma'))
 		\to 0.
 	\]
 	By \ref{lem:restriction fundamental class generates} and \ref{lem:splits in splitting module},
-	the map $H^2(S,M) \to H^2(S,\Split(\sigma))$ is zero.
-	In particular $H^2(S,\Split(\sigma)) \cong 0$.
+	the map $H^2(S,M) \to H^2(S,\Split(\sigma'))$ is zero.
+	In particular $H^2(S,\Split(\sigma')) \cong 0$.
 	The $R$-modules $H^1(S,\aug(R,G))$ and $H^2(S,M)$ are both isomorphic to $R / |S|R$,
 	and the map from one to the other is surjective.
 	By \ref{lem:linear injective of surjective}, the map
 	from $H^1(S,\aug(R,G))$ to $H^2(S,M)$ is also injective.
-	Therefore $H^1(S,\Split(\sigma))=0$.
+	Therefore $H^1(S,\Split(\sigma')) \cong 0$.
 \end{proof}
 
 \begin{definition} \label{def:reciprocity iso}
 	\uses{thm:splitting module trivial,
-		eq:Tate -1 aug,
+		lem:Tate -1 aug,
 		thm:trivial cohomology implies trivial Tate}
 	The theorem implies that we have isomorphisms for all $n\in \Z$ (which depend of $\sigma$):
 	\[
@@ -1924,7 +2002,7 @@ The reciprocity isomorphism depends on the choice of a fundamental class.
 	Here $\delta$ is the connecting map for the short exact sequence \ref{eq:split ses}.
 \end{definition}
 
-We next a formula for the reciprocity isomorphism in terms of
+We next prove a formula for the reciprocity isomorphism in terms of
 a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 
 \begin{lemma} \label{lem:reciprocity formula}
@@ -1945,13 +2023,13 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 	which are all $N_G$.
 	\[
 		\begin{matrix}
-			0 \to & C^{-1}(G,M) & \to & C^{-1}(G,\Split(\sigma)) & \to & C^{-1}(G,\aug(R,G)) & \to 0 \\
+			0 \to & C^{-1}(G,M) & \to & C^{-1}(G,\Split(\sigma')) & \to & C^{-1}(G,\aug(R,G)) & \to 0 \\
 			&\downarrow &&\downarrow &&\downarrow \\
-			0 \to & C^{0}(G,M) & \to & C^{0}(G,\Split(\sigma)) & \to & C^{0}(G,\aug(R,G)) & \to 0
+			0 \to & C^{0}(G,M) & \to & C^{0}(G,\Split(\sigma')) & \to & C^{0}(G,\aug(R,G)) & \to 0
 		\end{matrix}
 	\]
-	Choose an element $g \in G$. Recall that the element $gG' \otimes 1 \in G^{\ab} \otimes R$
-	corresponds to the element
+	Choose an element $g \in G$. By \ref{lem:Tate -1 aug},
+	the element $gG' \otimes 1 \in G^{\ab} \otimes R$ maps to the cocycle
 	$[g]-[1] \in C^{-1}(G,\aug(\Z,G))$.
 	An obvious pre-image of this element in $C^{-1}(G,\Split(\sigma))$ is
 	the element $(0,[g]-[1])$.
@@ -1961,39 +2039,28 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 		=
 		\left(\sum_{x \in G} (\sigma'(x,g) - \sigma'(x,1)), 0\right).
 	\]
-	By the cocycle relation we have $\sigma'(x,1) = \sigma'(1,1)$ for all $x\in G$.
-	Hence the reciprocity map takes $g \in G$ to the element
+	By the cocycle relation we have $\sigma'(x,1) = x \bullet \sigma'(1,1)$ for all $x\in G$.
+	Hence the reciprocity map is given by
 	\[
-		\sum_{x \in G} \sigma'(x,g) - |G| \sigma'(1,1)
+		\reciprocity(gG' \otimes 1)
+		\cong \sum_{x \in G} \sigma'(x,g) - N_G \sigma'(1,1)
+		\cong \sum_{x \in G} \sigma'(x,g)
 		\in M^G / N_G M.
-	\]
-	Since every element of $H^\bullet_{\Tate} (G,-)$ is killed by $|G|$, this formula simplifies to
-	\[
-		\reciprocity (g) = \sum_{x \in G} \sigma'(x,g).
 	\]
 	If we modify $\sigma'$ by a coboundary $d\tau$:
 	\[
-		\sigma''(x,y) = \sigma'(x,y) + x \tau(y) - \tau(xy) + \tau(x),
+		\sigma''(x,y) = \sigma'(x,y) + x \bullet \tau(y) - \tau(xy) + \tau(x),
 	\]
 	then we will add the folowing term to $\reciprocity(g)$:
 	\[
-		\sum_{x \in G} (x \tau(g) - \tau(xg) + \tau(x)).
+		\sum_{x \in G} (x \bullet \tau(g) - \tau(xg) + \tau(x)).
 	\]
-	This sum simplifies to $N_G(\tau(g))$, which is zero in $H^0_{\Tate}(G,M)$.
+	The second and third terms canel each other out after reindexing, so we are
+	left with $N_G(\tau(g))$, which is zero in $H^0_{\Tate}(G,M)$.
 \end{proof}
 
 
-% \begin{example}
-% 	The simplest example of a class formation and a fundamental class is in the case
-% 	that $G$ is a cyclic group of order $n$ and $M$ is the trivial representation $\Z$.
-% 	It follows immediately that the element $\sigma_1 \in H^2(G,\Z)$ defined in
-% 	\ref{lem:H2 cyclic Z} is a fundamental class.
-% 	In this case the reciprocity isomorphism takes the form
-% 	\[
-% 		G^{\ab} \cong H^0_{\Tate} (G,\Z) \cong \Z/n\Z.
-% 	\]
-% 	(The isomorphism depends on $\sigma_1$, which depends on a choice of generator $g \in G$).
-% \end{example}
+
 
 
 
@@ -2023,7 +2090,7 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 \begin{proof}
 	The fact that $(R, S, M \downarrow S)$ is a finite class formation is a tautology.
 	The fact that $\sigma_S$
-	is a fundamental class follows from \ref{lem:restriction fundamental class generates}.
+	is a fundamental is \ref{lem:restriction fundamental class generates}.
 	It remains to prove that the diagram commutes.
 	We'll write $\theta_G$ and $\theta_S$ for the horizontal maps in the diagram.
 	For an element $s \in S$ we have by \ref{lem:reciprocity formula}:
@@ -2035,7 +2102,7 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 	\[
 		\theta_G(sG') = \sum_{r \in R} \sum_{x \in S} \sigma_G(rx,s).
 	\]
-	Using the cocyclce relation we have
+	Using the cocycle relation we have
 	\[
 		\theta_G(sG') = \sum_{r \in R} \sum_{x \in S}
 		\left(\sigma_G(r,xs) + r \bullet \sigma_G(x,s) - \sigma_G(r,x)\right).
@@ -2184,63 +2251,63 @@ a cocycle $\sigma'$ representing the fundamental class $\sigma$.
 
 
 
-\section{The invariant map}
+% \section{The invariant map}
 
-For simplicity we shall work over the ring $R=\Z$ from now on.
+% For simplicity we shall work over the ring $R=\Z$ from now on.
 
-Suppose $S$ is a subgroup of $G$ and $M$ is a finite class formation with
-fundamental class $\sigma_G$. It follows immediately that $M\downarrow S$ is also
-a finite class formation with fundamental class $\sigma_S := \sigma_G | S$.
-Similarly we have :
+% Suppose $S$ is a subgroup of $G$ and $M$ is a finite class formation with
+% fundamental class $\sigma_G$. It follows immediately that $M\downarrow S$ is also
+% a finite class formation with fundamental class $\sigma_S := \sigma_G | S$.
+% Similarly we have :
 
-\begin{lemma} \label{lem:quotient class formation}
-	Let $S$ be a normal subgroup of $G$ and let $M$ be a class formation for $G$.
-	Then $M^S$ is a finite class formation for $G/S$. Furthermore there is a unique
-	fundamental class $\sigma_{G/S} \in H^2(G/S, M^S)$ such that
-	$\inf (\sigma_{G/S}) = [G:S] \cdot \sigma_G$.
-\end{lemma}
+% \begin{lemma} \label{lem:quotient class formation}
+% 	Let $S$ be a normal subgroup of $G$ and let $M$ be a class formation for $G$.
+% 	Then $M^S$ is a finite class formation for $G/S$. Furthermore there is a unique
+% 	fundamental class $\sigma_{G/S} \in H^2(G/S, M^S)$ such that
+% 	$\inf (\sigma_{G/S}) = [G:S] \cdot \sigma_G$.
+% \end{lemma}
 
-\begin{proof}
-	Consider the inflation restriction sequence:
-	\[
-		0 \to H^2(G/S,M^S) \to H^2(G,M) \to H^2(S,M)
-	\]
-	The result follows since the restriction map $H^2(G,M) \to H^2(S,M)$
-	is a surjective map from $\Z/|G|\cdot \Z$ to $\Z/|S|\cdot \Z$.
-\end{proof}
+% \begin{proof}
+% 	Consider the inflation restriction sequence:
+% 	\[
+% 		0 \to H^2(G/S,M^S) \to H^2(G,M) \to H^2(S,M)
+% 	\]
+% 	The result follows since the restriction map $H^2(G,M) \to H^2(S,M)$
+% 	is a surjective map from $\Z/|G|\cdot \Z$ to $\Z/|S|\cdot \Z$.
+% \end{proof}
 
-In practice, the following is a more convenient definition of a finite class formation.
+% In practice, the following is a more convenient definition of a finite class formation.
 
-\begin{definition}
-	For all subgroups $S \le T \le G$ with $S$ normal in $T$,
-	there is an element $\sigma_{T/S} \in H^2(T/S,M^S)$
-	with the following properties:
-	\begin{itemize}
-		\item
-		$\inf (\sigma_{T/S}) = [T:S] \cdot \sigma_T$,
-		\item
-		$\sigma_T = \rest \sigma_{G}$.
-	\end{itemize}
-\end{definition}
+% \begin{definition}
+% 	For all subgroups $S \le T \le G$ with $S$ normal in $T$,
+% 	there is an element $\sigma_{T/S} \in H^2(T/S,M^S)$
+% 	with the following properties:
+% 	\begin{itemize}
+% 		\item
+% 		$\inf (\sigma_{T/S}) = [T:S] \cdot \sigma_T$,
+% 		\item
+% 		$\sigma_T = \rest \sigma_{G}$.
+% 	\end{itemize}
+% \end{definition}
 
-Given a class formation with fundamental classes $\sigma_{T/S}$ we define an invariant map
-\[
-	\inv_{T/S} : H^2 (T/S, M^S) \to \Q / \Z,
-	\qquad
-	\sigma_{T/S} \mapsto \frac{1}{[T:S]}.
-\]
+% Given a class formation with fundamental classes $\sigma_{T/S}$ we define an invariant map
+% \[
+% 	\inv_{T/S} : H^2 (T/S, M^S) \to \Q / \Z,
+% 	\qquad
+% 	\sigma_{T/S} \mapsto \frac{1}{[T:S]}.
+% \]
 
 
-\begin{lemma} \label{lem:inv inflation compatibility}
-	Let $S\le T$ be a normal subgroup. then we have
-	\[
-		\inv_{T/S}(\sigma) = \inv_{T/1} (\infl (\sigma)).
-	\]
-\end{lemma}
+% \begin{lemma} \label{lem:inv inflation compatibility}
+% 	Let $S\le T$ be a normal subgroup. then we have
+% 	\[
+% 		\inv_{T/S}(\sigma) = \inv_{T/1} (\infl (\sigma)).
+% 	\]
+% \end{lemma}
 
-\begin{lemma} \label{lem:inv restriction compatibility}
-	Let $S\le T \le U \le G$ be with $S$ normal in $U$. then we have
-	\[
-		\inv_{U/S} (\rest (\sigma))= [U : T] \cdot \inv_{T/S}(\sigma) .
-	\]
-\end{lemma}
+% \begin{lemma} \label{lem:inv restriction compatibility}
+% 	Let $S\le T \le U \le G$ be with $S$ normal in $U$. then we have
+% 	\[
+% 		\inv_{U/S} (\rest (\sigma))= [U : T] \cdot \inv_{T/S}(\sigma) .
+% 	\]
+% \end{lemma}

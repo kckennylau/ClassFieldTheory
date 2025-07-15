@@ -316,27 +316,8 @@ then $\pi_k$ is also a uniformizer in $l$, so we may identify $\F_l$ with $\cO_l
 	we may choose $x_0 \in \F_l$
 	such that $\{g \bullet x_0 :g \in \Gal(l/k)\}$ is a normal basis.
 	Let $y \in \cO_l$ be a lift of $x_0$.
-	We claim that $\{g \bullet y\}$ is a normal basis	in $\cO_l$.
-	It's sufficient to show that these vectors span $\cO_l$ over $\cO_k$.
-	Choose any $z \in \cO_l$. By assumption we may choose elements
-	$\lambda_{g,0} \in \cO_k$ for $g \in G$, such that
-	\[
-		\sum \lambda_{g,0} g y \equiv z \mod \pi_k.
-	\]
-	Similarly we may choose $\lambda_{g,1} \in \cO_k$, such that
-	\[
-		\sum \lambda_{g,1} g y \equiv \frac{z - \sum \lambda_{g,0} g y}{\pi_k} \mod \pi_k.
-		\qquad
-		(\lambda_{g,1} \in \cO_k).
-	\]
-	This implies
-	\[
-		z \equiv \sum (\lambda_{g,0} + \lambda_{g,1} \pi_k) g y \mod \pi_k^2.
-	\]
-	etc.
-	Proceeding in this way, we construct convergent series
-	$\lambda_{g} = \sum \lambda_{g,r}\pi_k^r \in \cO_k$,
-	such that $z = \sum_g \lambda_g \cdot g \bullet y$.
+	It follows from Nakayama's lemma that $\{g \bullet y\}$ is a normal basis	in $\cO_l$.
+	As in earlier proofs, this implies the isomorphism $\cO_l \cong \ind_1 \cO_k$.
 \end{proof}
 
 
@@ -421,7 +402,7 @@ then $\pi_k$ is also a uniformizer in $l$, so we may identify $\F_l$ with $\cO_l
 
 We therefore have a reciprocity isomorphism $\Gal(l/k) \cong k^\times / N(l^\times)$.
 
-\begin{lemma}
+\begin{lemma} \label{lem:local unramified reciprocity}
 	Let $l/k$ be an unramified extension of local fields and let $F_k$ be the Frobenius
 	element in $\Gal(l/k)$. Let $\pi_k$ be a uniformizer of $k$. Then we have
 	\[
@@ -530,38 +511,12 @@ We have proved the following.
 
 
 
-\section{Compatibility in towers}
 
-Let $l / m / k$ be a tower of finite Galois extensions of local fields.
-Then we have
-\[
-	N_{l/k} (l^\times) = N_{m/k}(N_{l/m}(l^\times)) \subseteq N_{m/k}(m^\times).
-\]
-Hence there is a projection map
-\[
-	k^\times / N(l^\times) \to k^\times / N(m^\times).
-\]
-Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
-\[
-	\Gal(l/k)^{\ab} \to \Gal(m/k)^{\ab}.
-\]
-
-\begin{lemma} \label{lem:local compatibility in towers}
-	The following square commutes:
-	\[
-		\begin{matrix}
-			\Gal(l/k)^\ab & \cong & k^\times / N(l^\times) \\
-			\downarrow && \downarrow \\
-			\Gal(l/k)^\ab & \cong & k^\times / N(l^\times)
-		\end{matrix}
-	\]
-\end{lemma}
-
-\begin{proof}
-\end{proof}
+\section{Some consequences of the reciprocity isomorphism}
 
 
 \begin{theorem} \label{thm:local norm limitation}
+	\uses{cor:norm limitiation}
 	Let $l/k$ be a finite Galois extension of local fields and let $l^{\ab}$ be the
 	maximal subfield of $l$ which is an abelian extsion of $k$, i.e. the fixed field of
 	the commutator subgroup of $\Gal(l/k)$.
@@ -569,8 +524,7 @@ Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
 \end{theorem}
 
 \begin{proof}
-	This follows from \ref{lem:local compatibility in towers} because the projection
-	$\Gal(l/k)^{\ab} \to \Gal(l^{\ab}/k)^{\ab}$ is an isomorphism.
+	This follows from \ref{cor:norm limitiation}.
 \end{proof}
 
 
@@ -581,27 +535,71 @@ Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
 	and $l_1 = l_2$ if and only if $N_{l_1/k}(l_1^\times) = N_{l_2/k}(l_2^\times)$.
 \end{theorem}
 
-
-\begin{example}
-	Let $l/k$ be an unramified extension of local field of degree $f$.
-	Then $N(l^\times) = \pi_k^f \times \cO_k^\times$.
-\end{example}
-
 \begin{proof}
-	We have calculated the reciprocity map in this case.
+	This follows from \ref{cor:norm submodule mono}.
 \end{proof}
 
-\begin{lemma}
-	Let $m_1$ and $m_2$ be two intermediate fields between $k$ and $l$
-	such that $l = m_1 m_2$.
+
+
+\begin{lemma} \label{lem:norm composite intersection}
+	Let $l/k$ be a finite abelian extension and let $m_1$ and $m_2$ be two intermediate
+	fields between $k$ and $l$ such that $l = m_1 m_2$.
 	Then we have
 	\[
 		N_{l/k}(l^\times) = N_{m_1/k} (m_1^\times) \cap N_{m_2/k} (m_2^\times).
 	\]
 \end{lemma}
 
+\begin{proof}
+	Clearly if $x \in N_{l/k}(l^\times)$ then $x$ is a norm from both $m_1$ and $m_2$.
+	Suppose conversely that $x$ is a norm from both $m_1$ and $m_2$.
+	Let $S_i=\Gal(l/m_i)$ for $i=1,2$.
+	It follows that $x$ is in the image of each $S_i$ in $k^\times / N(l^\times)$
+	under the reciprocity map.
+	Since the reciprocity map is bijective, $x$ is in the image of
+	$S_1 \cap S_2$.
+	The condition $l = m_1 m_2$ implies $S_1 \cap S_2 = 1$.
+	Therefore $x \in N(l^\times)$.
+\end{proof}
 
-\begin{example}
+
+
+\begin{lemma} \label{lem:local unramified norms}
+	Let $l/k$ be an unramified extension of local fields of degree $f$.
+	Then $N(l^\times) = \pi_k^f \times \cO_k^\times$.
+\end{lemma}
+
+\begin{proof}
+	We have calculated the reciprocity map for unramified extensions
+	in \ref{lem:local unramified reciprocity}.
+\end{proof}
+
+
+\begin{lemma} \label{lem:local image inertia}
+	Let $l/k$ be a finite abelian extension of local fields and let $I \subseteq \Gal(l/k)$ be
+	the inertia subgroup.
+	Then the image of $I$ in $k^\times / N(l^\times)$
+	is the subgroup $\cO_k^\times / N(\cO_l^\times)$.
+\end{lemma}
+
+\begin{proof}
+	Let $m$ be the fixed field of $I$. The image of $I$ in $k^\times / N(l^\times)$
+	is $N_{m/k}(m^\times) / N_{l/k}(l^\times)$.
+	Since $m/k$ is unramified, \ref{lem:local unramified norms} implies
+	\[
+		N_{m/k}(m^\times) = \cO_k^\times \times \pi_k^{f\Z},
+	\]
+	where $f$ is the inertial degree of $l/k$.
+	If $\pi_l$ is a uniformizer in $l$ then $N(\pi_l)$ is a unit multiple of $\pi_k^f$.
+	This implies
+	\[
+		N_{m/k}(m^\times) = \cO_k^\times \times N(\pi_l^{\Z}).
+	\]
+	The result follows from this.
+\end{proof}
+
+
+\begin{example} \label{eg:local cyclotomic norms}
 	Let $l = \Q_p(\zeta)$ where $\zeta$ is a primitive $p^n$-th root of unity
 	for some $n > 0$.
 	Then $N(l^\times) = p^\Z \times (1+p^n \Z_p)$.
@@ -617,6 +615,9 @@ Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
 		&= [\Z_p^\times : (1+p^n \Z_p)] \\
 		&= | (\Z / p^n \Z)^\times |.
 	\end{align*}
+	It it therefore sufficient to prove that every element of $p^\Z \times (1+p^n \Z_p)$
+	is a norm.
+
 	We have $p = N(1-\zeta)$.
 	It is therefore sufficient to show that every $x \in 1 + p^n \Z_p$
 	is the norm of an element of $\Z_p[\zeta]$. We split this into cases.
@@ -657,9 +658,8 @@ Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
 
 \begin{theorem} \label{thm:local Kronecker Weber}
 	Let $l/\Q_p$ be a finite abelian extension.
-	Then $l$ is (isomorphic to) a subfield of a cyclotomic extension.
+	Then $l$ is isomorphic to a subfield of a cyclotomic extension.
 \end{theorem}
-
 
 \begin{proof}
 	The subgroup $N_{l/\Q_p}(l^\times)$ is open in $\Q_p^\times$, so it must contain
@@ -668,4 +668,59 @@ Also, $\Gal(m/k)$ is a quotient group of $\Gal(l/k)$ to we have a projection map
 	\[
 		N(l^\times) \supset p^{f\Z} \times (1 + p^n\Z_p).
 	\]
+	The subgroup $p^{f\Z} \times \Z_p^\times$ is the norm subgroups for the unramified extension
+	of degree $f$, which is $\Q_p(\zeta_{p^f-1})$.
+	The group $p^\Z \times (1_p^n \Z_p)$ is the norm subgroup of $\Q_p(\zeta_{p^n})$.
+	Hence $l$ is contained in $\Q_p(\zeta_{p^f-1}, \zeta_{p^n})$.
+\end{proof}
+
+\begin{theorem} \label{thm:Kronecker Weber}
+	Let $l/\Q$ be a finite abelian extension.
+	Then there exists a natural number $n$ such that $l$ is isomorphic to
+	a subfield of $\Q(\zeta_n)$.
+\end{theorem}
+
+\begin{proof}
+	Let $S$ be a the set of primes which ramify in $l$.
+	For each $p \in S$ we let $\hat p$ be a prime of $l$ above $p$.
+	We therefore have an abelian extension $l_{\hat p} / \Q_p$.
+	Choose $r_p$ such that $1+p^{r_p} \Z_p \subseteq N(l_{\hat p}^\times)$.
+	Let $N = \prod_{p \in S} p^{r_p}$.
+	Let $m = l(\zeta_N)$.
+	We shall prove that $m = \Q(\zeta_N)$, which implies $l$ is
+	isomorphic to a subfield of $\Q(\zeta_N)$.
+
+	For a prime $p \in S$, let $D_p$ and $I_p$ be the decomposition subgroup and inertia subgroup of
+	$\Gal(m/\Q)$ at $p$. We may identify $D_p$ with $\Gal(m_p / \Q_p)$, and we have a reciprocity
+	isomorphism
+	\[
+		D_p \cong \Q_p^\times / N(m_p^\times).
+	\]
+	By \ref{lem:local image inertia} The image of $I_p$ under the reciprocity map is
+	\[
+		I_p \cong \Z_p^\times / N(m_p^\times) \cap \Z_p^\times.
+	\]
+	We have
+	\[
+		N_{m_p/\Q_p} (m_p^\times)
+		=
+		N_{l_p/\Q_p} (l_p^\times) \cap N_{\Q_p(\zeta_N) / \Q_p} (\Q_p(\zeta_N)^\times).
+	\]
+	Note that
+	\[
+		N_{\Q_p(\zeta_N) / \Q_p} (\Q_p(\zeta_N)^\times) \cap \Z_p^\times =
+		1+p^r \Z_p
+		\supseteq N_{l_p/\Q_p} (l_p^\times).
+	\]
+	This implies $N_{m_p/\Q_p} (m_p^\times) \cap \Z_p^\times = 1+p^r \Z_p$.
+	It follows that $I_p \cong \Z_p^\times / (1+p^{r_p} \Z_p) \cong (\Z / p^{r_p})^\times$.
+	In particular $|I_p| = \phi(p^{r_p})$, where $\phi$ is the Euler totient function.
+
+	Let $I$ be the subgroup generated by the $I_p$ for $p \in S$.
+	The fixed field of $I$ is an unramified extension of $\Q$, and is therefore $\Q$.
+	Therefore $I = \Gal(m/\Q)$ and we have
+	\[
+		 [m : \Q] = |I| \le \prod |I_p| = \phi(N) = [\Q(\zeta_N) : \Q].
+	\]
+	Hence $m = \Q(\zeta_N)$.
 \end{proof}
