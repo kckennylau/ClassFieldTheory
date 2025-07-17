@@ -64,12 +64,12 @@ We also write $\cO_{l,S}$ for the ring $S$-integers in $l$:
 We regard $\cO_{l,S}$ as a subring of $\A_{l,S}$ and
 $\cO_{l,S}^\times$ as a subgroup of $\A_{l,S}^\times$.
 
-Note that the quotient $\A_l^\times / \A_{l,S}^\times$ is naturally isomorphic to the
-group of fractional ideals of $\cO_{l,S}$.
+The quotient $\A_l^\times / \A_{l,S}^\times$ is naturally isomorphic to the
+group of non-zero fractional ideals of $\cO_{l,S}$.
 By adding more primes to $S$ if necessary, we may assume that $\cO_{k,S}$ and $\cO_{l,S}$ are both
-principal ideal domains (that can be achieved by adding to $S$ the primes $P$ whose ideal classes
+principal ideal domains (this can be achieved by adding to $S$ primes $P$ whose ideal classes
 generate the class groups of $k$ and $l$).
-This implies
+With such a choice of $S$ we have:
 \[
 	\A_{l}^\times = \A_{l,S}^\times l^\times,
 	\qquad
@@ -81,7 +81,7 @@ and therefore
 	\Cl_{k} = \A_{k,S}^\times / \cO_{k,S}^\times.
 \]
 The big advantage of working with $\A_{l,S}^\times$ and $\cO_{l,S}$ instead of $\A_l^\times$ and
-$l^\times$ is that $\A_{l,S}^\times$ and $\cO_{l,S}$ have well-defined Herbrand quotients,
+$l^\times$ is that $\A_{l,S}^\times$ and $\cO_{l,S}$ have finite cohomology groups,
 whereas the cohomology groups of $\A_l^\times$ and $l^\times$ are infinite.
 
 
@@ -93,7 +93,7 @@ whereas the cohomology groups of $\A_l^\times$ and $l^\times$ are infinite.
 Let $v$ be a place of $k$ and $\hat v$ a place of $l$ above $v$.
 We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
 
-\begin{lemma}
+\begin{lemma} \label{lem:semi-local iso coind}
 	Then there are isomorphisms
 	\[
 		\prod_{w | v} l_w^\times
@@ -107,33 +107,38 @@ We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
 \end{lemma}
 
 \begin{proof}
+	We'll write $x$ for an element of $\prod_{w | v} l_w^\times$ and $x_w$ for it's component in $l_w$.
 	Define a map $\Phi : \prod_{w | v} l_w^\times \to (\Gal(l/k) \to l_{\hat v}^\times)$ by
 	\[
-		\Phi ( x_w)
+		\Phi (x)
 		=
 		(g \mapsto g \bullet x_{g^{-1} \hat v}).
 	\]
 	Note that for $h \in D_{\hat v}$ we have
 	\[
-		\Phi (x_w) (hg) = h \bullet (g  x_{g^{-1} \hat v}) = h \bullet \Phi(x_w) (g).
+		\Phi (x) (hg) = h \bullet (g \bullet x_{g^{-1} \hat v}) = h \bullet \Phi(x) (g).
 	\]
-	Therefore $\Phi(x_w)$ is actually in the subspace $\coind_{D_v} l_{\hat v}$, and it's
+	Therefore $\Phi(x)$ is in the subspace $\coind_{D_v} l_{\hat v}$, and it's
 	easy to check that $\Phi$ gives a group isomorphism
-	$\prod_{w | v} l_w \cong \coind_{D_v} l_{\hat v}$.
-	We'll check that this map intertwines the actions of $G$:
-	Note that for $g \in G$, then element $g \bullet (x_w)$ has $w$-coordinate
+	$\prod_{w | v} l_w^\times \cong \coind_{D_v} l_{\hat v}^\times$.
+	We'll check that this map intertwines the actions of $G$.
+	For $g \in G$, then element $g \bullet x$ has $w$-component
 	$g \bullet x_{g^{-1}\bullet w}$.
 	This implies
 	\[
-		\Phi( g \bullet (x_w))(h)
+		\Phi( g \bullet x)(h)
 		=	h\bullet (g \bullet x)_{h^{-1} \bullet \hat v}
 		=	h g \bullet x_{(hg)^{-1} \bullet \hat v}
-		= \Phi (x_w) (hg).
+		= \Phi (x) (hg).
 	\]
-	The proof of the other isomorphism is similar.
+	The proof of the isomorphism for $\prod_{w | v} \cO_w^\times$ is similar.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma} \label{lem:cohomology S-ideles decomp}
+	\uses{lem:Shapiro,
+		lem:semi-local iso coind,
+		lem:unramified units trivial
+	}
 	There are isomorphisms for all $n > 0$
 	\[
 		H^n(l/k, \A_{S,l}^\times)
@@ -143,25 +148,28 @@ We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
 \end{lemma}
 
 \begin{proof}
-	We note that by the previous lemma we have
+	We note that by \ref{lem:semi-local iso coind} we have
 	\[
 		\A_{S,l}^\times \cong \prod_{v \in S} \coind_{D_{\hat v}} l_{\hat v}^\times
 		\times
 		\prod_{v \not\in S} \coind_{D_{\hat v}} \cO_{\hat v}^\times
 	\]
-	By Shapiro's lemma we have
+	By Shapiro's lemma (\ref{lem:Shapiro}) we have
 	\[
 		H^n(l/k,\A_{S,l}^\times) \cong
 		\prod_{v \in S} H^n(l_{\hat v}/k_v , l_{\hat v}^\times)
 		\times
 		\prod_{v \not\in S} H^n(l_{\hat v}/k_v , \cO_{\hat v}^\times)
 	\]
-	For $v \not\in S$, the extension $l_{\hat{v}}/l_v$ is unramified, and
-	we have proved in such cases that $\cO_{\hat v}^\times$ has trivial cohomology.
+	For $v \not\in S$, the extension $l_{\hat{v}}/l_v$ is unramified, so
+	by \ref{lem:unramified units trivial} $\cO_{\hat v}^\times$ has trivial cohomology.
 \end{proof}
 
 
-\begin{lemma}
+\begin{lemma} \label{lem:herbrand S-ideles}
+	\uses{lem:cohomology S-ideles decomp,
+		lem:herbrand local l*
+	}
 	If $l/k$ is a cyclic extension then we have
 	\[
 		h(l/k, \A_{S,l} ^\times )
@@ -171,9 +179,11 @@ We'll write $D_{\hat v}$ the decomposition group at $\hat v$.
 \end{lemma}
 
 \begin{proof}
-	This follows from the previous lemma, and the
-	calculation of Herbrand quotients for local fields.
+	This follows from \ref{lem:cohomology S-ideles decomp} and
+	\ref{lem:herbrand local l*}.
 \end{proof}
+
+
 
 
 
@@ -184,7 +194,7 @@ over the real numbers:
 \[
 	V_S = \prod_{v \in S} \prod_{w | v} \R.
 \]
-We consider $L_S$ as a representation of $\Gal(l/k)$, where the Galois action
+We consider $V_S$ as a representation of $\Gal(l/k)$, where the Galois action
 permutes the places $w$ lying above each $v \in S$.
 As a Galois representation we have
 \[
@@ -197,17 +207,25 @@ We have an isomorphism
 	L_S \cong \prod_{v \in S} \ind_{D_{\hat v}}^{\Gal(l/k)} \Z.
 \]
 
-\begin{lemma}
+\begin{lemma} \label{lem:herbrand L_S}
+	\uses{lem:Shapiro,
+		lem:H2 cyclic Z
+	}
 	If $l/k$ is a cyclic extension then
 	$h(l/k,L_S) = \prod_{v \in S} |D_{\hat v}|$.
 \end{lemma}
 
 \begin{proof}
-	This follows from Shapiro's lemma together with
-	the calculation of the cohomology of a cyclic group with values in $\Z$.
+	This follows from Shapiro's lemma (\ref{lem:Shapiro})
+	together with the calculation
+	of the cohomology of a cyclic group with values in $\Z$ (\ref{lem:H2 cyclic Z}).
 \end{proof}
 
-\begin{lemma}
+\begin{lemma} \label{lem:herbrand log lattice}
+	\uses{lem:herbrand L_S,
+		lem:herbrand ses,
+		lem:herbrand finite
+	}
 	Let $l/k$ be cyclic and let $M$ be any Galois-invariant lattice in $V_S$.
 	Then $h(l/k,M) = \prod_{v \in S} |D_{\hat v}|$
 \end{lemma}
@@ -217,7 +235,9 @@ We have an isomorphism
 	(this is just the character of the representation $V_S$).
 	Therefore the representations $M \otimes \Q$ and $L_S \otimes \Q$ are isomorphic.
 	Hence $M$ is isomorphic to subrepresentation of finite index in $L_S$,
-	so thay have the same Herbrand quotient.
+	so by \ref{lem:herbrand ses} and \ref{lem:herbrand finite}
+	they have the same Herbrand quotient.
+	The result then follows from \ref{lem:herbrand L_S}.
 \end{proof}
 
 
@@ -231,11 +251,25 @@ where the $w$-component of $\log_S(x)$ is $\log |x|_w$.
 The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 
 \begin{theorem} \label{thm:Dirichlet unit theorem}
+	\lean{NumberField.Units.dirichletUnitTheorem.unitLattice_span_eq_top}
+	\mathlibok
 	$\log_S(\cO_S^\times)$ has zero intersection with $\Span (1,1,\ldots,1)$.
 	The direct sum of these subrepresentations is a lattice in $V_S$.
 \end{theorem}
 
-\begin{corollary}
+\begin{proof}
+	\mathlibok
+	An equivalent statement is already in Mathlib as
+	\texttt{NumberField.Units.dirichletUnitTheorem.unitLattice\_span\_eq\_top}.
+\end{proof}
+
+\begin{corollary} \label{lem:herbrand S-units}
+	\uses{thm:Dirichlet unit theorem,
+		lem:herbrand ses,
+		lem:herbrand finite,
+		lem:H2 cyclic Z,
+		lem:herbrand log lattice
+	}
 	Let $l/k$ be a cyclic extension. Then
 	\[
 		h(l/k,\cO_{l,S}^\times) = \frac{\prod_{v\in S} |D_{\hat v}|}{[l:k]}.
@@ -247,17 +281,22 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 	equal to that of $\log_S(\cO_S^\times)$.
 	By Dirichlet's unit theorem, $\log_S(\cO_S^\times) \oplus \Z$ is a lattice in
 	$V_S$.
-	We know the Herbrand quotient of $\log_S(\cO_S^\times) \oplus \Z$ from the calculation above,
-	and the Herbrand quotient of $\Z$ is $[l:k]$.
+	We know the Herbrand quotient of $\log_S(\cO_S^\times) \oplus \Z$
+	from \ref{lem:herbrand log lattice}, and the Herbrand quotient of $\Z$ from \ref{lem:H2 cyclic Z}.
 \end{proof}
 
-\begin{corollary}
+\begin{corollary} \label{lem:herbrand idele class group}
+	\uses{lem:herbrand S-units,
+		lem:herbrand S-ideles,
+		lem:herbrand ses
+	}
 	If $l/k$ is cyclic then $h(l/k,\Cl_l) = [l:k]$.
 \end{corollary}
 
 \begin{proof}
-	Our choice of $S$ implies $\Cl_l \cong \A_{l,S}^\times / \cO_{l,S}^\times$, and
-	we have calculated the Herbrand quotients of $\A_{l,S}^\times$ and $\cO_{l,S}^\times$.
+	Our choice of $S$ implies $\Cl_l \cong \A_{l,S}^\times / \cO_{l,S}^\times$.
+	We have calculated the Herbrand quotients of $\A_{l,S}^\times$ and $\cO_{l,S}^\times$
+	in \ref{lem:herbrand S-ideles} and \ref{lem:herbrand S-units}.
 \end{proof}
 
 
@@ -279,7 +318,8 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \end{definition}
 
 
-\begin{lemma}
+\begin{lemma} \label{lem:Dirichlet density union}
+	\uses{def:Dirichlet density}
 	Suppose $M_1$ and $M_2$ are disjoint sets of primes of $\cO_l$.
 	If two of the sets $M_1, M_2, M_1 \cup M_2$ have a Dirichlet density, then so does the third
 	and we have
@@ -293,6 +333,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 \end{proof}
 
 \begin{lemma} \label{lem:Dirichlet density top}
+	\uses{def:Dirichlet density}
 	The set of all primes of $\cO_k$ has Dirichlet density $1$.
 \end{lemma}
 
@@ -325,6 +366,9 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 
 
 \begin{lemma} \label{lem:Dirichlet density degree one}
+	\uses{lem:Dirichlet density top,
+		lem:Dirichlet density union
+	}
 	The set of primes of $\cO_l$ of degree one has Dirichlet density $1$.
 \end{lemma}
 
@@ -345,11 +389,13 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 		\le [l:\Q] \sum_{r=2}^{[l:\Q]} \sum_{m =1} ^\infty m^{-rs}
 		\le [l:\Q] (\zeta_\Q(2) + \cdots + \zeta_\Q([l:\Q]) ).
 	\]
-	Since the sum above is bounded, the set $M$ has Dirichlet density $0$.
+	Since the sum above is bounded on the region $s > 1$,
+	the set $M$ has Dirichlet density $0$.
 \end{proof}
 
 
 \begin{lemma} \label{lem:Dirichlet density split}
+	\uses{lem:Dirichlet density degree one}
 	Let $l/k$ be a finite Galois extension of number fields.
 	Then the set of degree $1$ primes of $k$ which split completely in $l$
 	has density $\frac{1}{[l:k]}$.
@@ -378,7 +424,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 
 \section{Some $L$-functions}
 
-\begin{lemma}
+\begin{lemma} \label{lem:H0 idele class group finite}
 	$H^0_{\Tate}(l/k,\Cl_l)$ is finite.
 \end{lemma}
 
@@ -392,7 +438,7 @@ The kernel of $\log_S$ is the finite group of roots of unity in $k$.
 	where $\hat v$ is a place of $l$ lying above $v$.
 	The result follows because each of the groups $k_v^\times / N(l_w)$ is finite
 	(in fact by the local reciprocity isomorphism this is isomorphic to the abelianization of the
-	decomposition group of $\hat v$).
+	decomposition group at $\hat v$).
 \end{proof}
 
 Given any maximal ideal $P$ of $\cO_{k,S}$, we let $\pi_P$ be an idele whose
@@ -400,9 +446,10 @@ $P$-component is a uniformizer in $k_P$, and whose other components are all $1$.
 The coset of $\pi_P$ in $H^0(l/k,\Cl_l)$ does not depend on the choice of uniformizer since
 all the local units at $P$ are local norms from $l_{Q}$ for any $Q|P$
 (because $P$ is unramified in $l$).
-Equivalently, if we choose a generator $P=(\pi)$ then the coset of $\pi_P$ is the inverse of
+Equivalently, if we choose a generator $P=(\pi)$ with $\pi \in \cO_{k,S}$
+then the coset of $\pi_P$ is the inverse of
 the image of $\pi$ in $\prod_{v \in S} k_v^\times / N(l_{\hat v}^\times)$.
-This clearly extends to a map
+This clearly extends to a homomorphism
 \[
 	\iota : \textrm{non-zero fractional ideals of $\cO_{k,S}$}
 	\to
@@ -411,8 +458,11 @@ This clearly extends to a map
 whose kernel is the subgroup of ideals with a generator which is a local norm at $v$ for
 all $v \in S$.
 
-\begin{definition}
-	For any character $\chi : H^0_{\Tate}(l/k,\Cl_l) \to C^\times$ we define the $L$-function
+\begin{definition} \label{def:L-function}
+	\uses{lem:H0 idele class group finite}
+	Let $\chi : H^0_{\Tate}(l/k,\Cl_l) \to \C^\times$ be a character.
+	For a non-zero ideal $I$ of $\cO_{k,S}$, we shall write $\chi(I)$ in place of $\chi(\iota(I))$.
+	We define the $L$-function of $\chi$ by
 	\[
 		L(s,\chi)
 		=
@@ -436,17 +486,17 @@ and is entire if $\chi$ is non-trivial
 (see for example Tate's thesis, which is chapter XV of \cite{cassells frohlich}).
 We won't need such a strong result here; we can make do with the following:
 
-\begin{lemma}[Weak lemma]
+\begin{lemma}[Weak lemma] \label{lem:L-function bound}
+	\uses{def:L-function}
 	If $\chi$ is a non-trivial character then $L(s,\chi)$ is
 	bounded on the interval $(1,2)$.
 \end{lemma}
 
-
-
-\begin{lemma}
+\begin{lemma} \label{lem:density bound}
+	\uses{lem:L-function bound}
 	Let $M$ be a set of primes of $\cO_S$ whose image in $H^0_{\Tate}(l/k,\Cl_l)$ is zero.
-	There exists a real number $c$ depending only on $k$ and $l$,
-	such that for all $s > 0$ we have:
+	There exists a real number $c$ depending only on the fields $k$ and $l$,
+	such that for all $s > 1$ we have:
 	\[
 		\sum_{p \in M} N(P)^{-s}
 		\le \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log\left(\frac{1}{s-1}\right) + c.
@@ -573,7 +623,9 @@ We won't need such a strong result here; we can make do with the following:
 \section{The first inequality}
 
 \begin{theorem} \label{thm:first inequality}
-	\uses{lem:Dirichlet density split}
+	\uses{lem:Dirichlet density split,
+		lem:density bound
+	}
 	For any finite Galois extension $l/k$ be have
 	\[
 		|H^0_{\Tate}(l/k, \Cl_{l}) | \le [l : k].
@@ -581,29 +633,32 @@ We won't need such a strong result here; we can make do with the following:
 \end{theorem}
 
 \begin{proof}
-	Let $M_1$ be the set of defree $1$ primes of $\cO_{k,S}$ which split in $l$ and let $M_2$ be the
+	Let $M_1$ be the set of degree $1$ primes of $\cO_{k,S}$ which split in $l$ and let $M_2$ be the
 	set of primes of $\cO_{k,S}$ whose image in $H^0_{\Tate}(l/k,\Cl_l)$ is zero.
 	Given $P \in M_1$, the norm map $l_{\hat v}^\times \to k_v^\times$ is the identity map, and is
-	in particular surjective. Hence the image of $P$ in $H^0(l/k,\Cl_l)$ is zero.
+	in particular surjective. Hence the image of $P$ in $H^0_{\Tate}(l/k,\Cl_l)$ is zero.
 	This shows that $M_1 \subseteq M_2$.
 	This implies for $s> 1$:
 	\[
 		\sum_{P \in M_1} N(P)^{-s}
 		\le \sum_{P \in M_2} N(P)^{-s} .
 	\]
-	The results of the previous section implies
+	By \ref{lem:density bound} we have
 	\[
 		\sum_{P \in M_1} N(P)^{-s}
 		\le
 		\frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|} \log \left(\frac{1}{1-s}\right) + O(1).
 	\]
-	We showed earlier that the left hand side is asymptotic to
+	By \ref{lem:Dirichlet density split} the left hand side is asymptotic to
 	$\frac{1}{[l:k]}\log \left(\frac{1}{1-s}\right)$.
 	Therefore $\frac{1}{[l:k]} \le \frac{1}{|H^0_{\Tate}(l/k,\Cl_l)|}$.
 \end{proof}
 
 
 \begin{corollary} \label{cor:H1 H2 cyclic idele class}
+	\uses{thm:first inequality,
+		lem:herbrand idele class group
+	}
 	If $l/k$ is cyclic then $|H^2(l/k, \Cl_{l})| = [l:k]$ and $H^1(l/k, \Cl_{l}) = 0$.
 \end{corollary}
 
@@ -613,8 +668,13 @@ We won't need such a strong result here; we can make do with the following:
 	of $\Cl_{l}$.
 \end{proof}
 
-\begin{theorem}
-	If $l/k$ is any finite Galois extension then $H^1(l/k, \Cl_{l}) = 0$
+\begin{theorem} \label{thm:global cohomology bound}
+	\uses{cor:H1 H2 cyclic idele class,
+		thm:inflation restriction sequence,
+		cor:cohomology sub Sylow,
+		cor:cohomology G-torsion
+	}
+	If $l/k$ is any finite Galois extension then $H^1(l/k, \Cl_{l}) \cong 0$
 	and $|H^2(l/k, \Cl_{l})| \le [l:k]$.
 \end{theorem}
 
@@ -632,16 +692,17 @@ We won't need such a strong result here; we can make do with the following:
 	in cyclic quotients.
 
 	Clearly the result holds for $k=l$.
-	Assume the result for a subfield $m$ of $l$ and let $m/k$ by cyclic.
+	Assume the result for a subfield $m$ of $l$ and let $m/k$ be cyclic.
 	We have an inflation restriction sequence:
 	\[
 		0 \to H^1(m/k, \Cl_{m}) \to H^1(l/k, \Cl_{l}) \to H^1(l/m,\Cl_{l}).
 	\]
 	The first term is zero by \ref{cor:H1 H2 cyclic idele class} and the last term is zero by
 	the inductive hypothesis.
-	Therefore $H^1(l/k,\Cl_l)=0$.
+	Therefore $H^1(l/k,\Cl_l) \cong 0$.
 
 	Since $H^1(l/m,\Cl_l)$ is assumed to be zero, we also have an inflation-restriction sequence
+	in dimension 2:
 	\[
 		0 \to H^2(m/k, \Cl_m) \to H^2(l/k, \Cl_l) \to H^2(l/m,\Cl_l).
 	\]
