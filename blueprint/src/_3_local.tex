@@ -1,6 +1,8 @@
 \chapter{Local Class Field Theory}
 
-In this chapter we shall consider finite Galois extensions of non-archimedean local fields $l/k$.
+In this chapter we shall consider finite Galois extensions of non-archimedean local fields $l/k$
+of characteristic zero (the characteristic zero assumption is used when discussing the exponential
+map).
 We shall regard the multiplicative group $l^\times$
 as a representation of $\Gal(l/k)$ over the ring $\Z$, where
 addition in the module is the operation which is usually written as multiplication.
@@ -140,7 +142,8 @@ The following result (called Hilbert's theorem 90) is already in Mathlib.
 
 \section{The Herbrand quotient of \texorpdfstring{$l^{\times}$}{l*}}
 
-In this section we'll prove that for a cyclic extension $l/k$ of local fields,
+In this section we'll prove that for a cyclic extension $l/k$
+of local fields of characteristic zero,
 $h(l/k,l^\times) = [l:k]$.
 
 \begin{lemma}
@@ -178,6 +181,7 @@ $h(l/k,l^\times) = [l:k]$.
 
 
 \begin{lemma}\label{lem:local isomorphism}
+	Assume $k$ and $l$ have characteristic zero.
 	For $n \in \N$ sufficiently large, the
 	exponential map gives an isomorphism
 	\[
@@ -213,7 +217,8 @@ $h(l/k,l^\times) = [l:k]$.
 		lem:herbrand compact open additive,
 		lem:herbrand finite,
 		lem:herbrand ses}
-	If $l/k$ is a cyclic extension, then $h(l/k, \cO_l^\times) = 1$.
+	If $l/k$ is a cyclic extension and $l,k$ have characteristic zero,
+	then $h(l/k, \cO_l^\times) = 1$.
 \end{lemma}
 
 \begin{proof}
@@ -230,7 +235,8 @@ $h(l/k,l^\times) = [l:k]$.
 	\uses{lem:herbrand local units,
 		eg:herbrand Z,
 		lem:herbrand ses}
-	If $l/k$ is a cyclic extension of local fields then $h(l/k, l^\times)= [l:k]$.
+	If $l/k$ is a cyclic extension of local fields of characteristic zero
+	then $h(l/k, l^\times)= [l:k]$.
 \end{lemma}
 
 \begin{proof}
@@ -248,7 +254,8 @@ $h(l/k,l^\times) = [l:k]$.
 \begin{lemma} \label{lem:local H2 l*}
 	\uses{lem:herbrand local l*,
 		thm:hilbert 90}
-	If $l/k$ is a cyclic extension of local fields then $|H^2(l/k,l^\times)| = [l:k]$.
+	If $l/k$ is a cyclic extension of local fields of characteristic zero
+	then $|H^2(l/k,l^\times)| = [l:k]$.
 \end{lemma}
 
 \begin{proof}
@@ -259,6 +266,8 @@ $h(l/k,l^\times) = [l:k]$.
 
 
 \section{An upper bound for \texorpdfstring{$H^2(l/k,l^\times)$}{$H^2(l/k,l*)$}}
+
+From now on $k$ and $l$ have characteristic zero.
 
 \begin{theorem} \label{lem:local H2 upper bound}
 	\uses{thm:hilbert 90,
