@@ -127,24 +127,16 @@ instance [Subsingleton G] (M : Rep R G) : M.TrivialTateCohomology := by
   match n with
   | .ofNat 0 =>
     refine IsZero.of_iso ?_ (TateCohomology_zero_iso_of_isTrivial _)
-    rw [Nat.card_unique, Nat.cast_one]
-    have : LinearMap.range (1 : M'.V →ₗ[R] M'.V) = ⊤ :=
-      LinearMap.range_eq_top_of_cancel fun _ _ a ↦ a
-    rw [this]
-    exact ModuleCat.isZero_of_subsingleton (ModuleCat.of R (M'.V ⧸ ⊤))
+    rw [Nat.card_unique, Nat.cast_one, LinearMap.range_eq_top_of_cancel (by exact fun _ _ a ↦ a)]
+    exact ModuleCat.isZero_of_subsingleton _
   | .ofNat (n + 1) =>
-    exact IsZero.of_iso (isZero_of_trivialCohomology)
-      (TateCohomology.isoGroupCohomology n M')
+    exact (isZero_of_trivialCohomology).of_iso (TateCohomology.isoGroupCohomology n M')
   | .negSucc 0 =>
     refine IsZero.of_iso ?_ (TateCohomology_neg_one_iso_of_isTrivial _)
-    rw [Nat.card_unique, Nat.cast_one]
-    have : LinearMap.ker (1 : M'.V →ₗ[R] M'.V) = ⊥ :=
-      LinearMap.ker_eq_bot_of_cancel fun _ _ a ↦ a
-    rw [this]
-    apply ModuleCat.isZero_of_subsingleton (ModuleCat.of R _)
+    rw [Nat.card_unique, Nat.cast_one, LinearMap.ker_eq_bot_of_cancel (by exact fun _ _ a ↦ a)]
+    exact ModuleCat.isZero_of_subsingleton _
   | .negSucc (n + 1) =>
     rw [show (Int.negSucc (n + 1)) = -n - 2 by grind]
-    exact IsZero.of_iso isZero_of_trivialHomology
-      (TateCohomology.isoGroupHomology n M')
+    exact isZero_of_trivialHomology.of_iso (TateCohomology.isoGroupHomology n M')
 
 end Rep
