@@ -57,21 +57,15 @@ lemma Rep.trivialHomology_of_iso {M N : Rep R G} (f : M ≅ N) [N.TrivialHomolog
 
 lemma groupCohomology.isZero_of_trivialCohomology [DecidableEq G] {M : Rep R G}
     [M.TrivialCohomology] (n : ℕ) :
-    IsZero (groupCohomology M (n + 1)) := by
-  apply IsZero.of_iso
-  apply Rep.TrivialCohomology.zero (M := M) (φ := (MonoidHom.id G))
-  exact fun ⦃a₁ a₂⦄ a ↦ a
-  exact n
-  apply Iso.refl
+    IsZero (groupCohomology M (n + 1)) :=
+  IsZero.of_iso
+    (Rep.TrivialCohomology.zero (φ := (MonoidHom.id G)) (fun _ _ a ↦ a)) (Iso.refl _)
 
 lemma groupHomology.isZero_of_trivialHomology [DecidableEq G] {M : Rep R G}
     [M.TrivialHomology] (n : ℕ) :
-    IsZero (groupHomology M (n + 1)) := by
-  apply IsZero.of_iso
-  apply Rep.TrivialHomology.zero (M := M) (φ := (MonoidHom.id G))
-  exact fun ⦃a₁ a₂⦄ a ↦ a
-  exact n
-  apply Iso.refl
+    IsZero (groupHomology M (n + 1)) :=
+  IsZero.of_iso
+    (Rep.TrivialHomology.zero (φ := (MonoidHom.id G)) (fun _ _ a ↦ a)) (Iso.refl _)
 
 class Rep.TrivialTateCohomology [Finite G] (M : Rep R G) : Prop where
   zero {H : Type} [Group H] [DecidableEq H] {φ : H →* G} (inj : Function.Injective φ) {n : ℤ} :
