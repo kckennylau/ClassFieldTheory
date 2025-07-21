@@ -64,6 +64,15 @@ lemma groupCohomology.isZero_of_trivialCohomology [DecidableEq G] {M : Rep R G}
   exact n
   apply Iso.refl
 
+lemma groupHomology.isZero_of_trivialHomology [DecidableEq G] {M : Rep R G}
+    [M.TrivialHomology] (n : ℕ) :
+    IsZero (groupHomology M (n + 1)) := by
+  apply IsZero.of_iso
+  apply Rep.TrivialHomology.zero (M := M) (φ := (MonoidHom.id G))
+  exact fun ⦃a₁ a₂⦄ a ↦ a
+  exact n
+  apply Iso.refl
+
 class Rep.TrivialTateCohomology [Finite G] (M : Rep R G) : Prop where
   zero {H : Type} [Group H] [DecidableEq H] {φ : H →* G} (inj : Function.Injective φ) {n : ℤ} :
     let _ := Finite.of_injective φ inj
@@ -80,3 +89,48 @@ lemma Rep.trivialTateCohomology_of_iso [Finite G] {M N : Rep R G} (f : M ≅ N)
     exact (res φ).mapIso f
   apply IsZero.of_iso _ this
   exact TrivialTateCohomology.zero hφ
+
+instance [Subsingleton G] (M : Rep R G) : M.TrivialCohomology := by
+  constructor
+  intro H _ _ _ hf _
+  letI : Subsingleton H := Function.Injective.subsingleton hf
+  apply isZero_groupCohomology_succ_of_subsingleton
+
+instance [Subsingleton G] (M : Rep R G) : M.TrivialHomology := by
+  constructor
+  intro H _ _ _ hf _
+  letI : Subsingleton H := Function.Injective.subsingleton hf
+  apply isZero_groupHomology_succ_of_subsingleton
+
+instance [Subsingleton G] (M : Rep R G) : M.TrivialTateCohomology := by
+  constructor
+  intro H _ _ f hf n
+  let : Subsingleton H := Function.Injective.subsingleton hf
+  set M' := (Rep.res f).obj M
+  letI : M'.ρ.IsTrivial := by
+    constructor
+    intro g
+    rw [Subsingleton.eq_one g, map_one]
+    rfl
+  match n with
+  | .ofNat 0 =>
+    refine IsZero.of_iso ?_ (TateCohomology_zero_iso_of_isTrivial _)
+    rw [Nat.card_unique, Nat.cast_one]
+    have : LinearMap.range (1 : M'.V →ₗ[R] M'.V) = ⊤ :=
+      LinearMap.range_eq_top_of_cancel fun _ _ a ↦ a
+    rw [this]
+    exact ModuleCat.isZero_of_subsingleton (ModuleCat.of R (M'.V ⧸ ⊤))
+  | .ofNat (n + 1) =>
+    exact IsZero.of_iso (isZero_of_trivialCohomology n) <|
+      (TateCohomology.iso_groupCohomology n M').app _
+  | .negSucc 0 =>
+    refine IsZero.of_iso ?_ (TateCohomology_neg_one_iso_of_isTrivial _)
+    rw [Nat.card_unique, Nat.cast_one]
+    have : LinearMap.ker (1 : M'.V →ₗ[R] M'.V) = ⊥ :=
+      LinearMap.ker_eq_bot_of_cancel fun _ _ a ↦ a
+    rw [this]
+    apply ModuleCat.isZero_of_subsingleton (ModuleCat.of R _)
+  | .negSucc (n + 1) =>
+    rw [show (Int.negSucc (n + 1)) = -n - 2 by grind]
+    exact IsZero.of_iso (groupHomology.isZero_of_trivialHomology n) <|
+      (TateCohomology.iso_groupHomology n M')
