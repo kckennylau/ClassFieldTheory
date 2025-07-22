@@ -6,6 +6,8 @@ variable {G : Type} [Group G] [Finite G] [IsCyclic G]
 open groupCohomology
   Representation
 
+attribute [-instance] NormedAddCommGroup.toENormedAddCommMonoid
+
 omit [IsCyclic G] in
 @[simp] lemma norm_trivial_int_eq_card : (trivial ℤ G ℤ).norm = Nat.card G := by
   ext; simpa [Representation.norm, Nat.card_eq]
@@ -22,23 +24,20 @@ omit [IsCyclic G] in
     (trivial ℤ G ℤ).herbrandB0 = Ideal.span {(Nat.card G : ℤ)} := by
   ext; simp [herbrandB0, Ideal.mem_span_singleton', mul_comm]
 
-def herbrandH0TrivIntAddEquivQuotCard : (trivial ℤ G ℤ).herbrandH0 ≃+
-    ℤ ⧸ AddSubgroup.zmultiples (Nat.card G : ℤ) :=
-  QuotientAddGroup.congr _ _ (AddEquiv.trans (AddEquiv.subsemigroupCongr
-    (by rw [herbrandZ0_trivial_int_eq_top]; rfl)) AddSubgroup.topEquiv) <| by
-      rw [herbrandB0_trivial_int_eq_span_card, ← Ideal.span_singleton_toAddSubgroup_eq_zmultiples]
-      exact AddSubgroup.ext fun x ↦ ⟨fun ⟨y, h₁, h₂⟩ ↦ h₂ ▸ h₁, fun h ↦ ⟨⟨x, by simp⟩, h, rfl⟩⟩
+def herbrandH0TrivIntAddEquivQuotCard : (trivial ℤ G ℤ).herbrandH0 ≃ₗ[ℤ]
+    ℤ ⧸ Ideal.span {(Nat.card G : ℤ)} :=
+  Submodule.Quotient.equiv _ _
+    (LinearEquiv.ofEq _ _ herbrandZ0_trivial_int_eq_top ≪≫ₗ Submodule.topEquiv) <| by
+      simp only [Submodule.submoduleOf, herbrandB0_trivial_int_eq_span_card]
+      exact Submodule.map_comap_eq_of_surjective (LinearEquiv.surjective _) _
 
-noncomputable def herbrandH0TrivIntAddEquivZModCard :
-    (trivial ℤ G ℤ).herbrandH0 ≃+ ZMod (Nat.card G) :=
-  AddEquiv.trans herbrandH0TrivIntAddEquivQuotCard (Int.quotientZMultiplesNatEquivZMod (Nat.card G))
-
+variable (G) in
 noncomputable def herbrandH0TrivIntEquivZModCard :
-    (trivial ℤ G ℤ).herbrandH0 ≃ ZMod (Nat.card G) :=
-  herbrandH0TrivIntAddEquivZModCard.toEquiv
+    (trivial ℤ G ℤ).herbrandH0 ≃ₗ[ℤ] ZMod (Nat.card G) :=
+  herbrandH0TrivIntAddEquivQuotCard ≪≫ₗ (Int.quotientSpanNatEquivZMod _).toIntLinearEquiv
 
 theorem card_herbrandH0_trivial_int : Nat.card (trivial ℤ G ℤ).herbrandH0 = Nat.card G := by
-  rw [Nat.card_congr herbrandH0TrivIntEquivZModCard, Nat.card_zmod]
+  rw [Nat.card_congr (herbrandH0TrivIntEquivZModCard G).toEquiv, Nat.card_zmod]
 
 instance : Subsingleton (trivial ℤ G ℤ).herbrandZ1 := by
   unfold herbrandZ1
