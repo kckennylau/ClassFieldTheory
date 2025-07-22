@@ -78,7 +78,7 @@ def dualizationRename (name : Name) : Name :=
     guessName dualizationNameDict dualizationFixAbbreviation cmp.toString
   renamings.foldl (init := .anonymous) .str
 
-syntax "dualized_to" ppDedent(command) : command
+syntax ppDedentIfGrouped("dualized_to" command) : command
 
 macro_rules
 | `(command| dualized_to $cmd') => `(command| $cmd')
