@@ -1,35 +1,44 @@
 import Mathlib
 import ClassFieldTheory.GroupCohomology._13_HerbrandQuotient
 
-variable {G : Type} [Group G] [Finite G] [DecidableEq G] [IsCyclic G]
+variable {G : Type} [Group G] [Finite G] [IsCyclic G]
 
-open CategoryTheory
-  groupCohomology
-  LinearMap
+open groupCohomology
   Representation
 
-omit [DecidableEq G] [IsCyclic G] in
-@[simp] lemma norm_trivial_int_eq_card : (Representation.trivial ℤ G ℤ).norm = Nat.card G := by
+omit [IsCyclic G] in
+@[simp] lemma norm_trivial_int_eq_card : (trivial ℤ G ℤ).norm = Nat.card G := by
   ext; simpa [Representation.norm, Nat.card_eq]
 
-omit [Finite G] [DecidableEq G]  in
-@[simp] lemma oneSubGen_trivial_int_eq_card : (Representation.trivial ℤ G ℤ).oneSubGen = 0 := by
+omit [Finite G] in
+@[simp] lemma oneSubGen_trivial_int_eq_zero : (trivial ℤ G ℤ).oneSubGen = 0 := by
   ext; simp
 
-omit [Finite G] [DecidableEq G] in
-lemma herbrandZ0_trivial_int_eq_top : (Representation.trivial ℤ G ℤ).herbrandZ0 = ⊤ := by simp
+omit [Finite G] in
+@[simp] lemma herbrandZ0_trivial_int_eq_top : (trivial ℤ G ℤ).herbrandZ0 = ⊤ := by simp
 
-omit [Finite G] [DecidableEq G] in
-lemma herbrandB0_trivial_int_eq_top : (Representation.trivial ℤ G ℤ).herbrandB0 = ⊤ := by simp
+omit [IsCyclic G] in
+@[simp] lemma herbrandB0_trivial_int_eq_span_card :
+    (trivial ℤ G ℤ).herbrandB0 = Ideal.span {(Nat.card G : ℤ)} := by
+  ext; simp [herbrandB0, Ideal.mem_span_singleton', mul_comm]
+
+def herbrandH0TrivIntAddEquivQuotCard : (trivial ℤ G ℤ).herbrandH0 ≃+
+    ℤ ⧸ AddSubgroup.zmultiples (Nat.card G : ℤ) :=
+  QuotientAddGroup.congr _ _ (AddEquiv.trans (AddEquiv.subsemigroupCongr
+    (by rw [herbrandZ0_trivial_int_eq_top]; rfl)) AddSubgroup.topEquiv) <| by
+      rw [herbrandB0_trivial_int_eq_span_card, ← Ideal.span_singleton_toAddSubgroup_eq_zmultiples]
+      exact AddSubgroup.ext fun x ↦ ⟨fun ⟨y, h₁, h₂⟩ ↦ h₂ ▸ h₁, fun h ↦ ⟨⟨x, by simp⟩, h, rfl⟩⟩
+
+noncomputable def herbrandH0TrivIntAddEquivZModCard :
+    (trivial ℤ G ℤ).herbrandH0 ≃+ ZMod (Nat.card G) :=
+  AddEquiv.trans herbrandH0TrivIntAddEquivQuotCard (Int.quotientZMultiplesNatEquivZMod (Nat.card G))
+
+noncomputable def herbrandH0TrivIntEquivZModCard :
+    (trivial ℤ G ℤ).herbrandH0 ≃ ZMod (Nat.card G) :=
+  herbrandH0TrivIntAddEquivZModCard.toEquiv
 
 theorem card_herbrandH0_trivial_int : Nat.card (trivial ℤ G ℤ).herbrandH0 = Nat.card G := by
-  unfold herbrandH0
-
-
-
-
-
-
+  rw [Nat.card_congr herbrandH0TrivIntEquivZModCard, Nat.card_zmod]
 
 instance : Subsingleton (trivial ℤ G ℤ).herbrandZ1 := by
   unfold herbrandZ1
@@ -43,7 +52,13 @@ instance : Subsingleton (trivial ℤ G ℤ).herbrandZ1 := by
 instance : Subsingleton (trivial ℤ G ℤ).herbrandH1 :=
   Quot.Subsingleton
 
-theorem herbrandQuotient_trivial_int : herbrandQuotient (trivial ℤ G ℤ) = Nat.card G := by
+variable (G) in
+theorem herbrandQuotient_trivial_int_eq_card : herbrandQuotient (trivial ℤ G ℤ) = Nat.card G := by
   unfold herbrandQuotient
   rw [card_herbrandH0_trivial_int, Nat.card_of_subsingleton (0 : (trivial ℤ G ℤ).herbrandH1)]
   simp only [Nat.cast_one, div_one]
+
+variable (G) in
+theorem Rep.herbrandQuotient_trivial_int_eq_card :
+    Rep.herbrandQuotient (trivial ℤ G ℤ) = Nat.card G := by
+  classical rw [trivial, herbrandQuotient_of, _root_.herbrandQuotient_trivial_int_eq_card]
