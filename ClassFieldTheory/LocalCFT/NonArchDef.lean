@@ -160,8 +160,17 @@ theorem e_pos : 0 < e K L :=
 theorem f_pos : 0 < f K L :=
   sorry
 
-theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L :=
-  sorry
+lemma unique_maximal_ideal_extension : (UniqueFactorizationMonoid.factors
+  (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) = {𝓂[L]} := by sorry
+
+theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L := by
+  symm
+  calc
+  _ = (Ideal.ramificationIdx (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] 𝓂[L]) * (Ideal.inertiaDeg 𝓂[K] 𝓂[L]) := by
+    symm
+    rw [← Ideal.sum_ramification_inertia 𝒪[L] 𝓂[K], unique_maximal_ideal_extension]
+    rfl
+    exact IsDiscreteValuationRing.not_a_field ↥𝒪[K]
 
 -- TODO: generalise to extensions of DVRs.
 class IsUnramified : Prop where
