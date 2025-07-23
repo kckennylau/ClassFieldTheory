@@ -179,9 +179,52 @@ section make_finite_extension
 
 variable (L : Type v) [Field L] [Algebra K L] [FiniteDimensional K L]
 
+open scoped Valued in
+#check (inferInstance : NormedField K)
+#check (inferInstance : Valuation.RankOne (Valued.v (R := K)))
+
+@[ext] theorem _root_.ValuativeRel.ext {R : Type u} [CommRing R] {v v' : ValuativeRel R}
+    (h : ∀ a b, v.rel a b ↔ v'.rel a b) : v = v' := by
+  cases v; cases v'; congr; ext; apply h
+
+theorem _root_.ValuativeRel.rel_iff_one_le {F : Type u} [Field F] [ValuativeRel F]
+    {x : F} (y : F) (hx : x ≠ 0) : x ≤ᵥ y ↔ 1 ≤ᵥ x⁻¹ * y :=
+  ⟨fun h ↦ by simpa [hx] using rel_mul_left x⁻¹ h,
+  fun h ↦ by simpa [hx] using rel_mul_left x h⟩
+
+@[ext high] theorem _root_.ValuativeRel.ext_field {F : Type u} [Field F] {v v' : ValuativeRel F}
+    (h : ∀ x, v.rel 1 x ↔ v'.rel 1 x) : v = v' := by
+  ext x y
+  by_cases hx : x = 0
+  · rw [hx]; simp only [ValuativeRel.zero_rel]
+  rw [rel_iff_one_le y hx, @rel_iff_one_le _ _ v _ y hx]
+  apply h
+
+open scoped Valued in
 include K in
-theorem unique_hasExtension : ∃! v : ValuativeRel L, ValuativeExtension K L :=
-  sorry -- by María Inés
+theorem unique_hasExtension : ∃! v : ValuativeRel L, ValuativeExtension K L := by
+  letI : NormedField L := spectralNorm.normedField K L
+  haveI : IsUltrametricDist L := IsUltrametricDist.isUltrametricDist_of_isNonarchimedean_nnnorm
+    isNonarchimedean_spectralNorm
+  let v := NormedField.valuation (K := L)
+  letI := ValuativeRel.ofValuation v
+  haveI := Valuation.Compatible.ofValuation v
+  refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, ?_⟩
+  · rw [Valuation.Compatible.rel_iff_le (v := v),
+      Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
+    change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
+    rw [spectralNorm_extends, spectralNorm_extends]
+    change Valued.norm _ ≤ Valued.norm _ ↔ _
+    rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
+      (Valuation.RankOne.strictMono Valued.v).le_iff_le]
+    rfl
+  · intro v' h
+    let f : AlgebraNorm K L := sorry
+    -- { toFun := _ }
+    ext x
+    change _ ≤ᵥ _ ↔ spectralNorm K L 1 ≤ spectralAlgNorm K L x
+    rw [spectralNorm_one]
+    sorry
 
 -- def of_finite_extension [ValuativeRel L] [ValuativeExtension K L] :
 --     IsNonarchLocalField L :=
