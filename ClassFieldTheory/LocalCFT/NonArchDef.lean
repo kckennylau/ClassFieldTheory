@@ -19,8 +19,26 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   -- CompleteSpace K,
   -- ValuativeRel.IsDiscrete K
 
-
 open ValuativeRel
+
+namespace ValuativeExtension
+
+variable (A : Type u) (B : Type v) [CommRing A] [CommRing B] [ValuativeRel A] [ValuativeRel B]
+  [Algebra A B] [ValuativeExtension A B] (a b : A)
+
+lemma algebraMap_le : valuation B (algebraMap A B a) ≤ valuation B (algebraMap A B b) ↔
+    valuation A a ≤ valuation A b := by
+  simp_rw [← Valuation.Compatible.rel_iff_le, rel_iff_rel]
+
+lemma algebraMap_eq : valuation B (algebraMap A B a) = valuation B (algebraMap A B b) ↔
+    valuation A a = valuation A b := by
+  simp_rw [le_antisymm_iff, algebraMap_le]
+
+lemma algebraMap_lt : valuation B (algebraMap A B a) < valuation B (algebraMap A B b) ↔
+    valuation A a < valuation A b := by
+  simp_rw [lt_iff_le_not_ge, algebraMap_le]
+
+end ValuativeExtension
 
 namespace IsNonarchLocalField
 
@@ -94,15 +112,12 @@ lemma associated_iff_of_irreducible (x y : 𝒪[K]) (hx : Irreducible x) :
   ⟨fun hyx ↦ hyx.symm.irreducible hx,
   fun hy ↦ IsDiscreteValuationRing.associated_of_irreducible _ hy hx⟩
 
-theorem compact_OK : IsCompact (𝒪[K] : Set K) :=
-  sorry
-
 theorem open_OK : IsOpen (𝒪[K] : Set K) :=
   sorry
 
 def compactOpenOK : TopologicalSpace.CompactOpens K where
   carrier := 𝒪[K]
-  isCompact' := compact_OK K
+  isCompact' := isCompact_iff_compactSpace.mpr <| compactSpace_integer K
   isOpen' := open_OK K
 
 -- TODO: add Haar measure (or check that it works with `example`)
@@ -116,13 +131,11 @@ variable [Algebra K L] [HasExtension K L]
 instance : FiniteDimensional K L :=
   sorry
 
-open Valuation.Compatible in
 omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
 lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
   rcases x with ⟨x, hx⟩
   change valuation L (algebraMap K L x) ≤ 1
-  rwa [show 1 = valuation L (algebraMap K L 1) by simp only [map_one], ← rel_iff_le,
-    ValuativeExtension.rel_iff_rel, rel_iff_le (v := valuation K)]
+  simpa only [map_one] using (ValuativeExtension.algebraMap_le K L x 1).mpr hx
 
 instance : Algebra 𝒪[K] 𝒪[L] where
   smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
