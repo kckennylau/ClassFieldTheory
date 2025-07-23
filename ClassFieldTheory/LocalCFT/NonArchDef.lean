@@ -116,16 +116,19 @@ variable [Algebra K L] [HasExtension K L]
 instance : FiniteDimensional K L :=
   sorry
 
-open Valuation.HasExtension in
+open Valuation.Compatible in
+omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
+lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
+  rcases x with ⟨x, hx⟩
+  change valuation L (algebraMap K L x) ≤ 1
+  rwa [show 1 = valuation L (algebraMap K L 1) by simp only [map_one], ← rel_iff_le,
+    ValuativeExtension.rel_iff_rel, rel_iff_le (v := valuation K)]
+
 instance : Algebra 𝒪[K] 𝒪[L] where
-  smul r a := ⟨r • a,
-    Algebra.smul_def r (a : L) ▸ mul_mem sorry a.2⟩
-  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L]
-    sorry
-    -- (by simp [Valuation.mem_integer_iff, val_map_le_one_iff vR vA])
+  smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
+  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L] fun x hx => algebraMap_mem_integer K L ⟨x, hx⟩
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
-  -- Valuation.HasExtension.instAlgebraInteger (R := K) (A := L) (vR := Valued.v) (vA := Valued.v)
 
 instance : ContinuousSMul K L :=
   sorry
