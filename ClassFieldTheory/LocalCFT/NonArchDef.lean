@@ -113,8 +113,102 @@ class HasExtension [Algebra K L] : Prop extends ValuativeExtension K L
 
 variable [Algebra K L] [HasExtension K L]
 
-instance : FiniteDimensional K L :=
-  sorry
+#check FiniteDimensional K L
+
+#synth Module K L
+
+-- TODO: MOVE
+theorem _root_.Irreducible.ne_zero'
+    {K S : Type*} [MonoidWithZero K] [SetLike S K] [SubmonoidClass S K]
+    {s : S} {x : s} (h : Irreducible x) : (x : K) ≠ 0 := by
+  obtain ⟨x, hx⟩ := x
+  rintro rfl
+  exact h.1 ((or_self _).mp (h.2 (a := ⟨0, hx⟩) (b := ⟨0, hx⟩) (by ext; simp)))
+
+-- TODO: MOVE
+open Filter Set in
+theorem _root_.Filter.mem_iInf'' {α} {ι : Sort _} {s : ι → Filter α} {U : Set α} :
+    (U ∈ ⨅ i, s i) ↔
+      ∃ I : Set ι, I.Finite ∧ ∃ V : I → Set α, (∀ (i : I), V i ∈ s i) ∧ U = ⋂ i, V i := by
+  constructor
+  · rw [iInf_eq_generate, mem_generate_iff]
+    rintro ⟨t, tsub, tfin, tinter⟩
+    rcases eq_finite_iUnion_of_finite_subset_iUnion tfin tsub with ⟨I, Ifin, σ, σfin, σsub, rfl⟩
+    rw [sInter_iUnion] at tinter
+    set V := fun i => U ∪ ⋂₀ σ i with hV
+    have V_in : ∀ (i : I), V i ∈ s i := by
+      rintro i
+      have : ⋂₀ σ i ∈ s i := by
+        rw [sInter_mem (σfin _)]
+        apply σsub
+      exact mem_of_superset this subset_union_right
+    refine ⟨I, Ifin, V, V_in, ?_⟩
+    rwa [hV, ← union_iInter, union_eq_self_of_subset_right]
+  · rintro ⟨I, Ifin, V, V_in, rfl⟩
+    exact mem_iInf_of_iInter Ifin V_in Subset.rfl
+
+open Set
+theorem _root_.Filter.mem_iInf''' {α} {ι : Prop} [Decidable ι] {s : ι → Filter α} {U : Set α} :
+    (U ∈ ⨅ i, s i) ↔ if i : ι then U ∈ s i else U = .univ := by
+  split_ifs with h <;> simp [h]
+
+open scoped Valued in
+#synth NontriviallyNormedField K
+
+#check NormedField.induced
+#check IsDiscreteValuationRing.exists_irreducible
+
+omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] [HasExtension K L] in
+@[simp]
+theorem ValuationExtension.le_iff_le [ValuativeExtension K L] {a b : K} : valuation L (algebraMap K L a) ≤ valuation L (algebraMap K L b) ↔ valuation K a ≤ valuation K b := by
+  rw [← Valuation.Compatible.rel_iff_le, ← Valuation.Compatible.rel_iff_le, ValuativeExtension.rel_iff_rel]
+
+omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] [HasExtension K L] in
+@[simp]
+theorem ValuationExtension.lt_iff_lt [ValuativeExtension K L] {a b : K} : valuation L (algebraMap K L a) < valuation L (algebraMap K L b) ↔ valuation K a < valuation K b := by
+  simp only [lt_iff_le_not_ge, ValuationExtension.le_iff_le]
+
+-- set_option trace.Meta.synthInstance true in
+instance : FiniteDimensional K L := by
+  letI : NontriviallyNormedField L := open scoped Valued in inferInstance
+  letI : NormedField K :=
+  { toUniformSpace := ‹UniformSpace K›,
+    __ := NormedField.induced K L (algebraMap K L) (algebraMap K L).injective,
+    uniformity_dist := ?uniformity_case
+  }
+  case uniformity_case =>
+    rw [uniformity_eq_comap_nhds_zero]
+    refine uniformity_dist_of_mem_uniformity 0 dist ?_
+    intro S
+    simp [Filter.mem_iInf, Filter.mem_iInf''']
+    sorry
+  letI : NontriviallyNormedField K := by
+    apply NontriviallyNormedField.ofNormNeOne
+    let ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
+    use ϖ
+    constructor
+    · exact Irreducible.ne_zero' hϖ
+    · apply ne_of_lt
+      change ‖(algebraMap K L ϖ)‖ < 1
+      rw [Valued.toNormedField.norm_lt_one_iff]
+      rw [← Valuation.map_one (valuation L)]
+      rw [← map_one (algebraMap K L)]
+      erw [ValuationExtension.lt_iff_lt]
+      rw [Valuation.map_one (valuation K)]
+      exact Valuation.integer.v_irreducible_lt_one hϖ
+  letI : NormedSpace K L := {
+    norm_smul_le a b := by
+      rw [Algebra.smul_def a b]
+      rw [norm_mul ((algebraMap K L) a) b]
+      rfl
+  }
+  apply FiniteDimensional.of_locallyCompactSpace (𝕜 := K) (E := L)
+
+#check ValuativeRel
+
+
+#exit
+#check FiniteDimensional.of_locallyCompactSpace
 
 open Valuation.Compatible in
 omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
