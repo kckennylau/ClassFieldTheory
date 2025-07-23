@@ -13,9 +13,9 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   ValuativeTopology K,
   IsUniformAddGroup K,
   LocallyCompactSpace K,
-  ValuativeRel.IsNontrivial K,
-  IsTopologicalDivisionRing K, -- TODO: remove IsTopologicalDivisionRing
-  ValuativeRel.IsRankLeOne K -- TODO: in future mathlib
+  ValuativeRel.IsNontrivial K
+  -- IsTopologicalDivisionRing K, -- TODO: remove IsTopologicalDivisionRing
+  -- ValuativeRel.IsRankLeOne K -- TODO: in future mathlib
   -- CompleteSpace K,
   -- ValuativeRel.IsDiscrete K
 
@@ -48,13 +48,17 @@ instance : LocallyCompactSpace ℚ_[p] := inferInstance
 
 instance : IsNonarchLocalField ℚ_[p] where
   mem_nhds_iff := sorry
-  nonempty := sorry
 
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
   (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
 
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
+
+-- waiting andrew
+instance : IsTopologicalDivisionRing K := sorry
+
+instance : ValuativeRel.IsRankLeOne K := sorry
 
 noncomputable
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).RankOne where
@@ -130,6 +134,7 @@ variable [Algebra K L] [HasExtension K L]
 
 instance : FiniteDimensional K L :=
   sorry
+  -- FiniteDimensional.of_locallyCompactSpace K (E := L)
 
 omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
 lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
@@ -216,39 +221,113 @@ theorem _root_.ValuativeRel.rel_iff_one_le {F : Type u} [Field F] [ValuativeRel 
   rw [rel_iff_one_le y hx, @rel_iff_one_le _ _ v _ y hx]
   apply h
 
+@[simp] theorem _root_.NormedField.valuation_le_valuation_iff {K : Type u} [NormedField K]
+    [IsUltrametricDist K] (x y : K) :
+    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+    valuation K x ≤ valuation K y ↔ ‖x‖ ≤ ‖y‖ := by
+  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+  rw [← Valuation.Compatible.rel_iff_le]
+  rfl
+
+@[simp] theorem _root_.NormedField.valuation_lt_valuation_iff {K : Type u} [NormedField K]
+    [IsUltrametricDist K] (x y : K) :
+    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+    valuation K x < valuation K y ↔ ‖x‖ < ‖y‖ := by
+  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+  simp_rw [lt_iff_le_not_ge, NormedField.valuation_le_valuation_iff]
+
+@[simp] theorem _root_.NormedField.ball_norm_eq {K : Type u} [NormedField K] [IsUltrametricDist K]
+    (x : K) :
+    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+    Metric.ball 0 ‖x‖ = { y | valuation K y < valuation K x } := by
+  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+  ext y
+  rw [mem_ball_zero_iff, Set.mem_setOf_eq, NormedField.valuation_lt_valuation_iff]
+
+theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUltrametricDist K] :
+    @ValuativeTopology K _ (ValuativeRel.ofValuation (NormedField.valuation (K := K))) _ := by
+  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+  refine { mem_nhds_iff s := ?_ }
+  by_cases nontrivial : ∃ x : K, x ≠ 0 ∧ ‖x‖ < 1
+  · obtain ⟨x, hx0, hx1⟩ := nontrivial
+    refine ⟨fun hs ↦ ?_, fun ⟨γ, hγ⟩ ↦ ?_⟩
+    · simp_rw [(Metric.nhds_basis_ball_pow (norm_pos_iff.2 hx0) hx1).mem_iff, ← norm_pow,
+        NormedField.ball_norm_eq] at hs
+      obtain ⟨n, -, hns⟩ := hs
+      let u : (ValueGroupWithZero K)ˣ :=
+        IsUnit.unit (a := valuation K x) (isUnit_iff_ne_zero.2 (by simp [hx0]))
+      exact ⟨u ^ n, by simpa [u] using hns⟩
+    · rw [Metric.mem_nhds_iff]
+      have : ∃ r : K, r ≠ 0 ∧ valuation K r = γ := sorry
+      obtain ⟨z, hz0, hzγ⟩ := this
+      refine ⟨‖z‖, norm_pos_iff.2 hz0, by simpa [← hzγ] using hγ⟩
+  haveI := DiscreteTopology.of_forall_le_norm (E := K) one_pos (by simpa using nontrivial)
+  rw [nhds_discrete, Filter.mem_pure]
+  refine ⟨fun h0s ↦ ⟨1, ?_⟩, fun ⟨γ, hγ⟩ ↦ ?_⟩
+  · simp_rw [Units.val_one, ← map_one (valuation K), NormedField.valuation_lt_valuation_iff,
+      norm_one]
+    simp_rw [not_exists, not_and, not_imp_not] at nontrivial
+    exact fun x hx ↦ by rwa [nontrivial x hx]
+  · have : ∃ r : K, r ≠ 0 ∧ valuation K r = γ := sorry
+    obtain ⟨z, hz0, hzγ⟩ := this
+    exact hγ (by simpa [← hzγ])
+
+-- open scoped Valued in
+theorem locallyCompactSpace_of_complete_of_finiteDimensional (K : Type u) (L : Type v)
+    [NontriviallyNormedField K] [CompleteSpace K] [LocallyCompactSpace K]
+    [AddCommGroup L] [TopologicalSpace L] [IsTopologicalAddGroup L] [T2Space L]
+    [Module K L] [ContinuousSMul K L] [FiniteDimensional K L] :
+    LocallyCompactSpace L := by
+  obtain ⟨s, ⟨b⟩⟩ := Basis.exists_basis K L
+  haveI := FiniteDimensional.fintypeBasisIndex b
+  exact b.equivFun.toContinuousLinearEquiv.toHomeomorph.isOpenEmbedding.locallyCompactSpace
+
+noncomputable
+def spectralNorm.nontriviallyNormedField (K : Type u) [NontriviallyNormedField K] (L : Type v)
+    [Field L] [Algebra K L] [Algebra.IsAlgebraic K L] [hu : IsUltrametricDist K] [CompleteSpace K] :
+    NontriviallyNormedField L where
+  __ := spectralNorm.normedField K L
+  non_trivial :=
+    let ⟨x, hx⟩ := NontriviallyNormedField.non_trivial (α := K)
+    ⟨algebraMap K L x, hx.trans_eq <| (spectralNorm_extends _).symm⟩
+
+theorem _root_.ValuativeRel.isNontrivial (K : Type u) [NontriviallyNormedField K]
+    [IsUltrametricDist K] :
+    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
+    ValuativeRel.IsNontrivial K := by
+  letI := ofValuation (NormedField.valuation (K := K))
+  haveI := Valuation.Compatible.ofValuation (S := K) NormedField.valuation
+  obtain ⟨x, hx⟩ := NontriviallyNormedField.non_trivial (α := K)
+  refine ⟨⟨valuation K x, ?_, ?_⟩⟩
+  · rw [Valuation.ne_zero_iff]
+    exact norm_pos_iff.1 (one_pos.trans hx)
+  · have := NormedField.valuation_lt_valuation_iff 1 x
+    simp only [map_one, norm_one] at this
+    exact ne_of_gt <| this.2 hx
+
 open scoped Valued in
 include K in
-theorem unique_hasExtension : ∃! v : ValuativeRel L, ValuativeExtension K L := by
-  letI : NormedField L := spectralNorm.normedField K L
+theorem isNonarchLocalField_of_finiteDimensional :
+    ∃ (_ : ValuativeRel L) (_ : ValuativeExtension K L)
+    (_ : UniformSpace L), IsNonarchLocalField L := by
+  letI : NontriviallyNormedField L := spectralNorm.nontriviallyNormedField K L
   haveI : IsUltrametricDist L := IsUltrametricDist.isUltrametricDist_of_isNonarchimedean_nnnorm
     isNonarchimedean_spectralNorm
   let v := NormedField.valuation (K := L)
   letI := ValuativeRel.ofValuation v
   haveI := Valuation.Compatible.ofValuation v
-  refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, ?_⟩
-  · rw [Valuation.Compatible.rel_iff_le (v := v),
-      Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
-    change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
-    rw [spectralNorm_extends, spectralNorm_extends]
-    change Valued.norm _ ≤ Valued.norm _ ↔ _
-    rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
-      (Valuation.RankOne.strictMono Valued.v).le_iff_le]
-    rfl
-  · intro v' h
-    let f : AlgebraNorm K L := sorry
-    -- { toFun := _ }
-    ext x
-    change _ ≤ᵥ _ ↔ spectralNorm K L 1 ≤ spectralAlgNorm K L x
-    rw [spectralNorm_one]
-    sorry
-
--- def of_finite_extension [ValuativeRel L] [ValuativeExtension K L] :
---     IsNonarchLocalField L :=
---   sorry
-/-
-failed to synthesize
-  UniformSpace L
--/
+  haveI := NormedField.valuativeTopology L
+  haveI := locallyCompactSpace_of_complete_of_finiteDimensional K L
+  haveI := ValuativeRel.isNontrivial L
+  refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, inferInstance, .mk⟩
+  rw [Valuation.Compatible.rel_iff_le (v := v),
+    Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
+  change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
+  rw [spectralNorm_extends, spectralNorm_extends]
+  change Valued.norm _ ≤ Valued.norm _ ↔ _
+  rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
+    (Valuation.RankOne.strictMono Valued.v).le_iff_le]
+  rfl
 
 end make_finite_extension
 
