@@ -19,8 +19,26 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   -- CompleteSpace K,
   -- ValuativeRel.IsDiscrete K
 
-
 open ValuativeRel
+
+namespace ValuativeExtension
+
+variable (A : Type u) (B : Type v) [CommRing A] [CommRing B] [ValuativeRel A] [ValuativeRel B]
+  [Algebra A B] [ValuativeExtension A B] (a b : A)
+
+lemma algebraMap_le : valuation B (algebraMap A B a) ≤ valuation B (algebraMap A B b) ↔
+    valuation A a ≤ valuation A b := by
+  simp_rw [← Valuation.Compatible.rel_iff_le, rel_iff_rel]
+
+lemma algebraMap_eq : valuation B (algebraMap A B a) = valuation B (algebraMap A B b) ↔
+    valuation A a = valuation A b := by
+  simp_rw [le_antisymm_iff, algebraMap_le]
+
+lemma algebraMap_lt : valuation B (algebraMap A B a) < valuation B (algebraMap A B b) ↔
+    valuation A a < valuation A b := by
+  simp_rw [lt_iff_le_not_ge, algebraMap_le]
+
+end ValuativeExtension
 
 namespace IsNonarchLocalField
 
@@ -94,15 +112,12 @@ lemma associated_iff_of_irreducible (x y : 𝒪[K]) (hx : Irreducible x) :
   ⟨fun hyx ↦ hyx.symm.irreducible hx,
   fun hy ↦ IsDiscreteValuationRing.associated_of_irreducible _ hy hx⟩
 
-theorem compact_OK : IsCompact (𝒪[K] : Set K) :=
-  sorry
-
 theorem open_OK : IsOpen (𝒪[K] : Set K) :=
   sorry
 
 def compactOpenOK : TopologicalSpace.CompactOpens K where
   carrier := 𝒪[K]
-  isCompact' := compact_OK K
+  isCompact' := isCompact_iff_compactSpace.mpr <| compactSpace_integer K
   isOpen' := open_OK K
 
 -- TODO: add Haar measure (or check that it works with `example`)
@@ -116,16 +131,17 @@ variable [Algebra K L] [HasExtension K L]
 instance : FiniteDimensional K L :=
   sorry
 
-open Valuation.HasExtension in
+omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
+lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
+  rcases x with ⟨x, hx⟩
+  change valuation L (algebraMap K L x) ≤ 1
+  simpa only [map_one] using (ValuativeExtension.algebraMap_le K L x 1).mpr hx
+
 instance : Algebra 𝒪[K] 𝒪[L] where
-  smul r a := ⟨r • a,
-    Algebra.smul_def r (a : L) ▸ mul_mem sorry a.2⟩
-  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L]
-    sorry
-    -- (by simp [Valuation.mem_integer_iff, val_map_le_one_iff vR vA])
+  smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
+  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L] fun x hx => algebraMap_mem_integer K L ⟨x, hx⟩
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
-  -- Valuation.HasExtension.instAlgebraInteger (R := K) (A := L) (vR := Valued.v) (vA := Valued.v)
 
 instance : ContinuousSMul K L :=
   sorry
