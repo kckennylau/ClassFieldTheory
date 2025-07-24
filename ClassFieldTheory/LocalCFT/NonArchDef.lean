@@ -168,7 +168,13 @@ omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalFi
 theorem ValuationExtension.lt_iff_lt [ValuativeExtension K L] {a b : K} : valuation L (algebraMap K L a) < valuation L (algebraMap K L b) ↔ valuation K a < valuation K b := by
   simp only [lt_iff_le_not_ge, ValuationExtension.le_iff_le]
 
--- set_option trace.Meta.synthInstance true in
+omit [UniformSpace K] [IsNonarchLocalField K] in
+lemma valuation_of_field_surjective {K : Type _} [Field K] [ValuativeRel K] : Function.Surjective (valuation K) := by
+  intro β
+  obtain ⟨a, b, _⟩ := valuation_surjective β (R := K)
+  use (a / b)
+  rwa [Valuation.map_div (valuation K) a ↑b]
+
 instance : FiniteDimensional K L := by
   letI : NontriviallyNormedField L := open scoped Valued in inferInstance
   letI : NormedField K :=
@@ -180,8 +186,80 @@ instance : FiniteDimensional K L := by
     rw [uniformity_eq_comap_nhds_zero]
     refine uniformity_dist_of_mem_uniformity 0 dist ?_
     intro S
-    simp [Filter.mem_iInf, Filter.mem_iInf''']
-    sorry
+    simp only [Filter.mem_comap, ValuativeTopology.mem_nhds_iff, gt_iff_lt]
+    let v : Valuation L (ValueGroupWithZero L) := Valued.v
+    have h : StrictMono (ValuativeExtension.mapValueGroupWithZero K L) := by
+      intro x y hxy
+      obtain ⟨a, ha⟩ := valuation_of_field_surjective x
+      obtain ⟨b, hb⟩ := valuation_of_field_surjective y
+      rw [← ha, ← hb]
+      simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
+      rw [@lt_iff_not_ge, ← Valuation.Compatible.rel_iff_le,  ValuativeExtension.rel_iff_rel, Valuation.Compatible.rel_iff_le (v := valuation K)]
+      grind [lt_iff_not_ge]
+    constructor
+    · rintro ⟨t, ⟨γ, hγ⟩, hS⟩
+      use (Valuation.RankOne.hom v).comp (ValuativeExtension.mapValueGroupWithZero K L) γ.val,
+        NNReal.coe_pos.2 (pos_of_ne_zero ((map_ne_zero _).2 γ.ne_zero))
+      intro a b hab
+      apply hS
+      apply hγ
+      apply ((Valuation.RankOne.strictMono v).comp h).lt_iff_lt.1
+      apply hab.trans_eq'
+      simp only [Function.comp_apply, ValuativeExtension.mapValueGroupWithZero_valuation, map_sub,
+        NNReal.val_eq_coe]
+      exact dist_comm b a
+    · intro ⟨ε, hε, hS⟩
+      let ⟨β, β_lt_one⟩ : ∃ β : (ValueGroupWithZero K)ˣ, β < 1 := by
+        let ⟨α, hα_neq_0, hα_neq_1⟩ := IsNontrivial.condition (R := K)
+        by_cases hα_lt_one : α < 1
+        · use IsUnit.unit <| Ne.isUnit hα_neq_0
+          change α < 1
+          assumption
+        · use (IsUnit.unit <| Ne.isUnit hα_neq_0)⁻¹
+          rw [@Right.inv_lt_one_iff]
+          change 1 < α
+          have := lt_trichotomy α 1
+          grind
+      obtain ⟨y, hyβ⟩ := valuation_of_field_surjective β.val
+      set x : NNReal := ((Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) ↑(valuation K y)))
+
+      have : 0 < x := by
+        have : (Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) (valuation K 0)) = 0 := by
+          rw [Valuation.RankOne.hom_eq_zero_iff v, MonoidWithZeroHom.map_eq_zero_iff, Valuation.zero_iff]
+        rw [← this]
+        apply Valuation.RankOne.strictMono
+        simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
+        rw [ValuationExtension.lt_iff_lt K L, hyβ, Valuation.map_zero (valuation K)]
+        exact Units.zero_lt β
+      have : x < 1 := by
+        have : (Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) (valuation K 1)) = 1 := by
+          rw [ValuativeExtension.mapValueGroupWithZero_valuation]
+          rw [RingHom.map_one]
+          rw [Valuation.map_one]
+          rw [MonoidWithZeroHom.map_one]
+        rw [← this]
+        apply Valuation.RankOne.strictMono
+        simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
+        rw [ValuationExtension.lt_iff_lt K L, hyβ, Valuation.map_one (valuation K)]
+        assumption
+      rw [← NNReal.coe_zero, ← Real.lt_toNNReal_iff_coe_lt] at hε
+      obtain ⟨n, hx_n_pow_le_ε⟩ := NNReal.exists_pow_lt_of_lt_one hε ‹x < 1›
+      refine ⟨_, ⟨β ^ (clear% S; clear% hS; n) , subset_rfl⟩, ?_⟩
+      intro ⟨a, b⟩ hab
+      apply hS
+      apply ((Valuation.RankOne.strictMono v).comp h).lt_iff_lt.2 at hab
+      apply NNReal.coe_lt_coe.2 at hab
+      simp only [Function.comp_apply, ValuativeExtension.mapValueGroupWithZero_valuation,
+        map_sub] at hab
+      rw [dist_comm]
+      apply hab.trans_le
+      rw [Units.val_pow_eq_pow_val β n]
+      rw [map_pow, map_pow]
+      rw [← hyβ]
+      change ↑(x ^ n) ≤ ε
+      rw [← Real.le_toNNReal_iff_coe_le']
+      grw [hx_n_pow_le_ε]
+      exact pow_pos ‹_› _
   letI : NontriviallyNormedField K := by
     apply NontriviallyNormedField.ofNormNeOne
     let ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
@@ -204,10 +282,6 @@ instance : FiniteDimensional K L := by
   }
   apply FiniteDimensional.of_locallyCompactSpace (𝕜 := K) (E := L)
 
-#check ValuativeRel
-
-
-#exit
 #check FiniteDimensional.of_locallyCompactSpace
 
 open Valuation.Compatible in
