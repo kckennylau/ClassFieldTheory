@@ -1,4 +1,5 @@
 import Mathlib
+import ClassFieldTheory.Mathlib.RingTheory.Valuation.ValuativeRel
 
 /-!
 # Definition of Non-Archimedean Local Fields
@@ -175,91 +176,16 @@ lemma valuation_of_field_surjective {K : Type _} [Field K] [ValuativeRel K] : Fu
   use (a / b)
   rwa [Valuation.map_div (valuation K) a ↑b]
 
+open scoped Valued in
+noncomputable instance (priority := low) : NontriviallyNormedField K := inferInstance
+
+open ValuativeExtension in
 instance : FiniteDimensional K L := by
-  letI : NontriviallyNormedField L := open scoped Valued in inferInstance
   letI : NormedField K :=
   { toUniformSpace := ‹UniformSpace K›,
     __ := NormedField.induced K L (algebraMap K L) (algebraMap K L).injective,
-    uniformity_dist := ?uniformity_case
+    uniformity_dist := ?_
   }
-  case uniformity_case =>
-    rw [uniformity_eq_comap_nhds_zero]
-    refine uniformity_dist_of_mem_uniformity 0 dist ?_
-    intro S
-    simp only [Filter.mem_comap, ValuativeTopology.mem_nhds_iff, gt_iff_lt]
-    let v : Valuation L (ValueGroupWithZero L) := Valued.v
-    have h : StrictMono (ValuativeExtension.mapValueGroupWithZero K L) := by
-      intro x y hxy
-      obtain ⟨a, ha⟩ := valuation_of_field_surjective x
-      obtain ⟨b, hb⟩ := valuation_of_field_surjective y
-      rw [← ha, ← hb]
-      simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
-      rw [@lt_iff_not_ge, ← Valuation.Compatible.rel_iff_le,  ValuativeExtension.rel_iff_rel, Valuation.Compatible.rel_iff_le (v := valuation K)]
-      grind [lt_iff_not_ge]
-    constructor
-    · rintro ⟨t, ⟨γ, hγ⟩, hS⟩
-      use (Valuation.RankOne.hom v).comp (ValuativeExtension.mapValueGroupWithZero K L) γ.val,
-        NNReal.coe_pos.2 (pos_of_ne_zero ((map_ne_zero _).2 γ.ne_zero))
-      intro a b hab
-      apply hS
-      apply hγ
-      apply ((Valuation.RankOne.strictMono v).comp h).lt_iff_lt.1
-      apply hab.trans_eq'
-      simp only [Function.comp_apply, ValuativeExtension.mapValueGroupWithZero_valuation, map_sub,
-        NNReal.val_eq_coe]
-      exact dist_comm b a
-    · intro ⟨ε, hε, hS⟩
-      let ⟨β, β_lt_one⟩ : ∃ β : (ValueGroupWithZero K)ˣ, β < 1 := by
-        let ⟨α, hα_neq_0, hα_neq_1⟩ := IsNontrivial.condition (R := K)
-        by_cases hα_lt_one : α < 1
-        · use IsUnit.unit <| Ne.isUnit hα_neq_0
-          change α < 1
-          assumption
-        · use (IsUnit.unit <| Ne.isUnit hα_neq_0)⁻¹
-          rw [@Right.inv_lt_one_iff]
-          change 1 < α
-          have := lt_trichotomy α 1
-          grind
-      obtain ⟨y, hyβ⟩ := valuation_of_field_surjective β.val
-      set x : NNReal := ((Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) ↑(valuation K y)))
-
-      have : 0 < x := by
-        have : (Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) (valuation K 0)) = 0 := by
-          rw [Valuation.RankOne.hom_eq_zero_iff v, MonoidWithZeroHom.map_eq_zero_iff, Valuation.zero_iff]
-        rw [← this]
-        apply Valuation.RankOne.strictMono
-        simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
-        rw [ValuationExtension.lt_iff_lt K L, hyβ, Valuation.map_zero (valuation K)]
-        exact Units.zero_lt β
-      have : x < 1 := by
-        have : (Valuation.RankOne.hom v) ((ValuativeExtension.mapValueGroupWithZero K L) (valuation K 1)) = 1 := by
-          rw [ValuativeExtension.mapValueGroupWithZero_valuation]
-          rw [RingHom.map_one]
-          rw [Valuation.map_one]
-          rw [MonoidWithZeroHom.map_one]
-        rw [← this]
-        apply Valuation.RankOne.strictMono
-        simp only [ValuativeExtension.mapValueGroupWithZero_valuation]
-        rw [ValuationExtension.lt_iff_lt K L, hyβ, Valuation.map_one (valuation K)]
-        assumption
-      rw [← NNReal.coe_zero, ← Real.lt_toNNReal_iff_coe_lt] at hε
-      obtain ⟨n, hx_n_pow_le_ε⟩ := NNReal.exists_pow_lt_of_lt_one hε ‹x < 1›
-      refine ⟨_, ⟨β ^ (clear% S; clear% hS; n) , subset_rfl⟩, ?_⟩
-      intro ⟨a, b⟩ hab
-      apply hS
-      apply ((Valuation.RankOne.strictMono v).comp h).lt_iff_lt.2 at hab
-      apply NNReal.coe_lt_coe.2 at hab
-      simp only [Function.comp_apply, ValuativeExtension.mapValueGroupWithZero_valuation,
-        map_sub] at hab
-      rw [dist_comm]
-      apply hab.trans_le
-      rw [Units.val_pow_eq_pow_val β n]
-      rw [map_pow, map_pow]
-      rw [← hyβ]
-      change ↑(x ^ n) ≤ ε
-      rw [← Real.le_toNNReal_iff_coe_le']
-      grw [hx_n_pow_le_ε]
-      exact pow_pos ‹_› _
   letI : NontriviallyNormedField K := by
     apply NontriviallyNormedField.ofNormNeOne
     let ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
@@ -280,23 +206,72 @@ instance : FiniteDimensional K L := by
       rw [norm_mul ((algebraMap K L) a) b]
       rfl
   }
-  apply FiniteDimensional.of_locallyCompactSpace (𝕜 := K) (E := L)
+  exact FiniteDimensional.of_locallyCompactSpace (𝕜 := K) (E := L)
+
+  -- Showing `uniformity_dist` for `K`
+  rw [uniformity_eq_comap_nhds_zero]
+  refine uniformity_dist_of_mem_uniformity 0 dist ?_
+  intro S
+  simp only [Filter.mem_comap, ValuativeTopology.mem_nhds_iff, gt_iff_lt]
+  let v : Valuation L (ValueGroupWithZero L) := Valued.v
+
+  constructor
+  · rintro ⟨t, ⟨γ, hγ⟩, hS⟩
+    use (Valuation.RankOne.hom v).comp (mapValueGroupWithZero K L) γ.val,
+      NNReal.coe_pos.2 (pos_of_ne_zero ((map_ne_zero _).mpr γ.ne_zero))
+    intro a b hab
+    apply hS
+    apply hγ
+    apply ((Valuation.RankOne.strictMono v).comp mapValueGroupWithZero_strictMono).lt_iff_lt.mp
+    apply hab.trans_eq'
+    simp only [Function.comp_apply, mapValueGroupWithZero_valuation, map_sub, NNReal.val_eq_coe]
+    exact dist_comm b a
+
+  · intro ⟨ε, hε, hS⟩
+    let ⟨x, hx_pos, hx_lt_one⟩ := (isNontrivial_field_iff_exists_valuation_between_zero_one (K := K)).mp inferInstance
+    let γ : (ValueGroupWithZero K)ˣ := by
+      refine (IsUnit.unit (a := valuation K x) ?_)
+      rw [isUnit_iff_ne_zero]
+      grind
+    set δ : NNReal := (Valuation.RankOne.hom v (mapValueGroupWithZero K L ↑(valuation K x)))
+
+    have : 0 < δ := by
+      have : (Valuation.RankOne.hom v) (mapValueGroupWithZero K L (valuation K 0)) = 0 := by
+        rw [Valuation.RankOne.hom_eq_zero_iff v, MonoidWithZeroHom.map_eq_zero_iff, Valuation.zero_iff]
+      rw [← this]
+      apply Valuation.RankOne.strictMono
+      simp only [mapValueGroupWithZero_valuation]
+      rwa [ValuationExtension.lt_iff_lt K L, Valuation.map_zero (valuation K)]
+
+    have : δ < 1 := by
+      have : (Valuation.RankOne.hom v) ((mapValueGroupWithZero K L) (valuation K 1)) = 1 := by
+        rw [mapValueGroupWithZero_valuation]
+        rw [RingHom.map_one]
+        rw [Valuation.map_one]
+        rw [MonoidWithZeroHom.map_one]
+      rw [← this]
+      apply Valuation.RankOne.strictMono
+      simp only [mapValueGroupWithZero_valuation]
+      rwa [ValuationExtension.lt_iff_lt K L, Valuation.map_one (valuation K)]
+
+    rw [← NNReal.coe_zero, ← Real.lt_toNNReal_iff_coe_lt] at hε
+    obtain ⟨n, hx_n_pow_le_ε⟩ := NNReal.exists_pow_lt_of_lt_one hε ‹δ < 1›
+    refine ⟨_, ⟨γ ^ n, subset_rfl⟩, ?_⟩
+    intro ⟨a, b⟩ hab
+    apply hS
+    apply ((Valuation.RankOne.strictMono v).comp mapValueGroupWithZero_strictMono).lt_iff_lt.2 at hab
+    apply NNReal.coe_lt_coe.2 at hab
+    simp only [Function.comp_apply, mapValueGroupWithZero_valuation, map_sub] at hab
+    rw [dist_comm]
+    apply hab.trans_le
+    rw [Units.val_pow_eq_pow_val γ n]
+    rw [map_pow, map_pow]
+    change ↑(δ ^ n) ≤ ε
+    rw [← Real.le_toNNReal_iff_coe_le']
+    grw [hx_n_pow_le_ε]
+    exact pow_pos ‹_› _
 
 #check FiniteDimensional.of_locallyCompactSpace
-
-open Valuation.Compatible in
-omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
-lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
-  rcases x with ⟨x, hx⟩
-  change valuation L (algebraMap K L x) ≤ 1
-  rwa [show 1 = valuation L (algebraMap K L 1) by simp only [map_one], ← rel_iff_le,
-    ValuativeExtension.rel_iff_rel, rel_iff_le (v := valuation K)]
-
-instance : Algebra 𝒪[K] 𝒪[L] where
-  smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
-  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L] fun x hx => algebraMap_mem_integer K L ⟨x, hx⟩
-  commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
-  smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
 
 instance : ContinuousSMul K L :=
   sorry
