@@ -130,11 +130,7 @@ def compactOpenOK : TopologicalSpace.CompactOpens K where
 
 -- TODO: add Haar measure (or check that it works with `example`)
 
--- class HasExtension [Algebra K L] : Prop extends
---   Valuation.HasExtension (Valued.v (R := K)) (Valued.v (R := L))
-class HasExtension [Algebra K L] : Prop extends ValuativeExtension K L
-
-variable [Algebra K L] [HasExtension K L]
+variable [Algebra K L] [ValuativeExtension K L]
 
 instance : FiniteDimensional K L :=
   sorry
