@@ -15,8 +15,8 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   IsUniformAddGroup K,
   LocallyCompactSpace K,
   ValuativeRel.IsNontrivial K
-  -- IsTopologicalDivisionRing K, -- TODO: remove IsTopologicalDivisionRing
   -- ValuativeRel.IsRankLeOne K -- TODO: in future mathlib
+  -- IsTopologicalDivisionRing K,
   -- CompleteSpace K,
   -- ValuativeRel.IsDiscrete K
 
@@ -61,7 +61,7 @@ instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
 
 -- waiting andrew
-instance : IsTopologicalDivisionRing K := sorry
+instance : IsTopologicalDivisionRing K := inferInstance
 
 instance : ValuativeRel.IsRankLeOne K := sorry
 
