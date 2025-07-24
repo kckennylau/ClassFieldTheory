@@ -151,32 +151,27 @@ theorem e_spec {ϖK : 𝒪[K]} {ϖL : 𝒪[L]} (hk : Irreducible ϖK) (hl : Irre
 noncomputable def f : ℕ :=
   Ideal.inertiaDeg 𝓂[K] 𝓂[L]
 
--- Is this really true in the definition of mathlib?
 instance : 𝓂[L].LiesOver 𝓂[K] := sorry
 
-theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] := by
-  simp [f]
-  sorry
+theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] := sorry
 
-lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥ ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
+lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥
+  ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
 
-theorem e_pos : 0 < e K L := by
-  refine Nat.pos_of_ne_zero ?_
-  intro a
-  -- simp [e, Ideal.ramificationIdx, sSup] at a
-  sorry
+theorem e_pos : 0 < e K L := sorry
 
 theorem f_pos : 0 < f K L := Ideal.inertiaDeg_pos 𝓂[K] 𝓂[L]
 
-lemma irreducible_pow_span_pow {R : Type u} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] {ϖ : R} (h : Irreducible ϖ) {n : ℕ} : Ideal.span {ϖ ^ n} = (Ideal.span {ϖ})^(n) := sorry
+lemma irreducible_pow_span_pow {R : Type u} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
+  {ϖ : R} (h : Irreducible ϖ) {n : ℕ} : Ideal.span {ϖ ^ n} = (Ideal.span {ϖ})^(n) := sorry
 
 lemma unique_maximal_ideal_factorization [DecidableEq (Ideal ↥𝒪[L])] : (UniqueFactorizationMonoid.factors
   (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])).toFinset = {𝓂[L]} := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
-  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (s := (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) (non_triv_maximal_embedding K L).1 hϖ
+  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (non_triv_maximal_embedding K L).1 hϖ
   have irred_ele_span_irred_ideal : Irreducible (Ideal.span {ϖ}) := by
     sorry
-  rw [hn, Irreducible.maximalIdeal_eq hϖ, (irreducible_pow_span_pow hϖ)]
+  rw [hn, Irreducible.maximalIdeal_eq hϖ, irreducible_pow_span_pow hϖ]
   simp
   rw [UniqueFactorizationMonoid.normalizedFactors_irreducible irred_ele_span_irred_ideal]
   simp
