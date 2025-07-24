@@ -204,30 +204,61 @@ open scoped Valued in
 #check (inferInstance : NormedField K)
 #check (inferInstance : Valuation.RankOne (Valued.v (R := K)))
 
+section
+
+variable {R : Type u} [CommRing R] [ValuativeRel R] {Γ : Type v}
+  [LinearOrderedCommMonoidWithZero Γ] (v : Valuation R Γ) [Valuation.Compatible v] (x : R)
+
+lemma _root_.Valuation.Compatible.rel_one_iff :
+    x ≤ᵥ 1 ↔ v x ≤ 1 := by
+  rw [← map_one v, ← Valuation.Compatible.rel_iff_le]
+
+lemma _root_.Valuation.Compatible.rel_zero_iff :
+    x ≤ᵥ 0 ↔ v x ≤ 0 := by
+  rw [← map_zero v, ← Valuation.Compatible.rel_iff_le]
+
+lemma _root_.Valuation.Compatible.one_rel_iff :
+    1 ≤ᵥ x ↔ 1 ≤ v x := by
+  rw [← map_one v, ← Valuation.Compatible.rel_iff_le]
+
+end
+
 @[ext] theorem _root_.ValuativeRel.ext {R : Type u} [CommRing R] {v v' : ValuativeRel R}
     (h : ∀ a b, v.rel a b ↔ v'.rel a b) : v = v' := by
   cases v; cases v'; congr; ext; apply h
 
-theorem _root_.ValuativeRel.rel_iff_one_le {F : Type u} [Field F] [ValuativeRel F]
-    {x : F} (y : F) (hx : x ≠ 0) : x ≤ᵥ y ↔ 1 ≤ᵥ x⁻¹ * y :=
-  ⟨fun h ↦ by simpa [hx] using rel_mul_left x⁻¹ h,
-  fun h ↦ by simpa [hx] using rel_mul_left x h⟩
+theorem _root_.ValuativeRel.rel_iff_one_rel_div {F : Type u} [Field F] [ValuativeRel F]
+    {x : F} (y : F) (hx : x ≠ 0) : x ≤ᵥ y ↔ 1 ≤ᵥ y / x :=
+  ⟨fun h ↦ by simpa [hx, inv_mul_eq_div] using rel_mul_left x⁻¹ h,
+  fun h ↦ by simpa [hx] using rel_mul_right x h⟩
 
+theorem _root_.ValuativeRel.rel_iff_div_rel_one {F : Type u} [Field F] [ValuativeRel F]
+    (x : F) {y : F} (hy : y ≠ 0) : x ≤ᵥ y ↔ x / y ≤ᵥ 1 := by
+  rw [Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation F),
+    Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation F),
+    map_div₀, map_one, div_le_one₀ (bot_lt_iff_ne_bot.2 ((map_ne_zero _).2 hy))]
+
+theorem _root_.ValuativeRel.rel_zero_iff {F : Type u} [Field F] [ValuativeRel F] (x : F) :
+    x ≤ᵥ 0 ↔ x = 0 := by
+  rw [Valuation.Compatible.rel_iff_le (v := valuation F), map_zero, le_zero_iff, map_eq_zero]
+
+/-- Two valuative relations on a field are equal iff their rings of integers are equal. -/
 @[ext high] theorem _root_.ValuativeRel.ext_field {F : Type u} [Field F] {v v' : ValuativeRel F}
-    (h : ∀ x, v.rel 1 x ↔ v'.rel 1 x) : v = v' := by
+    (h : ∀ x, v.rel x 1 ↔ v'.rel x 1) : v = v' := by
   ext x y
-  by_cases hx : x = 0
-  · rw [hx]; simp only [ValuativeRel.zero_rel]
-  rw [rel_iff_one_le y hx, @rel_iff_one_le _ _ v _ y hx]
-  apply h
+  by_cases hy : y = 0
+  · simp_rw [hy, rel_zero_iff]
+  · rw [rel_iff_div_rel_one _ hy, @rel_iff_div_rel_one _ _ v x y hy, h]
 
 @[simp] theorem _root_.NormedField.valuation_le_valuation_iff {K : Type u} [NormedField K]
     [IsUltrametricDist K] (x y : K) :
     letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
     valuation K x ≤ valuation K y ↔ ‖x‖ ≤ ‖y‖ := by
   letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-  rw [← Valuation.Compatible.rel_iff_le]
-  rfl
+  haveI := Valuation.Compatible.ofValuation (S := K) NormedField.valuation
+  simp_rw [← Valuation.Compatible.rel_iff_le,
+    Valuation.Compatible.rel_iff_le (v := NormedField.valuation),
+    NormedField.valuation_apply, ← NNReal.coe_le_coe, coe_nnnorm]
 
 @[simp] theorem _root_.NormedField.valuation_lt_valuation_iff {K : Type u} [NormedField K]
     [IsUltrametricDist K] (x y : K) :
@@ -248,15 +279,15 @@ theorem _root_.ValuativeRel.posSubmonoid.ne_zero {R : Type u} [CommRing R] [Valu
     (x : posSubmonoid R) : x.val ≠ 0 :=
   mt (· ▸ rel_rfl) x.2
 
-theorem _root_.ValuativeRel.valuation_surjective' {F : Type u} [Field F] [ValuativeRel F]
-    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ := by
-  obtain ⟨x, y, rfl⟩ := valuation_surjective γ
-  refine ⟨x * y.val⁻¹, by rw [map_mul, map_inv₀, div_eq_mul_inv]⟩
+theorem _root_.ValuativeRel.valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
+    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
+  let ⟨x, y, hxy⟩ := valuation_surjective γ
+  ⟨x / y.val, by rw [map_div₀, hxy]⟩
 
 theorem _root_.ValuativeRel.units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
     (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
-  let ⟨x, hx⟩ := valuation_surjective' γ.val
-  ⟨Units.mk0 x (mt (by rwa [·, map_zero, eq_comm] at hx) γ.ne_zero),
+  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
+  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
     Units.ext <| by simpa using hx⟩
 
 theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUltrametricDist K] :
