@@ -212,7 +212,21 @@ noncomputable def f : ℕ :=
 
 instance : 𝓂[L].LiesOver 𝓂[K] := sorry
 
-theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] := sorry
+
+instance :  Algebra 𝓀[K] 𝓀[L] :=Ideal.Quotient.algebraQuotientOfLEComap
+  (IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝓂[L])).ge
+
+
+
+theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[L] :=by
+  have s :Module.finrank 𝓀[K] 𝓀[L] = f K L :=by
+    simp only [f, Ideal.inertiaDeg,IsLocalRing.eq_maximalIdeal
+    (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝓂[L]), ↓reduceDIte,
+    IsLocalRing.ResidueField]
+  letI : Fintype 𝓀[K] :=Fintype.ofFinite (IsLocalRing.ResidueField ↥𝒪[K])
+  letI : Fintype 𝓀[L] :=Fintype.ofFinite (IsLocalRing.ResidueField ↥𝒪[L])
+  rw[← s,Nat.card_eq_fintype_card,← Module.card_eq_pow_finrank
+  ,Nat.card_eq_fintype_card]
 
 lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥
   ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
