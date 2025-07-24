@@ -33,7 +33,7 @@ instance : IsNonarchLocalField ℚ_[p] where
   nonempty := sorry
 
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
-  (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
+  (L : Type u) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
 
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
@@ -199,12 +199,48 @@ theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L := by
 -- TODO: generalise to extensions of DVRs.
 class IsUnramified : Prop where
   e_eq_one : e K L = 1
+  -- residue_separable : Algebra.IsSeparable 𝓀[K] 𝓀[L]
+
+instance : IsLocalization.AtPrime 𝒪[L] (IsLocalRing.maximalIdeal 𝒪[L]) :=
+  by sorry
 
 theorem unramified_def : IsUnramified K L ↔ e K L = 1 :=
   ⟨fun h ↦ h.1, fun h ↦ ⟨h⟩⟩
 
-theorem unramified_iff_unramified : IsUnramified K L ↔ Algebra.Unramified 𝒪[K] 𝒪[L] :=
+theorem unramified_maximal_ideal_eq : IsUnramified K L
+  ↔ Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] = 𝓂[L] := by
+  rw [unramified_def]
+  simp [e]
+  rw [Ideal.IsDedekindDomain.ramificationIdx_eq_one_iff]
   sorry
+
+instance : Algebra 𝓀[L] 𝓀[K] := sorry
+
+-- Should it be a definition?
+theorem residue_separable : Algebra.IsSeparable 𝓀[K] 𝓀[L] := sorry
+theorem residue_separable' : Algebra.IsSeparable 𝓂[K].ResidueField 𝓂[L].ResidueField := sorry
+
+theorem unramified_iff_unramified [CharZero 𝒪[K]] : IsUnramified K L ↔ Algebra.Unramified 𝒪[K] 𝒪[L] := by calc
+  _ ↔ Algebra.IsUnramifiedAt 𝒪[K] 𝓂[L] := by
+    rw [Algebra.isUnramifiedAt_iff_map_eq (p := 𝓂[K]), unramified_maximal_ideal_eq]
+    constructor
+    intro h
+    constructor
+    exact (residue_separable' K L)
+    sorry
+    intro h
+    -- exact h.2
+    sorry
+    -- stupid rewrite bug flowing on
+  _ ↔ Algebra.Unramified 𝒪[K] 𝒪[L] := by
+    constructor
+    intro h
+    have b : Algebra.FormallyUnramified 𝒪[K] 𝒪[L] := sorry
+    exact { formallyUnramified := b, finiteType := inferInstance }
+    intro h
+    sorry
+    -- Universe problem
+    -- have x := (Iff.symm (Algebra.unramifiedLocus_eq_univ_iff (A := 𝒪[L]) (R := 𝒪[K]))).mp h.formallyUnramified
 
 section make_finite_extension
 
