@@ -19,5 +19,9 @@ import ClassFieldTheory.LocalCFT.NonArchDef
 import ClassFieldTheory.Mathlib.Algebra.Homology.Embedding.Connect
 import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.Basic
 import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.ShortExact
-import ClassFieldTheory.Mathlib.ValuativeLemmas
+import ClassFieldTheory.Mathlib.Analysis.Normed.Unbundled.SpectralNorm
+import ClassFieldTheory.Mathlib.RingTheory.Valuation.Basic
+import ClassFieldTheory.Mathlib.RingTheory.Valuation.ValuativeRel
+import ClassFieldTheory.Mathlib.Topology.Algebra.Module.FiniteDimension
+import ClassFieldTheory.Mathlib.Topology.Algebra.Valued.NormedValued
 import ClassFieldTheory.Tactic.Dualize

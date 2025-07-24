@@ -1,4 +1,5 @@
-import ClassFieldTheory.Mathlib.ValuativeLemmas
+import ClassFieldTheory.Mathlib.Analysis.Normed.Unbundled.SpectralNorm
+import ClassFieldTheory.Mathlib.Topology.Algebra.Valued.NormedValued
 import Mathlib.Topology.Algebra.Valued.ValuativeRel
 import Mathlib.Topology.Algebra.Valued.ValuedField
 
@@ -85,11 +86,11 @@ variable (K L : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [Valuativ
   apply (Filter.HasBasis.tendsto_iff B₁ B₂).mpr
   simp only [Set.mem_setOf_eq, true_and, true_imp_iff]
   intro b
-  obtain ⟨a, rfl⟩ := units_map_valuation_surjective b
+  obtain ⟨a, rfl⟩ := unitsMap_valuation_surjective b
   obtain ⟨a', ha'⟩ := exists_valuation_algebraMap_le_valuation K a
   refine ⟨a'.map (valuation K), fun x hx ↦ ?_⟩
   simp only [Units.coe_map, MonoidHom.coe_coe] at hx ⊢
-  exact lt_of_lt_of_le ((ValuativeExtension.algebraMap_lt K L x a'.val).mpr hx) ha'
+  exact lt_of_lt_of_le (ValuativeExtension.algebraMap_lt.mpr hx) ha'
 
 instance : ContinuousSMul K L :=
   letI := IsTopologicalAddGroup.toUniformSpace L

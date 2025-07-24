@@ -1,5 +1,5 @@
-import ClassFieldTheory.Mathlib.ValuativeLemmas
 import ClassFieldTheory.LocalCFT.Continuity
+import ClassFieldTheory.Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib
 
 /-!
@@ -121,7 +121,7 @@ omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalFi
 lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
   rcases x with ⟨x, hx⟩
   change valuation L (algebraMap K L x) ≤ 1
-  simpa only [map_one] using (ValuativeExtension.algebraMap_le K L x 1).mpr hx
+  simpa only [map_one] using (ValuativeExtension.algebraMap_le (B := L)).mpr hx
 
 instance : Algebra 𝒪[K] 𝒪[L] where
   smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
