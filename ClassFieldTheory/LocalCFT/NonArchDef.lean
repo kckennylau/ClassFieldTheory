@@ -1,3 +1,4 @@
+import ClassFieldTheory.Mathlib.ValuativeLemmas
 import Mathlib
 
 /-!
@@ -13,16 +14,36 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   ValuativeTopology K,
   IsUniformAddGroup K,
   LocallyCompactSpace K,
-  ValuativeRel.IsNontrivial K,
-  IsTopologicalDivisionRing K, -- TODO: remove IsTopologicalDivisionRing
-  ValuativeRel.IsRankLeOne K -- TODO: in future mathlib
+  ValuativeRel.IsNontrivial K
+  -- ValuativeRel.IsRankLeOne K -- TODO: in future mathlib
+  -- IsTopologicalDivisionRing K,
   -- CompleteSpace K,
   -- ValuativeRel.IsDiscrete K
 
-
 open ValuativeRel
 
+namespace ValuativeExtension
+
+variable (A : Type u) (B : Type v) [CommRing A] [CommRing B] [ValuativeRel A] [ValuativeRel B]
+  [Algebra A B] [ValuativeExtension A B] (a b : A)
+
+lemma algebraMap_le : valuation B (algebraMap A B a) ≤ valuation B (algebraMap A B b) ↔
+    valuation A a ≤ valuation A b := by
+  simp_rw [← Valuation.Compatible.rel_iff_le, rel_iff_rel]
+
+lemma algebraMap_eq : valuation B (algebraMap A B a) = valuation B (algebraMap A B b) ↔
+    valuation A a = valuation A b := by
+  simp_rw [le_antisymm_iff, algebraMap_le]
+
+lemma algebraMap_lt : valuation B (algebraMap A B a) < valuation B (algebraMap A B b) ↔
+    valuation A a < valuation A b := by
+  simp_rw [lt_iff_le_not_ge, algebraMap_le]
+
+end ValuativeExtension
+
 namespace IsNonarchLocalField
+
+section Padic
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -30,13 +51,18 @@ instance : LocallyCompactSpace ℚ_[p] := inferInstance
 
 instance : IsNonarchLocalField ℚ_[p] where
   mem_nhds_iff := sorry
-  nonempty := sorry
+
+end Padic
 
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
   (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
 
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
+
+instance : IsTopologicalDivisionRing K := inferInstance
+
+instance : ValuativeRel.IsRankLeOne K := sorry
 
 noncomputable
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).RankOne where
@@ -94,40 +120,32 @@ lemma associated_iff_of_irreducible (x y : 𝒪[K]) (hx : Irreducible x) :
   ⟨fun hyx ↦ hyx.symm.irreducible hx,
   fun hy ↦ IsDiscreteValuationRing.associated_of_irreducible _ hy hx⟩
 
-theorem compact_OK : IsCompact (𝒪[K] : Set K) :=
-  sorry
-
 theorem open_OK : IsOpen (𝒪[K] : Set K) :=
   sorry
 
 def compactOpenOK : TopologicalSpace.CompactOpens K where
   carrier := 𝒪[K]
-  isCompact' := compact_OK K
+  isCompact' := isCompact_iff_compactSpace.mpr <| compactSpace_integer K
   isOpen' := open_OK K
 
 -- TODO: add Haar measure (or check that it works with `example`)
 
--- class HasExtension [Algebra K L] : Prop extends
---   Valuation.HasExtension (Valued.v (R := K)) (Valued.v (R := L))
-class HasExtension [Algebra K L] : Prop extends ValuativeExtension K L
-
-variable [Algebra K L] [HasExtension K L]
+variable [Algebra K L] [ValuativeExtension K L]
 
 instance : FiniteDimensional K L :=
   sorry
 
-#check Valuation.HasExtension
+omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
+lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
+  rcases x with ⟨x, hx⟩
+  change valuation L (algebraMap K L x) ≤ 1
+  simpa only [map_one] using (ValuativeExtension.algebraMap_le K L x 1).mpr hx
 
-open Valuation.HasExtension in
 instance : Algebra 𝒪[K] 𝒪[L] where
-  smul r a := ⟨r • a,
-    Algebra.smul_def r (a : L) ▸ mul_mem sorry a.2⟩
-  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L]
-    sorry
-    -- (by simp [Valuation.mem_integer_iff, val_map_le_one_iff vR vA])
+  smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
+  algebraMap := (algebraMap K L).restrict 𝒪[K] 𝒪[L] fun x hx => algebraMap_mem_integer K L ⟨x, hx⟩
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
-  -- Valuation.HasExtension.instAlgebraInteger (R := K) (A := L) (vR := Valued.v) (vA := Valued.v)
 
 namespace ValuativeRel
 
@@ -212,17 +230,50 @@ theorem e_spec {ϖK : 𝒪[K]} {ϖL : 𝒪[L]} (hk : Irreducible ϖK) (hl : Irre
 noncomputable def f : ℕ :=
   Ideal.inertiaDeg 𝓂[K] 𝓂[L]
 
-theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] :=
-  sorry
+instance : 𝓂[L].LiesOver 𝓂[K] := sorry
 
-theorem e_pos : 0 < e K L :=
-  sorry
+theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] := sorry
 
-theorem f_pos : 0 < f K L :=
-  sorry
+lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥
+  ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
 
-theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L :=
-  sorry
+theorem e_pos : 0 < e K L := sorry
+
+theorem f_pos : 0 < f K L := Ideal.inertiaDeg_pos 𝓂[K] 𝓂[L]
+
+lemma irreducible_pow_span_pow {R : Type u} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
+  {ϖ : R} (h : Irreducible ϖ) {n : ℕ} : Ideal.span {ϖ ^ n} = (Ideal.span {ϖ})^(n) := sorry
+
+lemma unique_maximal_ideal_factorization [DecidableEq (Ideal ↥𝒪[L])] : (UniqueFactorizationMonoid.factors
+  (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])).toFinset = {𝓂[L]} := by
+  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
+  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (non_triv_maximal_embedding K L).1 hϖ
+  have irred_ele_span_irred_ideal : Irreducible (Ideal.span {ϖ}) := by
+    sorry
+  rw [hn, Irreducible.maximalIdeal_eq hϖ, irreducible_pow_span_pow hϖ]
+  simp
+  rw [UniqueFactorizationMonoid.normalizedFactors_irreducible irred_ele_span_irred_ideal]
+  simp
+  rw [Multiset.nsmul_singleton, Multiset.toFinset_replicate]
+  have g : n ≠ 0 := by
+    intro h
+    rw [h, irreducible_pow_span_pow] at hn
+    simp at hn
+    exact False.elim ((non_triv_maximal_embedding K L).2 hn)
+    assumption
+  simp
+  intro a
+  exact False.elim (g a)
+
+theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L := by
+  symm
+  calc
+  _ = (Ideal.ramificationIdx (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] 𝓂[L]) * (Ideal.inertiaDeg 𝓂[K] 𝓂[L]) := by
+    symm
+    rw [← Ideal.sum_ramification_inertia 𝒪[L] 𝓂[K]]
+    classical rw [unique_maximal_ideal_factorization]
+    rfl
+    exact IsDiscreteValuationRing.not_a_field ↥𝒪[K]
 
 -- TODO: generalise to extensions of DVRs.
 class IsUnramified : Prop where
@@ -240,16 +291,39 @@ section make_finite_extension
 
 variable (L : Type v) [Field L] [Algebra K L] [FiniteDimensional K L]
 
-include K in
-theorem unique_hasExtension : ∃! v : ValuativeRel L, ValuativeExtension K L :=
-  sorry -- by María Inés
-
--- def of_finite_extension [ValuativeRel L] [ValuativeExtension K L] :
---     IsNonarchLocalField L :=
---   sorry
 /-
-failed to synthesize
-  UniformSpace L
+open scoped Valued in
+#check (inferInstance : NormedField K)
+#check (inferInstance : Valuation.RankOne (Valued.v (R := K)))
+-/
+
+open scoped Valued NormedField in
+include K in
+theorem isNonarchLocalField_of_finiteDimensional :
+    ∃ (_ : ValuativeRel L) (_ : ValuativeExtension K L)
+    (_ : UniformSpace L), IsNonarchLocalField L := by
+  letI : NontriviallyNormedField L := spectralNorm.nontriviallyNormedField K L
+  haveI : IsUltrametricDist L := IsUltrametricDist.isUltrametricDist_of_isNonarchimedean_nnnorm
+    isNonarchimedean_spectralNorm
+  let v := NormedField.valuation (K := L)
+  haveI := locallyCompactSpace_of_complete_of_finiteDimensional K L
+  refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, inferInstance, .mk⟩
+  rw [Valuation.Compatible.rel_iff_le (v := v),
+    Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
+  change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
+  rw [spectralNorm_extends, spectralNorm_extends]
+  change Valued.norm _ ≤ Valued.norm _ ↔ _
+  rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
+    (Valuation.RankOne.strictMono Valued.v).le_iff_le]
+  rfl
+
+/- TODO:
+1. Show that given a valuative extension, we can already make a local field (generalise the above
+   proof)
+2. Show that given an extension of local fields, the valuative rel is the same as this one given by
+   the spectral norm.
+3. As a result, conclude that there is only one valuative rel that is a valuative extension in the
+   situation above.
 -/
 
 end make_finite_extension
