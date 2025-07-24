@@ -158,7 +158,7 @@ theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[K] := by
   simp [f]
   sorry
 
-lemma non_tri_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥ ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
+lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥ ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
 
 theorem e_pos : 0 < e K L := by
   refine Nat.pos_of_ne_zero ?_
@@ -173,7 +173,7 @@ lemma irreducible_pow_span_pow {R : Type u} [CommRing R] [IsDomain R] [IsDiscret
 lemma unique_maximal_ideal_factorization [DecidableEq (Ideal ↥𝒪[L])] : (UniqueFactorizationMonoid.factors
   (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])).toFinset = {𝓂[L]} := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
-  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (s := (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) (non_tri_maximal_embedding K L).1 hϖ
+  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (s := (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) (non_triv_maximal_embedding K L).1 hϖ
   have irred_ele_span_irred_ideal : Irreducible (Ideal.span {ϖ}) := by
     sorry
   rw [hn, Irreducible.maximalIdeal_eq hϖ, (irreducible_pow_span_pow hϖ)]
@@ -185,7 +185,7 @@ lemma unique_maximal_ideal_factorization [DecidableEq (Ideal ↥𝒪[L])] : (Uni
     intro h
     rw [h, irreducible_pow_span_pow] at hn
     simp at hn
-    exact False.elim ((non_tri_maximal_embedding K L).2 hn)
+    exact False.elim ((non_triv_maximal_embedding K L).2 hn)
     assumption
   simp
   intro a
