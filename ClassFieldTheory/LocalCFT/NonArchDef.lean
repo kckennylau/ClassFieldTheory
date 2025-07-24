@@ -169,8 +169,7 @@ end ValuativeRel
 theorem density (y : Lˣ) : ∃ (x : Kˣ), Valued.v (algebraMap K L x) ≤ Valued.v y.val := sorry
 
 instance : ContinuousSMul K L := by
-  apply continuousSMul_of_algebraMap K L
-  apply continuous_of_continuousAt_zero
+  apply continuousSMul_of_algebraMap K L (continuous_of_continuousAt_zero _ _)
   simp only [ContinuousAt, map_zero]
   obtain B₁ := Valued.hasBasis_nhds_zero K (ValueGroupWithZero K)
   obtain B₂ := Valued.hasBasis_nhds_zero L (ValueGroupWithZero L)
@@ -182,31 +181,12 @@ instance : ContinuousSMul K L := by
   obtain ⟨a', ha'⟩ := density K L a
   use Units.map (valuation K) (a')
   intro x hx
-  have hx' := LT.lt.le hx
-  haveI : (valuation K).HasExtension (valuation L) := sorry
-  have h : Valued.v (R := K) (Γ₀ := ValueGroupWithZero K) = valuation K := rfl
-  have : Valued.v (R := L) (Γ₀ := ValueGroupWithZero L) = valuation L := rfl
-  simp only [Units.coe_map, MonoidHom.coe_coe, gt_iff_lt] at *
-  change valuation _ _ < valuation _ _ at *
-  change valuation _ _ ≤ valuation _ _ at hx'
-  apply (Valuation.Compatible.rel_iff_le x a').mpr at hx'
+  simp only [Units.coe_map, MonoidHom.coe_coe] at *
+  change valuation _ _ ≤ valuation _ _ at ha'
+  change valuation _ _ < valuation _ _
+  change valuation _ _ < valuation _ _  at hx
+  exact lt_of_lt_of_le ((ValuativeExtension.algebraMap_lt K L x a'.val).mpr hx) ha'
 
-  have := (ValuativeExtension.rel_iff_rel (B:=L) x a').mpr hx'
-
-
-  have : x ≤ᵥ a' ↔ (valuation K) x ≤ (valuation K) a'.val := Valuation.Compatible.rel_iff_le x a'
-
-  -- refine continuousAt_def.mpr ?_
-  -- intro N hN
-  -- convert Filter.preimage_mem_comap hN
-  -- simp only [map_zero]
-  -- apply le_antisymm
-  -- · intro x hx
-
-  --   sorry
-  -- · intro x hx
-
-  sorry
 
 -- TODO: Maddy
 
