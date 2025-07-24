@@ -14,6 +14,7 @@ import ClassFieldTheory.GroupCohomology._11_TrivialityCriterion
 import ClassFieldTheory.GroupCohomology._12_augmentationModule
 import ClassFieldTheory.GroupCohomology._13_HerbrandQuotient
 import ClassFieldTheory.GroupCohomology._14_SplittingModule
+import ClassFieldTheory.LocalCFT.Continuity
 import ClassFieldTheory.LocalCFT.NonArchDef
 import ClassFieldTheory.Mathlib.Algebra.Homology.Embedding.Connect
 import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.Basic
