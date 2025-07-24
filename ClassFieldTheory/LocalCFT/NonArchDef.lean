@@ -116,6 +116,8 @@ variable [Algebra K L] [HasExtension K L]
 instance : FiniteDimensional K L :=
   sorry
 
+#check Valuation.HasExtension
+
 open Valuation.HasExtension in
 instance : Algebra 𝒪[K] 𝒪[L] where
   smul r a := ⟨r • a,
@@ -127,8 +129,67 @@ instance : Algebra 𝒪[K] 𝒪[L] where
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
   -- Valuation.HasExtension.instAlgebraInteger (R := K) (A := L) (vR := Valued.v) (vA := Valued.v)
 
-instance : ContinuousSMul K L :=
+namespace ValuativeRel
+
+theorem posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
+    (x : posSubmonoid R) : x.val ≠ 0 :=
+  mt (· ▸ rel_rfl) x.2
+
+theorem valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
+    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
+  let ⟨x, y, hxy⟩ := valuation_surjective γ
+  ⟨x / y.val, by rw [map_div₀, hxy]⟩
+
+theorem units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
+    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
+  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
+  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
+    Units.ext <| by simpa using hx⟩
+
+end ValuativeRel
+
+theorem density (y : Lˣ) : ∃ (x : Kˣ), Valued.v (algebraMap K L x) ≤ Valued.v y.val := sorry
+
+instance : ContinuousSMul K L := by
+  apply continuousSMul_of_algebraMap K L
+  apply continuous_of_continuousAt_zero
+  simp only [ContinuousAt, map_zero]
+  obtain B₁ := Valued.hasBasis_nhds_zero K (ValueGroupWithZero K)
+  obtain B₂ := Valued.hasBasis_nhds_zero L (ValueGroupWithZero L)
+  apply (Filter.HasBasis.tendsto_iff B₁ B₂).mpr
+  simp only [Set.mem_setOf_eq, true_and]
+  intro b hb
+  obtain ⟨a, ha⟩ := IsNonarchLocalField.ValuativeRel.units_map_valuation_surjective b
+  rw [← ha]
+  obtain ⟨a', ha'⟩ := density K L a
+  use Units.map (valuation K) (a')
+  intro x hx
+  have hx' := LT.lt.le hx
+  haveI : (valuation K).HasExtension (valuation L) := sorry
+  have h : Valued.v (R := K) (Γ₀ := ValueGroupWithZero K) = valuation K := rfl
+  have : Valued.v (R := L) (Γ₀ := ValueGroupWithZero L) = valuation L := rfl
+  simp only [Units.coe_map, MonoidHom.coe_coe, gt_iff_lt] at *
+  change valuation _ _ < valuation _ _ at *
+  change valuation _ _ ≤ valuation _ _ at hx'
+  apply (Valuation.Compatible.rel_iff_le x a').mpr at hx'
+
+  have := (ValuativeExtension.rel_iff_rel (B:=L) x a').mpr hx'
+
+
+  have : x ≤ᵥ a' ↔ (valuation K) x ≤ (valuation K) a'.val := Valuation.Compatible.rel_iff_le x a'
+
+  -- refine continuousAt_def.mpr ?_
+  -- intro N hN
+  -- convert Filter.preimage_mem_comap hN
+  -- simp only [map_zero]
+  -- apply le_antisymm
+  -- · intro x hx
+
+  --   sorry
+  -- · intro x hx
+
   sorry
+
 -- TODO: Maddy
 
 instance : Module.Finite 𝒪[K] 𝒪[L] :=
