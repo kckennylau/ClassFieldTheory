@@ -101,8 +101,29 @@ theorem units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
   ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
     Units.ext <| by simpa using hx⟩
 
-
 end ValuativeRel
+
+
+namespace ValuativeExtension
+
+open ValuativeRel
+
+variable (A : Type u) (B : Type v) [CommRing A] [CommRing B] [ValuativeRel A] [ValuativeRel B]
+  [Algebra A B] [ValuativeExtension A B] (a b : A)
+
+lemma algebraMap_le : valuation B (algebraMap A B a) ≤ valuation B (algebraMap A B b) ↔
+    valuation A a ≤ valuation A b := by
+  simp_rw [← Valuation.Compatible.rel_iff_le, rel_iff_rel]
+
+lemma algebraMap_eq : valuation B (algebraMap A B a) = valuation B (algebraMap A B b) ↔
+    valuation A a = valuation A b := by
+  simp_rw [le_antisymm_iff, algebraMap_le]
+
+lemma algebraMap_lt : valuation B (algebraMap A B a) < valuation B (algebraMap A B b) ↔
+    valuation A a < valuation A b := by
+  simp_rw [lt_iff_le_not_ge, algebraMap_le]
+
+end ValuativeExtension
 
 
 namespace ValuativeTopology
