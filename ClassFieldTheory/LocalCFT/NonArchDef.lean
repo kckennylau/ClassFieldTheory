@@ -147,8 +147,47 @@ instance : Algebra 𝒪[K] 𝒪[L] where
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
 
-instance : ContinuousSMul K L :=
-  sorry
+namespace ValuativeRel
+
+theorem posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
+    (x : posSubmonoid R) : x.val ≠ 0 :=
+  mt (· ▸ rel_rfl) x.2
+
+theorem valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
+    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
+  let ⟨x, y, hxy⟩ := valuation_surjective γ
+  ⟨x / y.val, by rw [map_div₀, hxy]⟩
+
+theorem units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
+    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
+  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
+  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
+    Units.ext <| by simpa using hx⟩
+
+end ValuativeRel
+
+theorem density (y : Lˣ) : ∃ (x : Kˣ), Valued.v (algebraMap K L x) ≤ Valued.v y.val := sorry
+
+instance : ContinuousSMul K L := by
+  apply continuousSMul_of_algebraMap K L (continuous_of_continuousAt_zero _ _)
+  simp only [ContinuousAt, map_zero]
+  obtain B₁ := Valued.hasBasis_nhds_zero K (ValueGroupWithZero K)
+  obtain B₂ := Valued.hasBasis_nhds_zero L (ValueGroupWithZero L)
+  apply (Filter.HasBasis.tendsto_iff B₁ B₂).mpr
+  simp only [Set.mem_setOf_eq, true_and]
+  intro b hb
+  obtain ⟨a, ha⟩ := IsNonarchLocalField.ValuativeRel.units_map_valuation_surjective b
+  rw [← ha]
+  obtain ⟨a', ha'⟩ := density K L a
+  use Units.map (valuation K) (a')
+  intro x hx
+  simp only [Units.coe_map, MonoidHom.coe_coe] at *
+  change valuation _ _ ≤ valuation _ _ at ha'
+  change valuation _ _ < valuation _ _
+  change valuation _ _ < valuation _ _  at hx
+  exact lt_of_lt_of_le ((ValuativeExtension.algebraMap_lt K L x a'.val).mpr hx) ha'
+
+
 -- TODO: Maddy
 
 instance : Module.Finite 𝒪[K] 𝒪[L] :=
