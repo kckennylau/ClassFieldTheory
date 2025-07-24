@@ -60,7 +60,6 @@ variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLoca
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
 
--- waiting andrew
 instance : IsTopologicalDivisionRing K := inferInstance
 
 instance : ValuativeRel.IsRankLeOne K := sorry
