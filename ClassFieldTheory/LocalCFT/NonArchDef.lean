@@ -160,15 +160,38 @@ theorem e_pos : 0 < e K L :=
 theorem f_pos : 0 < f K L :=
   sorry
 
-lemma unique_maximal_ideal_extension : (UniqueFactorizationMonoid.factors
-  (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) = {𝓂[L]} := by sorry
+lemma non_tri_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥ ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
+
+lemma irreducible_pow_span_pow {R : Type u} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] {ϖ : R} (h : Irreducible ϖ) {n : ℕ} : Ideal.span {ϖ ^ n} = (Ideal.span {ϖ})^(n) := sorry
+
+lemma unique_maximal_ideal_factorization [DecidableEq (Ideal ↥𝒪[L])] : (UniqueFactorizationMonoid.factors
+  (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])).toFinset = {𝓂[L]} := by
+  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
+  obtain ⟨n, hn⟩ := IsDiscreteValuationRing.ideal_eq_span_pow_irreducible (s := (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K])) (non_tri_maximal_embedding K L).1 hϖ
+  have p : Irreducible (Ideal.span {ϖ}) := by
+    sorry
+  rw [hn, Irreducible.maximalIdeal_eq hϖ, (irreducible_pow_span_pow hϖ)]
+  simp
+  rw [UniqueFactorizationMonoid.normalizedFactors_irreducible p]
+  simp
+  rw [Multiset.nsmul_singleton, Multiset.toFinset_replicate]
+  have g : n ≠ 0 := by
+    intro a
+    rw [a, irreducible_pow_span_pow] at o
+    simp at o
+    exact False.elim ((non_tri_maximal_embedding K L).2 o)
+    assumption
+  simp
+  intro a
+  exact False.elim (g a)
 
 theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L := by
   symm
   calc
   _ = (Ideal.ramificationIdx (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] 𝓂[L]) * (Ideal.inertiaDeg 𝓂[K] 𝓂[L]) := by
     symm
-    rw [← Ideal.sum_ramification_inertia 𝒪[L] 𝓂[K], unique_maximal_ideal_extension]
+    rw [← Ideal.sum_ramification_inertia 𝒪[L] 𝓂[K]]
+    classical rw [unique_maximal_ideal_factorization]
     rfl
     exact IsDiscreteValuationRing.not_a_field ↥𝒪[K]
 
