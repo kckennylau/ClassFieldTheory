@@ -1,8 +1,8 @@
 import ClassFieldTheory.GroupCohomology.Examples.Examples
-import ClassFieldTheory.Tactic.Dualize
+import ClassFieldTheory.GroupCohomology.HerbrandInt
 import ClassFieldTheory.GroupCohomology._1_Basic
-import ClassFieldTheory.GroupCohomology._3_inflation
 import ClassFieldTheory.GroupCohomology._2_restriction
+import ClassFieldTheory.GroupCohomology._3_inflation
 import ClassFieldTheory.GroupCohomology._4_TateCohomology_def
 import ClassFieldTheory.GroupCohomology._5_TrivialCohomology
 import ClassFieldTheory.GroupCohomology._6_LeftRegular
@@ -15,4 +15,8 @@ import ClassFieldTheory.GroupCohomology._12_augmentationModule
 import ClassFieldTheory.GroupCohomology._13_HerbrandQuotient
 import ClassFieldTheory.GroupCohomology._14_SplittingModule
 import ClassFieldTheory.LocalCFT.NonArchDef
-import ClassFieldTheory.Mathlib.CopyLeftHomologyData
+import ClassFieldTheory.Mathlib.Algebra.Homology.Embedding.Connect
+import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.Basic
+import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.ShortExact
+import ClassFieldTheory.Mathlib.ValuativeLemmas
+import ClassFieldTheory.Tactic.Dualize
