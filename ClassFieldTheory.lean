@@ -23,6 +23,5 @@ import ClassFieldTheory.LocalCFT.NonArchDef
 import ClassFieldTheory.Mathlib.Algebra.Homology.Embedding.Connect
 import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.Basic
 import ClassFieldTheory.Mathlib.Algebra.Homology.ShortComplex.ShortExact
-import ClassFieldTheory.Mathlib.CopyLeftHomologyData
 import ClassFieldTheory.Mathlib.ValuativeLemmas
 import ClassFieldTheory.Tactic.Dualize
