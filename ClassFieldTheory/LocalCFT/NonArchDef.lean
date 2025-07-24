@@ -244,6 +244,21 @@ theorem _root_.ValuativeRel.rel_iff_one_le {F : Type u} [Field F] [ValuativeRel 
   ext y
   rw [mem_ball_zero_iff, Set.mem_setOf_eq, NormedField.valuation_lt_valuation_iff]
 
+theorem _root_.ValuativeRel.posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
+    (x : posSubmonoid R) : x.val ≠ 0 :=
+  mt (· ▸ rel_rfl) x.2
+
+theorem _root_.ValuativeRel.valuation_surjective' {F : Type u} [Field F] [ValuativeRel F]
+    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ := by
+  obtain ⟨x, y, rfl⟩ := valuation_surjective γ
+  refine ⟨x * y.val⁻¹, by rw [map_mul, map_inv₀, div_eq_mul_inv]⟩
+
+theorem _root_.ValuativeRel.units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
+    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
+  let ⟨x, hx⟩ := valuation_surjective' γ.val
+  ⟨Units.mk0 x (mt (by rwa [·, map_zero, eq_comm] at hx) γ.ne_zero),
+    Units.ext <| by simpa using hx⟩
+
 theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUltrametricDist K] :
     @ValuativeTopology K _ (ValuativeRel.ofValuation (NormedField.valuation (K := K))) _ := by
   letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
@@ -258,9 +273,8 @@ theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUlt
         IsUnit.unit (a := valuation K x) (isUnit_iff_ne_zero.2 (by simp [hx0]))
       exact ⟨u ^ n, by simpa [u] using hns⟩
     · rw [Metric.mem_nhds_iff]
-      have : ∃ r : K, r ≠ 0 ∧ valuation K r = γ := sorry
-      obtain ⟨z, hz0, hzγ⟩ := this
-      refine ⟨‖z‖, norm_pos_iff.2 hz0, by simpa [← hzγ] using hγ⟩
+      obtain ⟨z, rfl⟩ := ValuativeRel.units_map_valuation_surjective γ
+      refine ⟨‖z.val‖, norm_pos_iff.2 z.ne_zero, by simpa using hγ⟩
   haveI := DiscreteTopology.of_forall_le_norm (E := K) one_pos (by simpa using nontrivial)
   rw [nhds_discrete, Filter.mem_pure]
   refine ⟨fun h0s ↦ ⟨1, ?_⟩, fun ⟨γ, hγ⟩ ↦ ?_⟩
@@ -268,9 +282,8 @@ theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUlt
       norm_one]
     simp_rw [not_exists, not_and, not_imp_not] at nontrivial
     exact fun x hx ↦ by rwa [nontrivial x hx]
-  · have : ∃ r : K, r ≠ 0 ∧ valuation K r = γ := sorry
-    obtain ⟨z, hz0, hzγ⟩ := this
-    exact hγ (by simpa [← hzγ])
+  · obtain ⟨z, rfl⟩ := ValuativeRel.units_map_valuation_surjective γ
+    exact hγ (by simp)
 
 -- open scoped Valued in
 theorem locallyCompactSpace_of_complete_of_finiteDimensional (K : Type u) (L : Type v)
