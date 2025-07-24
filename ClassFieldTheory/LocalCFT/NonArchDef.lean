@@ -1,3 +1,4 @@
+import ClassFieldTheory.Mathlib.ValuativeLemmas
 import Mathlib
 
 /-!
@@ -42,12 +43,16 @@ end ValuativeExtension
 
 namespace IsNonarchLocalField
 
+section Padic
+
 variable (p : ℕ) [Fact p.Prime]
 
 instance : LocallyCompactSpace ℚ_[p] := inferInstance
 
 instance : IsNonarchLocalField ℚ_[p] where
   mem_nhds_iff := sorry
+
+end Padic
 
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
   (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
@@ -134,7 +139,6 @@ variable [Algebra K L] [HasExtension K L]
 
 instance : FiniteDimensional K L :=
   sorry
-  -- FiniteDimensional.of_locallyCompactSpace K (E := L)
 
 omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalField L] in
 lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
@@ -233,156 +237,13 @@ section make_finite_extension
 
 variable (L : Type v) [Field L] [Algebra K L] [FiniteDimensional K L]
 
+/-
 open scoped Valued in
 #check (inferInstance : NormedField K)
 #check (inferInstance : Valuation.RankOne (Valued.v (R := K)))
+-/
 
-section
-
-variable {R : Type u} [CommRing R] [ValuativeRel R] {Γ : Type v}
-  [LinearOrderedCommMonoidWithZero Γ] (v : Valuation R Γ) [Valuation.Compatible v] (x : R)
-
-lemma _root_.Valuation.Compatible.rel_one_iff :
-    x ≤ᵥ 1 ↔ v x ≤ 1 := by
-  rw [← map_one v, ← Valuation.Compatible.rel_iff_le]
-
-lemma _root_.Valuation.Compatible.rel_zero_iff :
-    x ≤ᵥ 0 ↔ v x ≤ 0 := by
-  rw [← map_zero v, ← Valuation.Compatible.rel_iff_le]
-
-lemma _root_.Valuation.Compatible.one_rel_iff :
-    1 ≤ᵥ x ↔ 1 ≤ v x := by
-  rw [← map_one v, ← Valuation.Compatible.rel_iff_le]
-
-end
-
-@[ext] theorem _root_.ValuativeRel.ext {R : Type u} [CommRing R] {v v' : ValuativeRel R}
-    (h : ∀ a b, v.rel a b ↔ v'.rel a b) : v = v' := by
-  cases v; cases v'; congr; ext; apply h
-
-theorem _root_.ValuativeRel.rel_iff_one_rel_div {F : Type u} [Field F] [ValuativeRel F]
-    {x : F} (y : F) (hx : x ≠ 0) : x ≤ᵥ y ↔ 1 ≤ᵥ y / x :=
-  ⟨fun h ↦ by simpa [hx, inv_mul_eq_div] using rel_mul_left x⁻¹ h,
-  fun h ↦ by simpa [hx] using rel_mul_right x h⟩
-
-theorem _root_.ValuativeRel.rel_iff_div_rel_one {F : Type u} [Field F] [ValuativeRel F]
-    (x : F) {y : F} (hy : y ≠ 0) : x ≤ᵥ y ↔ x / y ≤ᵥ 1 := by
-  rw [Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation F),
-    Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation F),
-    map_div₀, map_one, div_le_one₀ (bot_lt_iff_ne_bot.2 ((map_ne_zero _).2 hy))]
-
-theorem _root_.ValuativeRel.rel_zero_iff {F : Type u} [Field F] [ValuativeRel F] (x : F) :
-    x ≤ᵥ 0 ↔ x = 0 := by
-  rw [Valuation.Compatible.rel_iff_le (v := valuation F), map_zero, le_zero_iff, map_eq_zero]
-
-/-- Two valuative relations on a field are equal iff their rings of integers are equal. -/
-@[ext high] theorem _root_.ValuativeRel.ext_field {F : Type u} [Field F] {v v' : ValuativeRel F}
-    (h : ∀ x, v.rel x 1 ↔ v'.rel x 1) : v = v' := by
-  ext x y
-  by_cases hy : y = 0
-  · simp_rw [hy, rel_zero_iff]
-  · rw [rel_iff_div_rel_one _ hy, @rel_iff_div_rel_one _ _ v x y hy, h]
-
-@[simp] theorem _root_.NormedField.valuation_le_valuation_iff {K : Type u} [NormedField K]
-    [IsUltrametricDist K] (x y : K) :
-    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-    valuation K x ≤ valuation K y ↔ ‖x‖ ≤ ‖y‖ := by
-  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-  haveI := Valuation.Compatible.ofValuation (S := K) NormedField.valuation
-  simp_rw [← Valuation.Compatible.rel_iff_le,
-    Valuation.Compatible.rel_iff_le (v := NormedField.valuation),
-    NormedField.valuation_apply, ← NNReal.coe_le_coe, coe_nnnorm]
-
-@[simp] theorem _root_.NormedField.valuation_lt_valuation_iff {K : Type u} [NormedField K]
-    [IsUltrametricDist K] (x y : K) :
-    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-    valuation K x < valuation K y ↔ ‖x‖ < ‖y‖ := by
-  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-  simp_rw [lt_iff_le_not_ge, NormedField.valuation_le_valuation_iff]
-
-@[simp] theorem _root_.NormedField.ball_norm_eq {K : Type u} [NormedField K] [IsUltrametricDist K]
-    (x : K) :
-    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-    Metric.ball 0 ‖x‖ = { y | valuation K y < valuation K x } := by
-  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-  ext y
-  rw [mem_ball_zero_iff, Set.mem_setOf_eq, NormedField.valuation_lt_valuation_iff]
-
-theorem _root_.ValuativeRel.posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
-    (x : posSubmonoid R) : x.val ≠ 0 :=
-  mt (· ▸ rel_rfl) x.2
-
-theorem _root_.ValuativeRel.valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
-    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
-  let ⟨x, y, hxy⟩ := valuation_surjective γ
-  ⟨x / y.val, by rw [map_div₀, hxy]⟩
-
-theorem _root_.ValuativeRel.units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
-    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
-  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
-  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
-    Units.ext <| by simpa using hx⟩
-
-theorem _root_.NormedField.valuativeTopology (K : Type u) [NormedField K] [IsUltrametricDist K] :
-    @ValuativeTopology K _ (ValuativeRel.ofValuation (NormedField.valuation (K := K))) _ := by
-  letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-  refine { mem_nhds_iff s := ?_ }
-  by_cases nontrivial : ∃ x : K, x ≠ 0 ∧ ‖x‖ < 1
-  · obtain ⟨x, hx0, hx1⟩ := nontrivial
-    refine ⟨fun hs ↦ ?_, fun ⟨γ, hγ⟩ ↦ ?_⟩
-    · simp_rw [(Metric.nhds_basis_ball_pow (norm_pos_iff.2 hx0) hx1).mem_iff, ← norm_pow,
-        NormedField.ball_norm_eq] at hs
-      obtain ⟨n, -, hns⟩ := hs
-      let u : (ValueGroupWithZero K)ˣ :=
-        IsUnit.unit (a := valuation K x) (isUnit_iff_ne_zero.2 (by simp [hx0]))
-      exact ⟨u ^ n, by simpa [u] using hns⟩
-    · rw [Metric.mem_nhds_iff]
-      obtain ⟨z, rfl⟩ := ValuativeRel.units_map_valuation_surjective γ
-      refine ⟨‖z.val‖, norm_pos_iff.2 z.ne_zero, by simpa using hγ⟩
-  haveI := DiscreteTopology.of_forall_le_norm (E := K) one_pos (by simpa using nontrivial)
-  rw [nhds_discrete, Filter.mem_pure]
-  refine ⟨fun h0s ↦ ⟨1, ?_⟩, fun ⟨γ, hγ⟩ ↦ ?_⟩
-  · simp_rw [Units.val_one, ← map_one (valuation K), NormedField.valuation_lt_valuation_iff,
-      norm_one]
-    simp_rw [not_exists, not_and, not_imp_not] at nontrivial
-    exact fun x hx ↦ by rwa [nontrivial x hx]
-  · obtain ⟨z, rfl⟩ := ValuativeRel.units_map_valuation_surjective γ
-    exact hγ (by simp)
-
--- open scoped Valued in
-theorem locallyCompactSpace_of_complete_of_finiteDimensional (K : Type u) (L : Type v)
-    [NontriviallyNormedField K] [CompleteSpace K] [LocallyCompactSpace K]
-    [AddCommGroup L] [TopologicalSpace L] [IsTopologicalAddGroup L] [T2Space L]
-    [Module K L] [ContinuousSMul K L] [FiniteDimensional K L] :
-    LocallyCompactSpace L := by
-  obtain ⟨s, ⟨b⟩⟩ := Basis.exists_basis K L
-  haveI := FiniteDimensional.fintypeBasisIndex b
-  exact b.equivFun.toContinuousLinearEquiv.toHomeomorph.isOpenEmbedding.locallyCompactSpace
-
-noncomputable
-def spectralNorm.nontriviallyNormedField (K : Type u) [NontriviallyNormedField K] (L : Type v)
-    [Field L] [Algebra K L] [Algebra.IsAlgebraic K L] [hu : IsUltrametricDist K] [CompleteSpace K] :
-    NontriviallyNormedField L where
-  __ := spectralNorm.normedField K L
-  non_trivial :=
-    let ⟨x, hx⟩ := NontriviallyNormedField.non_trivial (α := K)
-    ⟨algebraMap K L x, hx.trans_eq <| (spectralNorm_extends _).symm⟩
-
-theorem _root_.ValuativeRel.isNontrivial (K : Type u) [NontriviallyNormedField K]
-    [IsUltrametricDist K] :
-    letI := ValuativeRel.ofValuation (NormedField.valuation (K := K))
-    ValuativeRel.IsNontrivial K := by
-  letI := ofValuation (NormedField.valuation (K := K))
-  haveI := Valuation.Compatible.ofValuation (S := K) NormedField.valuation
-  obtain ⟨x, hx⟩ := NontriviallyNormedField.non_trivial (α := K)
-  refine ⟨⟨valuation K x, ?_, ?_⟩⟩
-  · rw [Valuation.ne_zero_iff]
-    exact norm_pos_iff.1 (one_pos.trans hx)
-  · have := NormedField.valuation_lt_valuation_iff 1 x
-    simp only [map_one, norm_one] at this
-    exact ne_of_gt <| this.2 hx
-
-open scoped Valued in
+open scoped Valued NormedField in
 include K in
 theorem isNonarchLocalField_of_finiteDimensional :
     ∃ (_ : ValuativeRel L) (_ : ValuativeExtension K L)
@@ -391,11 +252,7 @@ theorem isNonarchLocalField_of_finiteDimensional :
   haveI : IsUltrametricDist L := IsUltrametricDist.isUltrametricDist_of_isNonarchimedean_nnnorm
     isNonarchimedean_spectralNorm
   let v := NormedField.valuation (K := L)
-  letI := ValuativeRel.ofValuation v
-  haveI := Valuation.Compatible.ofValuation v
-  haveI := NormedField.valuativeTopology L
   haveI := locallyCompactSpace_of_complete_of_finiteDimensional K L
-  haveI := ValuativeRel.isNontrivial L
   refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, inferInstance, .mk⟩
   rw [Valuation.Compatible.rel_iff_le (v := v),
     Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
@@ -405,6 +262,15 @@ theorem isNonarchLocalField_of_finiteDimensional :
   rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
     (Valuation.RankOne.strictMono Valued.v).le_iff_le]
   rfl
+
+/- TODO:
+1. Show that given a valuative extension, we can already make a local field (generalise the above
+   proof)
+2. Show that given an extension of local fields, the valuative rel is the same as this one given by
+   the spectral norm.
+3. As a result, conclude that there is only one valuative rel that is a valuative extension in the
+   situation above.
+-/
 
 end make_finite_extension
 

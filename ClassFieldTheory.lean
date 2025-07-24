@@ -16,3 +16,4 @@ import ClassFieldTheory.GroupCohomology._13_HerbrandQuotient
 import ClassFieldTheory.GroupCohomology._14_SplittingModule
 import ClassFieldTheory.LocalCFT.NonArchDef
 import ClassFieldTheory.Mathlib.CopyLeftHomologyData
+import ClassFieldTheory.Mathlib.ValuativeLemmas
