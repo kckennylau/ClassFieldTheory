@@ -37,7 +37,7 @@ instance : IsNonarchLocalField ℚ_[p] where
 end Padic
 
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
-  (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
+  (L : Type u) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
 
 instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
@@ -212,11 +212,52 @@ theorem e_mul_f_eq_n : e K L * f K L = Module.finrank K L := by
 class IsUnramified : Prop where
   e_eq_one : e K L = 1
 
+instance {R : Type u} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] :
+  IsLocalization.AtPrime R (IsLocalRing.maximalIdeal R) := by sorry
+
 theorem unramified_def : IsUnramified K L ↔ e K L = 1 :=
   ⟨fun h ↦ h.1, fun h ↦ ⟨h⟩⟩
 
-theorem unramified_iff_unramified : IsUnramified K L ↔ Algebra.Unramified 𝒪[K] 𝒪[L] :=
+theorem unramified_maximal_ideal_eq : IsUnramified K L
+  ↔ Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] = 𝓂[L] := by
+  rw [unramified_def]
+  simp [e]
+  rw [Ideal.IsDedekindDomain.ramificationIdx_eq_one_iff (IsDiscreteValuationRing.not_a_field ↥𝒪[L])]
   sorry
+  -- still can't unify this extra localization
+  sorry
+
+-- Since residue field is finite, separable should be free
+theorem residue_separable : Algebra.IsSeparable 𝓀[K] 𝓀[L] := sorry
+-- looks like it can make type checker happy
+theorem residue_separable' : Algebra.IsSeparable 𝓂[K].ResidueField 𝓂[L].ResidueField := sorry
+
+theorem unramified_iff_unramified : IsUnramified K L ↔ Algebra.Unramified 𝒪[K] 𝒪[L] := by calc
+  _ ↔ Algebra.IsUnramifiedAt 𝒪[K] 𝓂[L] := by
+    rw [Algebra.isUnramifiedAt_iff_map_eq (p := 𝓂[K]), unramified_maximal_ideal_eq]
+    constructor
+    intro h
+    constructor
+    exact (residue_separable' K L)
+    sorry
+    -- need to show Localize.AtPrime 𝓂[K] = 𝒪[K]
+    intro h
+    -- exact h.2
+    sorry
+    -- same as above
+  _ ↔ Algebra.Unramified 𝒪[K] 𝒪[L] := by
+    constructor
+    intro h
+    have fu : Algebra.FormallyUnramified 𝒪[K] 𝒪[L] := by
+      rw [(Iff.symm (Algebra.unramifiedLocus_eq_univ_iff (A := 𝒪[L]) (R := 𝒪[K])))]
+      sorry
+      -- Now use the lemma `iff_pid_with_one_nonzero_prime` to describe the specturm of DVR
+    exact { formallyUnramified := fu, finiteType := inferInstance }
+    intro h
+    have x := (Iff.symm (Algebra.unramifiedLocus_eq_univ_iff (A := 𝒪[L]) (R := 𝒪[K]))).mp h.formallyUnramified
+    simp [Algebra.unramifiedLocus] at x
+    -- same as above
+    sorry
 
 section make_finite_extension
 
