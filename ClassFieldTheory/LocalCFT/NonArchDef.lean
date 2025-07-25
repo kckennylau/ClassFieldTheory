@@ -129,8 +129,61 @@ instance : Algebra 𝒪[K] 𝒪[L] where
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
 
--- done in `Continuity.lean` by Andrew and Maddy
-instance : ContinuousSMul K L := inferInstance
+
+omit  [UniformSpace K][IsNonarchLocalField K][UniformSpace L][IsNonarchLocalField L]
+lemma IsInjective : Function.Injective ⇑(algebraMap ↥𝒪[K] ↥𝒪[L]) := by
+  refine fun x {y} hxy => ?_
+  have{s}: (algebraMap ↥𝒪[K] ↥𝒪[L]) s = ((algebraMap K L).restrict 𝒪[K] 𝒪[L]
+    fun x hx => algebraMap_mem_integer K L ⟨x, hx⟩) s :=rfl
+  obtain ⟨x,sx⟩ :=x
+  obtain ⟨y,sy⟩ :=y
+  simpa[this, RingHom.restrict, Subtype.eq_iff, RingHom.codRestrict_apply,
+    RingHom.restrict_apply, algebraMap.coe_inj] using hxy
+variable[UniformSpace K][IsNonarchLocalField K][UniformSpace L][IsNonarchLocalField L]
+
+
+namespace ValuativeRel
+
+theorem posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
+    (x : posSubmonoid R) : x.val ≠ 0 :=
+  mt (· ▸ rel_rfl) x.2
+
+theorem valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
+    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
+  let ⟨x, y, hxy⟩ := valuation_surjective γ
+  ⟨x / y.val, by rw [map_div₀, hxy]⟩
+
+theorem units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
+    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
+  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
+  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
+    Units.ext <| by simpa using hx⟩
+
+end ValuativeRel
+
+theorem density (y : Lˣ) : ∃ (x : Kˣ), Valued.v (algebraMap K L x) ≤ Valued.v y.val := sorry
+
+instance : ContinuousSMul K L := by
+  apply continuousSMul_of_algebraMap K L (continuous_of_continuousAt_zero _ _)
+  simp only [ContinuousAt, map_zero]
+  obtain B₁ := Valued.hasBasis_nhds_zero K (ValueGroupWithZero K)
+  obtain B₂ := Valued.hasBasis_nhds_zero L (ValueGroupWithZero L)
+  apply (Filter.HasBasis.tendsto_iff B₁ B₂).mpr
+  simp only [Set.mem_setOf_eq, true_and]
+  intro b hb
+  obtain ⟨a, ha⟩ := IsNonarchLocalField.ValuativeRel.units_map_valuation_surjective b
+  rw [← ha]
+  obtain ⟨a', ha'⟩ := density K L a
+  use Units.map (valuation K) (a')
+  intro x hx
+  simp only [Units.coe_map, MonoidHom.coe_coe] at *
+  change valuation _ _ ≤ valuation _ _ at ha'
+  change valuation _ _ < valuation _ _
+  change valuation _ _ < valuation _ _  at hx
+  exact lt_of_lt_of_le ((ValuativeExtension.algebraMap_lt ).mpr hx) ha'
+
+
+-- TODO: Maddy
 
 instance : Module.Finite 𝒪[K] 𝒪[L] :=
   sorry
@@ -143,8 +196,31 @@ noncomputable def e : ℕ :=
   Ideal.ramificationIdx (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K] 𝓂[L]
 
 theorem e_spec {ϖK : 𝒪[K]} {ϖL : 𝒪[L]} (hk : Irreducible ϖK) (hl : Irreducible ϖL) :
-    Associated (ϖL ^ e K L) (algebraMap 𝒪[K] 𝒪[L] (ϖK)) :=
-  sorry
+    Associated (ϖL ^ e K L) (algebraMap 𝒪[K] 𝒪[L] (ϖK)) :=by
+  obtain ⟨r, hn⟩ :=
+   IsDiscreteValuationRing.ideal_eq_span_pow_irreducible ((Submodule.ne_bot_iff (Ideal.map (algebraMap ↥𝒪[K] ↥𝒪[L])
+        (IsLocalRing.maximalIdeal ↥𝒪[K]))).mpr ⟨ algebraMap 𝒪[K] 𝒪[L] (ϖK),
+        ⟨by simpa [((IsDiscreteValuationRing.irreducible_iff_uniformizer ϖK).mp hk),
+        Ideal.map_span, Set.image_singleton] using (Ideal.mem_span_singleton_self _),
+        (map_ne_zero_iff (algebraMap ↥𝒪[K] ↥𝒪[L]) (IsInjective _ _)).mpr hk.ne_zero⟩⟩) hl
+  simp only [← Ideal.span_singleton_eq_span_singleton, ← Set.image_singleton, ← Ideal.map_span, ←
+    ((IsDiscreteValuationRing.irreducible_iff_uniformizer ϖK).mp hk), hn]
+  simp only [Set.image_singleton,← Ideal.span_singleton_pow]
+  refine congrArg (HPow.hPow (Ideal.span {ϖL})) ?_
+  have l1{s:ℕ} : sSup {n| n≤ s} =s := csSup_eq_of_is_forall_le_of_forall_le_imp_ge (
+      Set.nonempty_def.mpr ⟨0,by simp only [Set.mem_setOf_eq, zero_le]⟩
+    ) (fun a ha => by simpa using ha) (fun b sh => sh s (by simp only [Set.mem_setOf_eq, le_refl]))
+  have: sSup {n | (IsLocalRing.maximalIdeal ↥𝒪[L]) ^ r ≤ (IsLocalRing.maximalIdeal ↥𝒪[L]) ^ n}
+      =r := by
+      have {n}:(IsLocalRing.maximalIdeal ↥𝒪[L]) ^ r ≤ (IsLocalRing.maximalIdeal ↥𝒪[L]) ^ n
+       ↔  r ≥ n := by
+        refine StrictAnti.le_iff_le (Ideal.pow_right_strictAnti
+        (IsLocalRing.maximalIdeal ↥𝒪[L])
+        (IsDiscreteValuationRing.not_a_field ↥𝒪[L]) Ideal.IsPrime.ne_top')
+      simp only [this, l1]
+  simp only [e, Ideal.ramificationIdx,hn,← Ideal.span_singleton_pow
+  ,← (IsDiscreteValuationRing.irreducible_iff_uniformizer ϖL).mp hl,this]
+
 
 noncomputable def f : ℕ :=
   Ideal.inertiaDeg 𝓂[K] 𝓂[L]
@@ -153,8 +229,7 @@ instance : 𝓂[L].LiesOver 𝓂[K] := sorry
 
 -- bad instance : IsLocalHom (algebraMap 𝒪[K] 𝒪[L]) := sorry
 
-instance :  Algebra 𝓀[K] 𝓀[L] :=
-  Ideal.Quotient.algebraQuotientOfLEComap
+instance :  Algebra 𝓀[K] 𝓀[L] :=Ideal.Quotient.algebraQuotientOfLEComap
     (IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝓂[L])).ge
 
 theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[L] :=by
@@ -167,10 +242,37 @@ theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[L] :=by
   rw[← s,Nat.card_eq_fintype_card,← Module.card_eq_pow_finrank
   ,Nat.card_eq_fintype_card]
 
-lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥
-  ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ := sorry
 
-theorem e_pos : 0 < e K L := sorry
+lemma non_triv_maximal_embedding : (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊥
+  ∧ (Ideal.map (algebraMap 𝒪[K] 𝒪[L]) 𝓂[K]) ≠ ⊤ :=by
+  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
+  refine ⟨by
+    simpa[(IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).mp hϖ, Ideal.map_span,
+    Set.image_singleton, ne_eq, Ideal.span_singleton_eq_bot] using
+    (map_ne_zero_iff (algebraMap ↥𝒪[K] ↥𝒪[L]) (IsInjective _ _)).mpr hϖ.ne_zero,?_⟩
+  by_contra sa
+  obtain ⟨j,sj2⟩:=by simpa only[←sa,
+  (IsDiscreteValuationRing.irreducible_iff_uniformizer ϖ).mp hϖ, Ideal.map_span,
+    Set.image_singleton,Ideal.mem_span_singleton'] using Submodule.mem_top (R:=↥𝒪[L]) (x:=(1:↥𝒪[L]))
+  have h:¬  IsUnit ((algebraMap ↥𝒪[K] ↥𝒪[L]) ϖ) :=by
+    refine Valuation.Integer.not_isUnit_iff_valuation_lt_one.mpr ?_
+    have l1:1=(valuation L) ↑((algebraMap ↥𝒪[K] ↥𝒪[L]) 1) :=by
+      simp only [map_one, OneMemClass.coe_one]
+    have{s}: ((algebraMap ↥𝒪[K] ↥𝒪[L]) s ).1 =(algebraMap K L) s.1 :=rfl
+    simp only[this,l1,ValuativeExtension.algebraMap_lt]
+    rw[OneMemClass.coe_one,map_one]
+    exact Valuation.integer.v_irreducible_lt_one hϖ
+  exact h (isUnit_iff_exists.mpr ⟨j,⟨by simp only [← sj2,mul_comm],by simp only [← sj2]⟩⟩)
+
+
+instance : IsDedekindDomain 𝒪[L] :=by
+  exact instIsDedekindDomainOfIsDomainOfIsDedekindRing ↥𝒪[L]
+
+theorem e_pos : 0 < e K L :=
+ Nat.zero_lt_of_ne_zero (Ideal.IsDedekindDomain.ramificationIdx_ne_zero
+   (non_triv_maximal_embedding _ _).1 ( Ideal.IsMaximal.isPrime' _)  (
+       IsLocalRing.le_maximalIdeal  (non_triv_maximal_embedding _ _).2  ))
+
 
 theorem f_pos : 0 < f K L := Ideal.inertiaDeg_pos 𝓂[K] 𝓂[L]
 
