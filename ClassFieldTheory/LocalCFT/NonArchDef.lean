@@ -39,56 +39,59 @@ end Padic
 variable (K : Type u) [Field K] [ValuativeRel K] [UniformSpace K] [IsNonarchLocalField K]
   (L : Type v) [Field L] [ValuativeRel L] [UniformSpace L] [IsNonarchLocalField L]
 
-instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
+example : ValuativeTopology K := inferInstance
+example : IsUniformAddGroup K := inferInstance
+example : LocallyCompactSpace K := inferInstance
+example : ValuativeRel.IsNontrivial K := inferInstance
+
+instance v_isNontrivial : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
   ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
+
+instance : (valuation K).IsNontrivial := v_isNontrivial K
 
 instance : IsTopologicalDivisionRing K := inferInstance
 
+-- depends on Andrew, which depends on Yakov's PR's
 instance : ValuativeRel.IsRankLeOne K := sorry
 
 noncomputable
-instance : (Valued.v : Valuation K (ValueGroupWithZero K)).RankOne where
+def rankOne : (Valued.v : Valuation K (ValueGroupWithZero K)).RankOne where
   hom := IsRankLeOne.nonempty.some.emb
   strictMono' := IsRankLeOne.nonempty.some.strictMono
+scoped [IsNonarchLocalField.rankOne] attribute [instance] rankOne
+
+namespace rankOne
 
 open scoped Valued in
-instance : ProperSpace K := ProperSpace.of_nontriviallyNormedField_of_weaklyLocallyCompactSpace K
+theorem properSpace : ProperSpace K :=
+  ProperSpace.of_nontriviallyNormedField_of_weaklyLocallyCompactSpace K
+scoped [IsNonarchLocalField.rankOne] attribute [instance] properSpace
+
+open Valued.integer
+
+instance : CompleteSpace K :=
+  (properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mp
+    inferInstance).1
 
 instance : IsDiscreteValuationRing 𝒪[K] :=
-  (Valued.integer.properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mp inferInstance).2.1
+  (properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mp
+    inferInstance).2.1
 
-instance : (Valued.v : Valuation K (ValueGroupWithZero K)).IsNontrivial :=
-  ValuativeRel.isNontrivial_iff_isNontrivial.mp inferInstance
-
-noncomputable
-instance : (Valued.v : Valuation K (ValueGroupWithZero K)).RankOne where
-  hom := IsRankLeOne.nonempty.some.emb
-  strictMono' := IsRankLeOne.nonempty.some.strictMono
-
-open scoped Valued in
-instance : ProperSpace K := ProperSpace.of_nontriviallyNormedField_of_weaklyLocallyCompactSpace K
-
-open Valued.integer in
-instance compactSpace_integer : CompactSpace 𝒪[K] :=
-  properSpace_iff_compactSpace_integer.mp inferInstance
-
-open Valued.integer in
-instance : CompleteSpace 𝒪[K] :=
-  (compactSpace_iff_completeSpace_and_isDiscreteValuationRing_and_finite_residueField.mp
-    (compactSpace_integer K)).1
-
-open Valued.integer in
 instance : Finite 𝓀[K] :=
   (properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mp
     inferInstance).2.2
 
+instance compactSpace_integer : CompactSpace 𝒪[K] :=
+  properSpace_iff_compactSpace_integer.mp inferInstance
+
+instance : CompleteSpace 𝒪[K] :=
+  (compactSpace_iff_completeSpace_and_isDiscreteValuationRing_and_finite_residueField.mp
+    (compactSpace_integer K)).1
+
+end rankOne
+
 theorem prime_ringChar : (ringChar 𝓀[K]).Prime :=
   CharP.char_is_prime 𝓀[K] _
-
-open Valued.integer in
-instance : CompleteSpace K :=
-  (properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mp
-    inferInstance).1
 
 /-- This is how you show that there is a uniformiser (which in Mathlib is called `Irreducible`). -/
 example : ∃ ϖ : 𝒪[K], Irreducible ϖ :=
@@ -96,6 +99,39 @@ example : ∃ ϖ : 𝒪[K], Irreducible ϖ :=
 
 example : ∀ ϖ : 𝒪[K], Irreducible ϖ → ϖ ≠ 0 :=
   fun _ h ↦ h.ne_zero
+
+theorem _root_.Valuation.IsRankOneDiscrete.ofIsDiscreteValuationRing
+    (K : Type*) [Field K] [ValuativeRel K] [IsDiscreteValuationRing 𝒪[K]] :
+    (valuation K).IsRankOneDiscrete where
+  exists_generator_lt_one' := by
+    obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
+    have : valuation K ϖ ≠ 0 := mt (by simpa using ·) hϖ.ne_zero
+    let ϖ' := Units.mk0 (valuation K ϖ) this
+    refine ⟨ϖ', ?_, ?_⟩
+    · refine le_antisymm (Subgroup.zpowers_le.2 ?_) ((Subgroup.closure_le _).2 ?_)
+      · refine MonoidWithZeroHom.mem_valueGroup _ ⟨ϖ, rfl⟩
+      · rintro γ -
+        have {γ : (ValueGroupWithZero K)ˣ} (hγ : γ ≤ 1) : γ ∈ Subgroup.zpowers ϖ' := by
+          obtain ⟨x, rfl⟩ := unitsMap_valuation_surjective γ
+          let x' : 𝒪[K] := ⟨x, hγ⟩
+          have hx' : x' ≠ 0 := fun hx' ↦ x.ne_zero congr(($hx').val)
+          obtain ⟨n, u, hnu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hx' hϖ
+          replace hnu : x = (u * ϖ ^ n : K) := by simpa using congr(($hnu).val)
+          refine ⟨n, Units.ext ?_⟩
+          have hu : valuation K u = 1 :=
+            Valuation.Integers.one_of_isUnit (Valuation.integer.integers _) u.isUnit
+          simp [hnu, hu, ϖ']
+        obtain hγ | hγ := le_total γ 1
+        · exact this hγ
+        · exact (Subgroup.inv_mem_iff _).1 (this <| inv_le_one_of_one_le hγ)
+    · refine (Valuation.Integer.not_isUnit_iff_valuation_lt_one (x := ϖ)).1 hϖ.not_isUnit
+
+instance : (valuation K).IsRankOneDiscrete :=
+  .ofIsDiscreteValuationRing K
+
+/-- The uniformiser in the value group. -/
+noncomputable def ϖ' : (ValueGroupWithZero K)ˣ :=
+  Valuation.IsRankOneDiscrete.generator (valuation K)
 
 lemma associated_iff_of_irreducible (x y : 𝒪[K]) (hx : Irreducible x) :
     Associated y x ↔ Irreducible y :=
