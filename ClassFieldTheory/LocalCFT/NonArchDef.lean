@@ -1,4 +1,5 @@
-import ClassFieldTheory.Mathlib.ValuativeLemmas
+import ClassFieldTheory.LocalCFT.Continuity
+import ClassFieldTheory.Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib
 
 /-!
@@ -21,25 +22,6 @@ class IsNonarchLocalField (K : Type u) [Field K] [ValuativeRel K] [UniformSpace 
   -- ValuativeRel.IsDiscrete K
 
 open ValuativeRel
-
-namespace ValuativeExtension
-
-variable (A : Type u) (B : Type v) [CommRing A] [CommRing B] [ValuativeRel A] [ValuativeRel B]
-  [Algebra A B] [ValuativeExtension A B] (a b : A)
-
-lemma algebraMap_le : valuation B (algebraMap A B a) ≤ valuation B (algebraMap A B b) ↔
-    valuation A a ≤ valuation A b := by
-  simp_rw [← Valuation.Compatible.rel_iff_le, rel_iff_rel]
-
-lemma algebraMap_eq : valuation B (algebraMap A B a) = valuation B (algebraMap A B b) ↔
-    valuation A a = valuation A b := by
-  simp_rw [le_antisymm_iff, algebraMap_le]
-
-lemma algebraMap_lt : valuation B (algebraMap A B a) < valuation B (algebraMap A B b) ↔
-    valuation A a < valuation A b := by
-  simp_rw [lt_iff_le_not_ge, algebraMap_le]
-
-end ValuativeExtension
 
 namespace IsNonarchLocalField
 
@@ -139,7 +121,7 @@ omit [UniformSpace K] [IsNonarchLocalField K] [UniformSpace L] [IsNonarchLocalFi
 lemma algebraMap_mem_integer (x : 𝒪[K]) : (algebraMap 𝒪[K] L) x ∈ 𝒪[L] := by
   rcases x with ⟨x, hx⟩
   change valuation L (algebraMap K L x) ≤ 1
-  simpa only [map_one] using (ValuativeExtension.algebraMap_le K L x 1).mpr hx
+  simpa only [map_one] using (ValuativeExtension.algebraMap_le (B := L)).mpr hx
 
 instance : Algebra 𝒪[K] 𝒪[L] where
   smul r a := ⟨r • a, Algebra.smul_def r (a : L) ▸ mul_mem (algebraMap_mem_integer ..) a.2⟩
@@ -147,54 +129,11 @@ instance : Algebra 𝒪[K] 𝒪[L] where
   commutes' _ _ := Subtype.ext (Algebra.commutes _ _)
   smul_def' _ _ := Subtype.ext (Algebra.smul_def _ _)
 
-namespace ValuativeRel
-
-theorem posSubmonoid.ne_zero {R : Type u} [CommRing R] [ValuativeRel R]
-    (x : posSubmonoid R) : x.val ≠ 0 :=
-  mt (· ▸ rel_rfl) x.2
-
-theorem valuation_surjective₀ {F : Type u} [Field F] [ValuativeRel F]
-    (γ : ValueGroupWithZero F) : ∃ x : F, valuation F x = γ :=
-  let ⟨x, y, hxy⟩ := valuation_surjective γ
-  ⟨x / y.val, by rw [map_div₀, hxy]⟩
-
-theorem units_map_valuation_surjective {F : Type u} [Field F] [ValuativeRel F]
-    (γ : (ValueGroupWithZero F)ˣ) : ∃ x : Fˣ, Units.map (valuation F) x = γ :=
-  let ⟨x, hx⟩ := valuation_surjective₀ γ.val
-  ⟨Units.mk0 x (mt (by rw [← hx, ·, map_zero]) γ.ne_zero),
-    Units.ext <| by simpa using hx⟩
-
-end ValuativeRel
-
-theorem density (y : Lˣ) : ∃ (x : Kˣ), Valued.v (algebraMap K L x) ≤ Valued.v y.val := sorry
-
-instance : ContinuousSMul K L := by
-  apply continuousSMul_of_algebraMap K L (continuous_of_continuousAt_zero _ _)
-  simp only [ContinuousAt, map_zero]
-  obtain B₁ := Valued.hasBasis_nhds_zero K (ValueGroupWithZero K)
-  obtain B₂ := Valued.hasBasis_nhds_zero L (ValueGroupWithZero L)
-  apply (Filter.HasBasis.tendsto_iff B₁ B₂).mpr
-  simp only [Set.mem_setOf_eq, true_and]
-  intro b hb
-  obtain ⟨a, ha⟩ := IsNonarchLocalField.ValuativeRel.units_map_valuation_surjective b
-  rw [← ha]
-  obtain ⟨a', ha'⟩ := density K L a
-  use Units.map (valuation K) (a')
-  intro x hx
-  simp only [Units.coe_map, MonoidHom.coe_coe] at *
-  change valuation _ _ ≤ valuation _ _ at ha'
-  change valuation _ _ < valuation _ _
-  change valuation _ _ < valuation _ _  at hx
-  exact lt_of_lt_of_le ((ValuativeExtension.algebraMap_lt K L x a'.val).mpr hx) ha'
-
-
--- TODO: Maddy
+-- done in `Continuity.lean` by Andrew and Maddy
+instance : ContinuousSMul K L := inferInstance
 
 instance : Module.Finite 𝒪[K] 𝒪[L] :=
   sorry
-
-@[fun_prop] lemma continuous_algebraMap : Continuous (algebraMap K L) :=
-  _root_.continuous_algebraMap K L
 
 instance : IsScalarTower 𝒪[K] K L := inferInstance
 
@@ -212,11 +151,11 @@ noncomputable def f : ℕ :=
 
 instance : 𝓂[L].LiesOver 𝓂[K] := sorry
 
+-- bad instance : IsLocalHom (algebraMap 𝒪[K] 𝒪[L]) := sorry
 
-instance :  Algebra 𝓀[K] 𝓀[L] :=Ideal.Quotient.algebraQuotientOfLEComap
-  (IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝓂[L])).ge
-
-
+instance :  Algebra 𝓀[K] 𝓀[L] :=
+  Ideal.Quotient.algebraQuotientOfLEComap
+    (IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝓂[L])).ge
 
 theorem f_spec : Nat.card 𝓀[K] ^ f K L = Nat.card 𝓀[L] :=by
   have s :Module.finrank 𝓀[K] 𝓀[L] = f K L :=by
@@ -291,25 +230,29 @@ open scoped Valued in
 #check (inferInstance : Valuation.RankOne (Valued.v (R := K)))
 -/
 
-open scoped Valued NormedField in
+open scoped NormedField in
 include K in
 theorem isNonarchLocalField_of_finiteDimensional :
     ∃ (_ : ValuativeRel L) (_ : ValuativeExtension K L)
     (_ : UniformSpace L), IsNonarchLocalField L := by
+  letI : NontriviallyNormedField K := Valued.toNontriviallyNormedField (L := K)
   letI : NontriviallyNormedField L := spectralNorm.nontriviallyNormedField K L
   haveI : IsUltrametricDist L := IsUltrametricDist.isUltrametricDist_of_isNonarchimedean_nnnorm
     isNonarchimedean_spectralNorm
   let v := NormedField.valuation (K := L)
-  haveI := locallyCompactSpace_of_complete_of_finiteDimensional K L
-  refine ⟨inferInstance, ⟨fun k₁ k₂ ↦ ?_⟩, inferInstance, .mk⟩
-  rw [Valuation.Compatible.rel_iff_le (v := v),
+  haveI : ValuativeExtension K L := by
+    refine ⟨fun x y ↦ ?_⟩
+    rw [Valuation.Compatible.rel_iff_le (v := v),
     Valuation.Compatible.rel_iff_le (v := ValuativeRel.valuation K)]
-  change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
-  rw [spectralNorm_extends, spectralNorm_extends]
-  change Valued.norm _ ≤ Valued.norm _ ↔ _
-  rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
-    (Valuation.RankOne.strictMono Valued.v).le_iff_le]
-  rfl
+    change spectralNorm K L _ ≤ spectralNorm K L _ ↔ _
+    rw [spectralNorm_extends, spectralNorm_extends]
+    change Valued.norm _ ≤ Valued.norm _ ↔ _
+    rw [Valued.norm_def, Valued.norm_def, NNReal.coe_le_coe,
+      (Valuation.RankOne.strictMono Valued.v).le_iff_le]
+    rfl
+  haveI := locallyCompactSpace_of_complete_of_finiteDimensional K L
+  refine ⟨inferInstance, inferInstance, inferInstance, .mk⟩
+
 
 /- TODO:
 1. Show that given a valuative extension, we can already make a local field (generalise the above
