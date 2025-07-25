@@ -7,10 +7,7 @@ section Ring
 
 variable {R : Type*} [CommRing R]
 
--- TODO: when PR, tag `ValuativeRel` as `@[ext]` instead of this.
-@[ext] theorem ext {v v' : ValuativeRel R}
-    (h : ∀ a b, v.rel a b ↔ v'.rel a b) : v = v' := by
-  cases v; cases v'; congr; ext; apply h
+attribute [ext] ValuativeRel
 
 variable [ValuativeRel R]
 
