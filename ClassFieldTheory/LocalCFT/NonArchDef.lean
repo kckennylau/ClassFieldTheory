@@ -4,7 +4,7 @@ import Mathlib
 /-!
 # Definition of Non-Archimedean Local Fields
 
-We define non-archimedean local fields as a class `IsNonArchLF`.
+We define non-archimedean local fields aIsNonArchLF`.
 
 -/
 
