@@ -1,43 +1,64 @@
 import ClassFieldTheory.Mathlib.RingTheory.Valuation.ValuativeRel
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Int.WithZero
+import Mathlib.GroupTheory.ArchimedeanDensely
 import Mathlib.RingTheory.DiscreteValuationRing.Basic
-import Mathlib.Topology.Algebra.Valued.ValuativeRel
 import Mathlib.RingTheory.Valuation.Discrete.Basic
+import Mathlib.Topology.Algebra.Valued.ValuativeRel
 
-open ValuativeRel
+namespace ValuativeRel
 
-theorem Valuation.IsRankOneDiscrete.ofIsDiscreteValuationRing
-    (K : Type*) [Field K] [ValuativeRel K] [IsDiscreteValuationRing 𝒪[K]] :
-    (valuation K).IsRankOneDiscrete where
-  exists_generator_lt_one' := by
-    obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-    have : valuation K ϖ ≠ 0 := mt (by simpa using ·) hϖ.ne_zero
-    let ϖ' := Units.mk0 (valuation K ϖ) this
-    refine ⟨ϖ', ?_, ?_⟩
-    · refine le_antisymm (Subgroup.zpowers_le.2 ?_) ((Subgroup.closure_le _).2 ?_)
-      · refine MonoidWithZeroHom.mem_valueGroup _ ⟨ϖ, rfl⟩
-      · rintro γ -
-        have {γ : (ValueGroupWithZero K)ˣ} (hγ : γ ≤ 1) : γ ∈ Subgroup.zpowers ϖ' := by
-          obtain ⟨x, rfl⟩ := unitsMap_valuation_surjective γ
-          let x' : 𝒪[K] := ⟨x, hγ⟩
-          have hx' : x' ≠ 0 := fun hx' ↦ x.ne_zero congr(($hx').val)
-          obtain ⟨n, u, hnu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hx' hϖ
-          replace hnu : x = (u * ϖ ^ n : K) := by simpa using congr(($hnu).val)
-          refine ⟨n, Units.ext ?_⟩
-          have hu : valuation K u = 1 :=
-            Valuation.Integers.one_of_isUnit (Valuation.integer.integers _) u.isUnit
-          simp [hnu, hu, ϖ']
-        obtain hγ | hγ := le_total γ 1
-        · exact this hγ
-        · exact (Subgroup.inv_mem_iff _).1 (this <| inv_le_one_of_one_le hγ)
-    · refine (Valuation.Integer.not_isUnit_iff_valuation_lt_one (x := ϖ)).1 hϖ.not_isUnit
+open WithZero
 
-@[ext] structure Real.Small : Type where
+variable (R : Type*) [CommRing R] [ValuativeRel R]
+    [IsDiscrete R] [IsNontrivial R] [IsRankLeOne R]
+
+def valueGroupWithZeroEquivWithZeroMulInt :
+    ValueGroupWithZero R ≃*o ℤᵐ⁰ := sorry
+
+end ValuativeRel
+
+@[ext] structure Tiny (α : Type*) [LT α] [Zero α] [One α] : Type _ where
   val : ℝ
   pos : 0 < val
   lt_one : val < 1
 
+namespace Tiny
 
+open NNReal
 
-def discreteValuation :
+def toNNReal (r : Tiny ℝ) : ℝ≥0 :=
+  ⟨r.val, le_of_lt r.pos⟩
+
+instance : Coe (Tiny ℝ) ℝ≥0 where
+  coe := toNNReal
+
+theorem coe_ne_zero {r : Tiny ℝ} : r.toNNReal ≠ 0 :=
+  ne_of_gt r.pos
+
+noncomputable def negLog (r : Tiny ℝ) : ℝ≥0 :=
+  ⟨-r.val.log, neg_nonneg.2 <| (Real.log_le_iff_le_exp r.pos).2 <|
+    le_of_lt <| by simpa using r.lt_one⟩
+
+theorem negLog_ne_zero (r : Tiny ℝ) : r.negLog ≠ 0 :=
+  _
+
+end Tiny
+
+namespace Valuation
+
+open ValuativeRel NNReal WithZero
+
+/-- Given a tiny real number (`0 < r < 1`), there is a unique valuation that sends a uniformiser
+to `r`. -/
+noncomputable def ofTiny (R : Type*) [CommRing R] [ValuativeRel R]
+    [IsDiscrete R] [ValuativeRel.IsNontrivial R] [IsRankLeOne R] (r : Tiny ℝ) :
+    Valuation R ℝ≥0 :=
+  (valuation R).map
+    (.comp (WithZeroMulInt.toNNReal _)
+      (valueGroupWithZeroEquivWithZeroMulInt R : ValueGroupWithZero R →*o ℤᵐ⁰))
+    _
+
+end Valuation
 
 #min_imports
